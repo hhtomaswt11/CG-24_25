@@ -50,6 +50,11 @@ void primitiveToFile(const Primitive f, const char* path) {
     }
 }
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <limits>
+
 Primitive fileToPrimitive(const char* path) {
     Primitive f = newEmptyPrimitive();
     std::ifstream file(path);
@@ -59,22 +64,33 @@ Primitive fileToPrimitive(const char* path) {
         return f;
     }
 
-    int vertices;
-    file >> vertices;
-    file.ignore(); // Skip the newline character after the vertex count
+    int vertexCount;
+    file >> vertexCount;
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora o resto da linha
 
-    float x, y, z;
-    for (int i = 0; i < vertices; ++i) {
-        if (file >> x >> y >> z) {
+    std::string line;
+    int count = 0;
+
+    while (std::getline(file, line) && count < vertexCount) {
+        std::stringstream ss(line);
+        float x, y, z;
+        char comma1, comma2;
+
+        if (ss >> x >> comma1 >> y >> comma2 >> z && comma1 == ',' && comma2 == ',') {
             addPoint(f, newPoint(x, y, z));
+            count++;
         } else {
-            std::cerr << "Error processing line " << i + 1 << " in file: " << path << "\n";
-            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Skip erroneous line
+            std::cerr << "Error processing line " << (count + 1) << ": " << line << "\n";
         }
+    }
+
+    if (count != vertexCount) {
+        std::cerr << "Warning: Expected " << vertexCount << " vertices, but read " << count << "\n";
     }
 
     return f;
 }
+
 
 const std::list<Point>& getPoints(const Primitive f) {
     return f->points;

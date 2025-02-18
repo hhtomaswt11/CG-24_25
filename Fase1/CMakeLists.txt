@@ -1,20 +1,41 @@
-# Minimum required CMake version
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.5)
 
-# Define the project name
-project(.)
+# Project Name
+PROJECT(fase1)
 
-# Set C++ standard (optional, but good practice)
-set(CMAKE_CXX_STANDARD 17)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# Add subdirectories for each module (e.g., Utils, tinyXML)
-add_subdirectory(Utils)
-add_subdirectory(tinyXML)
+# Define os executáveis a serem construídos neste projecto
+add_executable(engine.exe ./Engine/engine.cpp)
+add_executable(generator.exe ./Generator/generator.cpp)
 
-# Add source files (main.cpp is assumed here, but replace with your actual source files)
-add_executable(Fase1 main.cpp)
+# Biblioteca das figuras e dos pontos
+add_library(
+        Utils_lib
+        ./Utils/point.cpp
+        ./Utils/point.h
+        ./Utils/primitive.cpp
+        ./Utils/primitive.h
+        ./Utils/XMLDataFormat.cpp
+        ./Utils/XMLDataFormat.h
+)
 
-target_link_libraries(Fase1 Utils tinyXML)
+# Biblioteca de parsing de XML
+add_library(
+        tinyXML
+        ./tinyXML/tinystr.cpp
+        ./tinyXML/tinyxmlerror.cpp
+        ./tinyXML/tinyxmlparser.cpp
+        ./tinyXML/tinystr.h
+        ./tinyXML/tinyxml.h
+        ./tinyXML/tinyxml.cpp
+)
+
+target_link_libraries(tinyXML)
+
+# Associa a biblioteca das figuras e dos pontos aos executáveis
+target_link_libraries(generator.exe Utils_lib)
+target_link_libraries(engine.exe Utils_lib tinyXML )
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
@@ -36,6 +57,11 @@ if  (WIN32)
 
 
     include_directories(${TOOLKITS_FOLDER}/glut )
+    #target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES}
+    #									  ${TOOLKITS_FOLDER}/glut/glut32.lib)
+    target_link_libraries(generator.exe ${OPENGL_LIBRARIES} ${TOOLKITS_FOLDER}/glut/glut32.lib)
+
+    target_link_libraries(engine.exe ${OPENGL_LIBRARIES} ${TOOLKITS_FOLDER}/glut/glut32.lib)
 
     if (EXISTS "${TOOLKITS_FOLDER}/glut/glut32.dll" )
         file(COPY ${TOOLKITS_FOLDER}/glut/glut32.dll DESTINATION ${CMAKE_BINARY_DIR})
@@ -50,8 +76,8 @@ else (WIN32) #Linux and Mac
     link_directories(${GLUT_LIBRARY_DIRS})
     add_definitions(${GLUT_DEFINITIONS})
 
-    target_link_libraries(Fase1 ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
-
+    target_link_libraries(generator.exe ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
+    target_link_libraries(engine.exe ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} )
     if(NOT GLUT_FOUND)
         message(ERROR ": GLUT not found!")
     endif(NOT GLUT_FOUND)
