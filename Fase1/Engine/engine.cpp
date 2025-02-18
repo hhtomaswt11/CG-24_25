@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
     glutKeyboardFunc(keyProc); // Adicionado para permitir controle do teclado
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE); // ao ativado, é descartado algumas faces dos triangulos com base na orientacao do winding order (ordem dos vertices)
 
     glutMainLoop();
 
