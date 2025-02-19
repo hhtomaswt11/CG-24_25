@@ -1,10 +1,10 @@
 #include "engine.h"
 
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
+// #ifdef __APPLE__
+// #include <GLUT/glut.h>
+// #else
 #include <GL/glut.h>
-#endif
+// #endif
 
 #include <iostream>
 #include <list>
@@ -14,18 +14,25 @@ using namespace std;
 #define WHITE 1.0f, 1.0f, 1.0f
 
 // Variáveis da câmara
-float alpha = M_PI / 4;
-float beta_ = M_PI / 4;
-float radius = 5.0f;
-float lookAtx = 0.0f, lookAty = 0.0f, lookAtz = 0.0f;
-float upx = 0.0f, upy = 1.0f, upz = 0.0f;
+float alpha = M_PI / 4, 
+      beta_ = M_PI / 4, 
+      radius = 5.0f;
 
+float lookAtx = 0.0f, 
+      lookAty = 0.0f, 
+      lookAtz = 0.0f;
+
+float upx = 0.0f, 
+      upy = 1.0f, 
+      upz = 0.0f;
+
+bool showAxes = true; 
 int mode = GL_LINE;
 list<Primitive> primitives;
 
 void changeSize(int w, int h) {
     if (h == 0) h = 1;
-    float ratio = w * 1.0 / h;
+    float ratio = (float) w / (float) h;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
@@ -38,7 +45,11 @@ void drawPrimitives(const list<Primitive>& figs) {
     glBegin(GL_TRIANGLES);
     for (const auto& fig : figs) {
         for (const auto& point : getPoints(fig)) {
-            glVertex3f(getX(point), getY(point), getZ(point));
+            float 
+            px = getX(point), 
+            py = getY(point), 
+            pz = getZ(point); 
+            glVertex3f(px,py,pz);
         }
     }
     glEnd();
@@ -48,9 +59,11 @@ void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     gluLookAt(radius * cos(beta_) * sin(alpha), radius * sin(beta_), radius * cos(beta_) * cos(alpha),
-              lookAtx, lookAty, lookAtz, upx, upy, upz);
+              lookAtx, lookAty, lookAtz, 
+              upx, upy, upz);
 
-    // Eixos
+    // Eixos 
+    if (showAxes){
     glBegin(GL_LINES);
     glColor3f(1.0f, 0.0f, 0.0f);
     glVertex3f(-100.0f, 0.0f, 0.0f);
@@ -62,6 +75,7 @@ void renderScene(void) {
     glVertex3f(0.0f, 0.0f, -100.0f);
     glVertex3f(0.0f, 0.0f, 100.0f);
     glEnd();
+    }
 
     glColor3f(1.0f, 1.0f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, mode);
@@ -72,23 +86,25 @@ void renderScene(void) {
 
 void keyProc(unsigned char key, int, int) {
     switch (key) {
-        case 'a': alpha -= 0.1f; break;
-        case 'd': alpha += 0.1f; break;
         case 'w': beta_ += (beta_ <= 1.48f ? 0.1f : 0.0f); break;
+        case 'a': alpha -= 0.1f; break; // alfa controla esq dir 
         case 's': beta_ -= (beta_ >= -1.48f ? 0.1f : 0.0f); break;
-        case 'f': mode = GL_FILL; break;
-        case 'l': mode = GL_LINE; break;
-        case 'p': mode = GL_POINT; break;
+        case 'd': alpha += 0.1f; break; // alfa controla esq dir 
+        case 'f': mode = GL_FILL; break; // preencher imagem 
+        case 'l': mode = GL_LINE; break; // apenas linhas (default)
+        case 'p': mode = GL_POINT; break; // apenas pontos da figura
+        case 'x': mode = showAxes = !showAxes; break; // ocultar os eixos x y z pelo controlo da variavel showAxes no renderScene
         default: break;
     }
     glutPostRedisplay();
 }
 
 int main(int argc, char* argv[]) {
-    std::list<std::string> models = {"plane.3d"};
-    for (const auto& model : models) {
-        primitives.push_back(fileToPrimitive(model.c_str()));
-    }
+    std::list<std::string> models = {"box.3d", "plane.3d"};
+
+    Primitive p = fileToPrimitive(argv[1]); 
+    primitives.push_back(p);
+
     beta_ = asin(5.0f / radius);
 
     glutInit(&argc, argv);
@@ -99,7 +115,7 @@ int main(int argc, char* argv[]) {
 
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
-    glutKeyboardFunc(keyProc); // Adicionado para permitir controle do teclado
+    glutKeyboardFunc(keyProc); // Adicionado para permitir o controlo do teclado
 
     glEnable(GL_DEPTH_TEST);
     // glEnable(GL_CULL_FACE); // ao ativado, é descartado algumas faces dos triangulos com base na orientacao do winding order (ordem dos vertices)

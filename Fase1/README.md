@@ -25,4 +25,7 @@ Desta forma, os executáveis generator.exe e executable.exe são gerados.
 ```text
 ./engine.exe
 ```
-
+###### Comando completo (deve ser executado na diretoria Fase1)
+```text
+cd build/ ; cmake .. ; cmake --build .  ; ./generator.exe plane 2 3 plane.3d  ; ./engine.exe plane.3d ; cd ..
+```

@@ -1,4 +1,8 @@
 #include "primitive.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <limits>
 
 struct primitive {
   std::list<Point> points;
@@ -20,6 +24,21 @@ Primitive newPrimitive(const std::list<Point>& points) {
     return p;
 }
 
+
+void addPrimitive(Primitive &dest, const Primitive &src) {
+    for (const auto& ponto : src->points) { // Copia os pontos da `src` para `dest`
+        dest->points.push_back(ponto);
+    }
+}
+
+
+void addTriangle(Primitive plano, const Point& p1, const Point& p2, const Point& p3) {
+    addPoint(plano, p1);
+    addPoint(plano, p2);
+    addPoint(plano, p3);
+}
+
+
 void addPoint(Primitive f, const Point& p) {
     if (f) {
         f->points.push_back(p);  // Adds a point to the list
@@ -37,6 +56,8 @@ void primitiveToFile(const Primitive f, const char* path) {
         std::cerr << "Primitive is empty or NULL.\n";
         return;
     }
+    std::cout << "Path 3D na primitiveToFile: " << path << std::endl;
+
 
     std::ofstream file(path);
     if (!file) {
@@ -50,19 +71,16 @@ void primitiveToFile(const Primitive f, const char* path) {
     }
 }
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <limits>
+
 
 Primitive fileToPrimitive(const char* path) {
     Primitive f = newEmptyPrimitive();
     std::ifstream file(path);
 
-    if (!file) {
-        std::cerr << "Error opening file: " << path << "\n";
-        return f;
-    }
+    // if (!file) {
+    //     std::cerr << "Error opening file: " << path << "\n";
+    //     return f;
+    // }
 
     int vertexCount;
     file >> vertexCount;
@@ -96,19 +114,26 @@ const std::list<Point>& getPoints(const Primitive f) {
     return f->points;
 }
 
+void deletePrimitiveSimple(Primitive f) {
+    if (f) {
+        f->points.clear();  //limpa os pontos
+        delete f;  // Libera a estrutura Primitive
+    }
+}
+
 void deletePrimitive(Primitive f) {
     if (f) {
         for (auto& p : f->points) {
             deletePoint(p);  // Clean up each point in the list
         }
         f->points.clear();  // Clear the list of points
-        delete f;  // Use 'delete' instead of 'free'
+        delete f;  
     }
 }
 
 void deletePrimitive2(Primitive f) {
     if (f) {
         f->points.clear();  // Just clear the list
-        delete f;  // Use 'delete' instead of 'free'
+        delete f; 
     }
 }

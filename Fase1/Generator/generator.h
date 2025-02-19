@@ -4,7 +4,10 @@
 #include <cstring>
 #include "../Utils/primitive.h"
 
-Primitive buildPlane(int length, int divisions, float h, int y);
+ // Primitive buildPlane(int length, int divisions, float h, int y);
 
+ Primitive buildPlane(int length, int divisions, char axis , float h , int invert) ; 
 
-#endif //GENERATOR_H
+ Primitive buildBox(int length, int divisions); 
+ 
+#endif 
