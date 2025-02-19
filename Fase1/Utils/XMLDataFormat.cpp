@@ -3,17 +3,53 @@
 #include <cstdlib>
 #include <iostream>
 
+struct Window{
+    int width, height;
+};  
+
+struct PosCamera{ // valores inteiros ou manter float ? 
+    float cam1, cam2, cam3; 
+}; 
+
+struct LookAt{
+    float lookat1, lookat2, lookat3; 
+}; 
+
+
+struct Up{
+    float up1, up2, up3; 
+}; 
+
+struct Projection{ // pode tomar valores float 
+    float fov, near, far; 
+}; 
+
+struct XMLDataFormat {
+    Window window; 
+    PosCamera poscamera; 
+    LookAt lookat; 
+    Up up; 
+    Projection projection; 
+
+    std::list<std::string> models; // List of model file paths
+
+};
+
 XMLDataFormat* newXMLDataFormat() {
     XMLDataFormat* newData = new XMLDataFormat();
     if (newData) {
-        // Initialize any values you need, if required
-        std::fill(std::begin(newData->poscam), std::end(newData->poscam), 0.0f);
-        std::fill(std::begin(newData->lookAt), std::end(newData->lookAt), 0.0f);
-        std::fill(std::begin(newData->up), std::end(newData->up), 0.0f);
-        std::fill(std::begin(newData->projection), std::end(newData->projection), 0.0f);
+        // Inicializa os valores da estrutura com 0.0f
+        newData->window = {512, 512}; 
+        newData->poscamera = {0.0f, 0.0f, 0.0f};
+        newData->lookat = {0.0f, 0.0f, 0.0f};
+        newData->up = {0.0f, 0.0f, 0.0f};
+        newData->projection = {0.0f, 0.0f, 0.0f};
+
+        // A lista de modelos já é inicializada vazia por padrão
     }
     return newData;
 }
+
 
 XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
     XMLDataFormat* result = newXMLDataFormat();
@@ -22,34 +58,65 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
         if (doc.LoadFile(filePath)) {
             TiXmlElement* root = doc.FirstChildElement("world");
 
+            if (!root) {
+                std::cerr << "Error: <world> element not found in XML file: " << filePath << std::endl;
+                return result;
+            }
+
+
+              // Lendo os parâmetros da janela
+              TiXmlElement* windowElement = root->FirstChildElement("window");
+              if (windowElement) {
+                  result->window.width = atoi(windowElement->Attribute("width"));
+                  result->window.height = atoi(windowElement->Attribute("height"));
+              }
+  
+
             // Camera parameters
             TiXmlElement* camera = root->FirstChildElement("camera");
-            TiXmlElement* posCamera = camera->FirstChildElement("position");
-            TiXmlElement* lookAtCamera = camera->FirstChildElement("lookAt");
-            TiXmlElement* upCamera = camera->FirstChildElement("up");
-            TiXmlElement* projectionCamera = camera->FirstChildElement("projection");
+            if (camera) {
+                TiXmlElement* posCamera = camera->FirstChildElement("position");
+                TiXmlElement* lookAtCamera = camera->FirstChildElement("lookAt");
+                TiXmlElement* upCamera = camera->FirstChildElement("up");
+                TiXmlElement* projectionCamera = camera->FirstChildElement("projection");
 
-            result->poscam[0] = atof(posCamera->Attribute("x"));
-            result->poscam[1] = atof(posCamera->Attribute("y"));
-            result->poscam[2] = atof(posCamera->Attribute("z"));
+                if (posCamera) {
+                    result->poscamera.cam1 = atof(posCamera->Attribute("x"));
+                    result->poscamera.cam2 = atof(posCamera->Attribute("y"));
+                    result->poscamera.cam3 = atof(posCamera->Attribute("z"));
+                }
 
-            result->lookAt[0] = atof(lookAtCamera->Attribute("x"));
-            result->lookAt[1] = atof(lookAtCamera->Attribute("y"));
-            result->lookAt[2] = atof(lookAtCamera->Attribute("z"));
+                if (lookAtCamera) {
+                    result->lookat.lookat1 = atof(lookAtCamera->Attribute("x"));
+                    result->lookat.lookat2 = atof(lookAtCamera->Attribute("y"));
+                    result->lookat.lookat3 = atof(lookAtCamera->Attribute("z"));
+                }
 
-            result->up[0] = atof(upCamera->Attribute("x"));
-            result->up[1] = atof(upCamera->Attribute("y"));
-            result->up[2] = atof(upCamera->Attribute("z"));
+                if (upCamera) {
+                    result->up.up1 = atof(upCamera->Attribute("x"));
+                    result->up.up2 = atof(upCamera->Attribute("y"));
+                    result->up.up3 = atof(upCamera->Attribute("z"));
+                }
 
-            result->projection[0] = atof(projectionCamera->Attribute("fov"));
-            result->projection[1] = atof(projectionCamera->Attribute("near"));
-            result->projection[2] = atof(projectionCamera->Attribute("far"));
+                if (projectionCamera) {
+                    result->projection.fov = atof(projectionCamera->Attribute("fov"));
+                    result->projection.near = atof(projectionCamera->Attribute("near"));
+                    result->projection.far = atof(projectionCamera->Attribute("far"));
+                }
+            }
 
             // Parsing models
             TiXmlElement* group = root->FirstChildElement("group");
-            TiXmlElement* models = group->FirstChildElement("models");
-            for (TiXmlElement* model = models->FirstChildElement("model"); model; model = model->NextSiblingElement("model")) {
-                result->models.push_back(model->Attribute("file"));
+            if (group) {
+                TiXmlElement* models = group->FirstChildElement("models");
+                if (models) {
+                    for (TiXmlElement* model = models->FirstChildElement("model"); model; model = model->NextSiblingElement("model")) {
+                        const char* file = model->Attribute("file");
+                        if (file) {
+                            result->models.push_back(file);
+                        }
+                    }
+                }
             }
         } else {
             std::cerr << "Error loading XML file: " << filePath << std::endl;
@@ -57,6 +124,7 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
     }
     return result;
 }
+
 
 // You should return a reference to the models list, but only if the XMLDataFormat instance is valid
 std::list<std::string>& getModels(XMLDataFormat* data) {
@@ -67,49 +135,65 @@ std::list<std::string>& getModels(XMLDataFormat* data) {
     return emptyList;
 }
 
+// Função para definir a posição da câmera
 void setCamPosition(XMLDataFormat* data, float x, float y, float z) {
     if (data) {
-        data->poscam[0] = x;
-        data->poscam[1] = y;
-        data->poscam[2] = z;
+        data->poscamera.cam1 = x;
+        data->poscamera.cam2 = y;
+        data->poscamera.cam3 = z;
     }
 }
 
+
+// GETTERS
+
+int getWidth(XMLDataFormat* data) {
+    return data ? data->window.width : 0.;
+}
+
+int getHeight(XMLDataFormat* data) {
+    return data ? data->window.height: 0;
+}
+
+// Funções para obter a posição da câmera
 float getXPosCam(XMLDataFormat* data) {
-    return data ? data->poscam[0] : 0.0f;
+    return data ? data->poscamera.cam1 : 0.0f;
 }
 
 float getYPosCam(XMLDataFormat* data) {
-    return data ? data->poscam[1] : 0.0f;
+    return data ? data->poscamera.cam2 : 0.0f;
 }
 
 float getZPosCam(XMLDataFormat* data) {
-    return data ? data->poscam[2] : 0.0f;
+    return data ? data->poscamera.cam3 : 0.0f;
 }
 
+// Funções para obter os valores do LookAt
 float getXLookAt(XMLDataFormat* data) {
-    return data ? data->lookAt[0] : 0.0f;
+    return data ? data->lookat.lookat1 : 0.0f;
 }
 
 float getYLookAt(XMLDataFormat* data) {
-    return data ? data->lookAt[1] : 0.0f;
+    return data ? data->lookat.lookat2 : 0.0f;
 }
 
 float getZLookAt(XMLDataFormat* data) {
-    return data ? data->lookAt[2] : 0.0f;
+    return data ? data->lookat.lookat3 : 0.0f;
 }
 
+// Funções para obter os valores do Up
 float getXUp(XMLDataFormat* data) {
-    return data ? data->up[0] : 0.0f;
+    return data ? data->up.up1 : 0.0f;
 }
 
 float getYUp(XMLDataFormat* data) {
-    return data ? data->up[1] : 0.0f;
+    return data ? data->up.up2 : 0.0f;
 }
 
 float getZUp(XMLDataFormat* data) {
-    return data ? data->up[2] : 0.0f;
+    return data ? data->up.up3 : 0.0f;
 }
+
 
 void deleteXMLDataFormat(XMLDataFormat* data) {
     if (data) {

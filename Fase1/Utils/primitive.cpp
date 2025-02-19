@@ -4,8 +4,14 @@
 #include <sstream>
 #include <limits>
 
+// struct Color {
+//     float r, g, b;
+// };
+
+
 struct primitive {
   std::list<Point> points;
+ // std::list<Color> colors;
 };
 
 Primitive newEmptyPrimitive() {

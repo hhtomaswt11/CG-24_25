@@ -65,21 +65,24 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
 }
 
 
-
 Primitive buildBox(int length, int divisions){
     Primitive box = newEmptyPrimitive();
     if (box){// se deu NULL, é porque houve erros
         float dimension2 = (float)length / 2;
+        char 
+         x = 'X',
+         y = 'Y',
+         z = 'Z'; 
 
         // Gerar cada face da caixa usando a função genérica buildPlane
-        Primitive faceCima    = buildPlane(length, divisions, 'Y',  dimension2, 0),
-                  faceBaixo   = buildPlane(length, divisions, 'Y', -dimension2, 1),
+        Primitive faceCima    = buildPlane(length, divisions, y, dimension2, 0),
+                  faceBaixo   = buildPlane(length, divisions, y, -dimension2, 1),
 
-                  faceLateral1 = buildPlane(length, divisions, 'X', -dimension2, 0), // as de lado
-                  faceLateral2 = buildPlane(length, divisions, 'X',  dimension2, 1),
+                  faceLateral1 = buildPlane(length, divisions, x , -dimension2, 0), // as de lado
+                  faceLateral2 = buildPlane(length, divisions, x ,  dimension2, 1),
 
-                  faceLateral3 = buildPlane(length, divisions, 'Z', -dimension2, 0), // as de frente e tras 
-                  faceLateral4 = buildPlane(length, divisions, 'Z',  dimension2, 1);
+                  faceLateral3 = buildPlane(length, divisions, z, -dimension2, 0), // as de frente e tras 
+                  faceLateral4 = buildPlane(length, divisions, z,  dimension2, 1);
 
         // Adicionar todas as faces ao objeto "box"
         addPrimitive(box, faceCima);

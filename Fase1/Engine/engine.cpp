@@ -1,11 +1,5 @@
 #include "engine.h"
-
-// #ifdef __APPLE__
-// #include <GLUT/glut.h>
-// #else
 #include <GL/glut.h>
-// #endif
-
 #include <iostream>
 #include <list>
 
@@ -65,15 +59,19 @@ void renderScene(void) {
     // Eixos 
     if (showAxes){
     glBegin(GL_LINES);
+
     glColor3f(1.0f, 0.0f, 0.0f);
     glVertex3f(-100.0f, 0.0f, 0.0f);
     glVertex3f(100.0f, 0.0f, 0.0f);
+
     glColor3f(0.0f, 1.0f, 0.0f);
     glVertex3f(0.0f, -100.0f, 0.0f);
     glVertex3f(0.0f, 100.0f, 0.0f);
+
     glColor3f(0.0f, 0.0f, 1.0f);
     glVertex3f(0.0f, 0.0f, -100.0f);
     glVertex3f(0.0f, 0.0f, 100.0f);
+
     glEnd();
     }
 
@@ -85,17 +83,31 @@ void renderScene(void) {
 }
 
 void keyProc(unsigned char key, int, int) {
-    switch (key) {
-        case 'w': beta_ += (beta_ <= 1.48f ? 0.1f : 0.0f); break;
-        case 'a': alpha -= 0.1f; break; // alfa controla esq dir 
-        case 's': beta_ -= (beta_ >= -1.48f ? 0.1f : 0.0f); break;
-        case 'd': alpha += 0.1f; break; // alfa controla esq dir 
-        case 'f': mode = GL_FILL; break; // preencher imagem 
-        case 'l': mode = GL_LINE; break; // apenas linhas (default)
-        case 'p': mode = GL_POINT; break; // apenas pontos da figura
-        case 'x': mode = showAxes = !showAxes; break; // ocultar os eixos x y z pelo controlo da variavel showAxes no renderScene
-        default: break;
+    if(key == 119 || key == 87){ // w 
+        beta_ += (beta_ <= 1.48f ? 0.1f : 0.0f); 
     }
+    else if(key == 97 || key == 65){ // a 
+        alpha -= 0.1f;  // alfa controla esq dir 
+    }
+    else if(key == 115 || key == 83){ // s
+        beta_ -= (beta_ >= -1.48f ? 0.1f : 0.0f); 
+    }
+    else if(key == 100 || key == 68){ // d 
+        alpha += 0.1f;  // alfa controla esq dir 
+    }
+    else if (key == 102 || key == 70){ // f 
+        mode = GL_FILL;  // preencher imagem 
+    }
+    else if(key == 108 || key == 76){ // l 
+        mode = GL_LINE;  // apenas linhas (default)
+    }
+    else if(key == 98 || key  == 66){ // b -> blank -> so os pontos 
+        mode = GL_POINT;  // apenas pontos da figura
+    }
+    else if (key == 120 || key == 88){ // x 
+        mode = showAxes = !showAxes;  // ocultar os eixos x y z pelo controlo da variavel showAxes no renderScene
+    }
+
     glutPostRedisplay();
 }
 
@@ -115,7 +127,7 @@ int main(int argc, char* argv[]) {
 
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
-    glutKeyboardFunc(keyProc); // Adicionado para permitir o controlo do teclado
+    glutKeyboardFunc(keyProc); 
 
     glEnable(GL_DEPTH_TEST);
     // glEnable(GL_CULL_FACE); // ao ativado, é descartado algumas faces dos triangulos com base na orientacao do winding order (ordem dos vertices)

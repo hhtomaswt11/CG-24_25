@@ -7,6 +7,7 @@
 #include "point.h"
 
 typedef struct primitive* Primitive;
+// typedef struct  color* Color; 
 
 Primitive newEmptyPrimitive();
 
