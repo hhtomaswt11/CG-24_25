@@ -7,7 +7,7 @@
 
 
 ```text
-cd build ; cmake .. ; cmake --build .
+mkdir build; cd build ; cmake .. ; cmake --build .
 ```
 
 Desta forma, os executáveis generator.exe e executable.exe são gerados. 
@@ -15,7 +15,7 @@ Desta forma, os executáveis generator.exe e executable.exe são gerados.
 ###### Gerar os ficheiros .3d que definem as primitivas desejadas a construir com o comando:
 
 ```text
-./generator.exe plane 2 3 plane.3d
+./generator box 2 3 box_2_3.3d
 ```
 
 - **Engine** 
@@ -23,9 +23,9 @@ Desta forma, os executáveis generator.exe e executable.exe são gerados.
 ###### Executar engine com o comando:
 
 ```text
-./engine.exe
+./engine ../test_files_phase_1/test_1_4.xml
 ```
 ###### Comando completo (deve ser executado na diretoria Fase1)
 ```text
-cd build/ ; cmake .. ; cmake --build .  ; ./generator.exe plane 2 3 plane.3d  ; ./engine.exe plane.3d ; cd ..
+mkdir build; cd build ; cmake .. ; cmake --build .  ; ./generator box 2 3 box_2_3.3d  ; ./engine ../test_files_phase_1/test_1_4.xml ; cd ..
 ```

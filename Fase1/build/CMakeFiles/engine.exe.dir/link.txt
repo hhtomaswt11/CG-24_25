@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Wextra CMakeFiles/engine.exe.dir/Engine/engine.cpp.o -o engine.exe  libUtils_lib.a libtinyXML.a /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so /usr/lib/x86_64-linux-gnu/libglut.so /usr/lib/x86_64-linux-gnu/libXmu.so /usr/lib/x86_64-linux-gnu/libXi.so

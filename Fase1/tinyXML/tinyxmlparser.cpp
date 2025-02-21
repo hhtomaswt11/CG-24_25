@@ -22,6 +22,15 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
+#ifdef _MSC_VER  // Microsoft Visual C++
+    #pragma warning(push, 0)  // Disable all warnings
+#elif defined(__GNUC__) || defined(__clang__)  // GCC and Clang
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wall"
+    #pragma GCC diagnostic ignored "-Wextra"
+    #pragma GCC diagnostic ignored "-Wpedantic"
+#endif
+
 #include <ctype.h>
 #include <stddef.h>
 

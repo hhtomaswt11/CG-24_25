@@ -1,250 +1,167 @@
 #include "engine.h"
-#include <GL/glut.h>
-#include <iostream>
-#include <list>
 
 using namespace std;
 
 #define WHITE 1.0f, 1.0f, 1.0f
+#define PI M_PI
 
-
-float alpha =  M_PI / 1000, 
-      beta_ =  M_PI / 1000, 
-      radius = 5.0f;
-
-float lookAtx = 0.0f, 
-      lookAty = 0.0f, 
-      lookAtz = 0.0f;
-
-float upx = 0.0f, 
-      upy = 1.0f, 
-      upz = 0.0f;
-
-bool showAxes = true; 
+float camX, camY, camZ;
+float lookAtx, lookAty, lookAtz;
+float upx, upy, upz;
+float fov, nearPlane, farPlane;
+float windowWidth, windowHeight;
+bool showAxes = true;
 int mode = GL_LINE;
+
 list<Primitive> primitives;
+
+// angulos da cam
+float Alpha, Beta;
+float radius;
+
+// constantes para movimento da cam
+const float ANGLE_INCREMENT = PI / 30;
+const float ZOOM_INCREMENT = 0.5f;
+
+// calcula as coordenadas esféricas da câmera
+void computeSphericalCoordinates() {
+    float dx = camX - lookAtx;
+    float dy = camY - lookAty;
+    float dz = camZ - lookAtz;
+    radius = sqrt(dx * dx + dy * dy + dz * dz);
+    Beta = asin(dy / radius);
+    Alpha = atan2(dx, dz);
+}
+
+// atualiza a posição da câmera
+void updateCameraPosition() {
+    camX = lookAtx + radius * cos(Beta) * sin(Alpha);
+    camY = lookAty + radius * sin(Beta);
+    camZ = lookAtz + radius * cos(Beta) * cos(Alpha);
+}
 
 void changeSize(int w, int h) {
     if (h == 0) h = 1;
-    float ratio = (float) w / (float) h;
+    float ratio = (float)w / (float)h;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glViewport(0, 0, w, h);
-    gluPerspective(45.0f, ratio, 1.0f, 1000.0f);
+    gluPerspective(fov, ratio, nearPlane, farPlane);
     glMatrixMode(GL_MODELVIEW);
 }
 
-void drawPrimitives(const std::list<std::string> figs) {
-
-
-    for (const std::string& model : figs) {
-        Primitive p = fileToPrimitive(model.c_str()); 
-
-
-
-        glColor3f(WHITE);
-        glBegin(GL_TRIANGLES);
-       // for (const auto& fig : figs) {
-            for (const auto& point : getPoints(p)) {
-                float 
-                px = getX(point), 
-                py = getY(point), 
-                pz = getZ(point); 
-                glVertex3f(px,py,pz);
-            }
-       // }
-
+void drawPrimitives() {
+    glColor3f(WHITE);
+    glBegin(GL_TRIANGLES);
+    for (const auto& p : primitives) {
+        for (const auto& point : getPoints(p)) {
+            glVertex3f(getX(point), getY(point), getZ(point));
+        }
     }
-
-   
     glEnd();
 }
 
-void renderScene(void) {
+void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    gluLookAt(radius * cos(beta_) * sin(alpha), radius * sin(beta_), radius * cos(beta_) * cos(alpha),
-        // 5,5,5,
-              lookAtx, lookAty, lookAtz, 
-              upx, upy, upz);
+    gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
 
-    // Eixos 
-    if (showAxes){
-    glBegin(GL_LINES);
-
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(-100.0f, 0.0f, 0.0f);
-    glVertex3f(100.0f, 0.0f, 0.0f);
-
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(0.0f, -100.0f, 0.0f);
-    glVertex3f(0.0f, 100.0f, 0.0f);
-
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, -100.0f);
-    glVertex3f(0.0f, 0.0f, 100.0f);
-
-    glEnd();
+    if (showAxes) {
+        glBegin(GL_LINES);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glVertex3f(-100.0f, 0.0f, 0.0f);
+        glVertex3f(100.0f, 0.0f, 0.0f);
+        glColor3f(0.0f, 1.0f, 0.0f);
+        glVertex3f(0.0f, -100.0f, 0.0f);
+        glVertex3f(0.0f, 100.0f, 0.0f);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glVertex3f(0.0f, 0.0f, -100.0f);
+        glVertex3f(0.0f, 0.0f, 100.0f);
+        glEnd();
     }
 
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glPolygonMode(GL_FRONT_AND_BACK, mode);
-
-
-    // for (Primitive p : primitives) {
-    //     primitiveToFile(p); 
-    // }
-
-
-
-    // drawPrimitives();
-
+    glPolygonMode(GL_FRONT, mode);
+    drawPrimitives();
     glutSwapBuffers();
 }
 
-    void keyProc(unsigned char key, int, int) {
-    if(key == 119 || key == 87){ // w 
-        beta_ += (beta_ <= 1.48f ? 0.1f : 0.0f); 
+void keyProc(unsigned char key, int, int) {
+    if (key == 'w' || key == 'W') {
+        Beta += ANGLE_INCREMENT;
+        if (Beta > PI / 2.0f) Beta = PI / 2.0f;
     }
-    else if(key == 97 || key == 65){ // a 
-        alpha -= 0.1f;  // alfa controla esq dir 
+    else if (key == 's' || key == 'S') {
+        Beta -= ANGLE_INCREMENT;
+        if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
     }
-    else if(key == 115 || key == 83){ // s
-        beta_ -= (beta_ >= -1.48f ? 0.1f : 0.0f); 
+    else if (key == 'a' || key == 'A') {
+        Alpha -= ANGLE_INCREMENT;
     }
-    else if(key == 100 || key == 68){ // d 
-        alpha += 0.1f;  // alfa controla esq dir 
+    else if (key == 'd' || key == 'D') {
+        Alpha += ANGLE_INCREMENT;
     }
-    else if (key == 102 || key == 70){ // f 
-        mode = GL_FILL;  // preencher imagem 
+    else if (key == 'q' || key == 'Q') {
+        radius -= ZOOM_INCREMENT;
+        if (radius < 1.0f) radius = 1.0f;
     }
-    else if(key == 108 || key == 76){ // l 
-        mode = GL_LINE;  // apenas linhas (default)
+    else if (key == 'e' || key == 'E') {
+        radius += ZOOM_INCREMENT;
     }
-    else if(key == 98 || key  == 66){ // b -> blank -> so os pontos 
-        mode = GL_POINT;  // apenas pontos da figura
-    }
-    else if (key == 120 || key == 88){ // x 
-        mode = showAxes = !showAxes;  // ocultar os eixos x y z pelo controlo da variavel showAxes no renderScene
-    }
-
+    else if (key == 'f' || key == 'F') mode = GL_FILL;
+    else if (key == 'l' || key == 'L') mode = GL_LINE;
+    else if (key == 'b' || key == 'B') mode = GL_POINT;
+    else if (key == 'x' || key == 'X') showAxes = !showAxes;
+    
+    updateCameraPosition();
     glutPostRedisplay();
 }
 
-
-
-
-
-
-
 int main(int argc, char* argv[]) {
-     XMLDataFormat *xmlData = xmlToXMLDataFormat(argv[1]); 
+    if (argc < 2) {
+        cerr << "Uso: " << argv[0] << " <XML file>" << endl;
+        return -1;
+    }
 
-    const std::list<std::string>& files = getModels(xmlData);// {"box.3d", "plane.3d"};
-    
-    
-    float width = getWidth(xmlData), height =  getHeight(xmlData); 
-    float x = getXPosCam(xmlData), y = getYPosCam(xmlData), z = getZPosCam(xmlData); 
+    XMLDataFormat* xmlData = xmlToXMLDataFormat(argv[1]);
+    if (!xmlData) {
+        cerr << "Falha no parse do xml." << endl;
+        return -1;
+    }
 
+    camX = getXPosCam(xmlData);
+    camY = getYPosCam(xmlData);
+    camZ = getZPosCam(xmlData);
     lookAtx = getXLookAt(xmlData);
     lookAty = getYLookAt(xmlData);
     lookAtz = getZLookAt(xmlData);
-
-    // Obtendo valores de Up
     upx = getXUp(xmlData);
     upy = getYUp(xmlData);
     upz = getZUp(xmlData);
+    fov = getFov(xmlData);
+    nearPlane = getNear(xmlData);
+    farPlane = getFar(xmlData);
 
-    // Obtendo valores de Projection
-    float fov = getFov(xmlData);
-    float nearPlane = getNear(xmlData);
-    float farPlane = getFar(xmlData);
+    windowWidth = getWidth(xmlData);
+    windowHeight = getHeight(xmlData);
 
-    drawPrimitives(files) ;
-    // if (files.empty()) {
-    //     std::cout << "No models found." << std::endl;
-    // } else {
-    //     // Itera sobre cada modelo usando um loop for-each
-    //     // std::cout << "Models:" << std::endl;
-    //     for (const std::string& model : files) {
-    //         // std::cout << "- " << model << std::endl;
-    //         fileToPrimitive(model.c_str()); 
-    //     }
-    // }
+    computeSphericalCoordinates();
 
-    // 
-    // if (!xmlData) {
-    //     std::cerr << "Failed to parse XML file." << std::endl;
-    //     return -1;
-    // }
+    for (const string& model : getModels(xmlData)) {
+        primitives.push_back(fileToPrimitive(model.c_str()));
+    }
 
-    // // Exibindo dados de Window
-    // std::cout << "Window:" << std::endl;
-    // std::cout << "Width: " << xmlData->window.width << std::endl;
-    // std::cout << "Height: " << xmlData->window.height << std::endl;
-
-    // // Exibindo dados de PosCamera
-    // std::cout << "\nCamera Position:" << std::endl;
-    // std::cout << "cam1 (X): " << xmlData->poscamera.cam1 << std::endl;
-    // std::cout << "cam2 (Y): " << xmlData->poscamera.cam2 << std::endl;
-    // std::cout << "cam3 (Z): " << xmlData->poscamera.cam3 << std::endl;
-
-    // // Exibindo dados de LookAt
-    // std::cout << "\nLookAt:" << std::endl;
-    // std::cout << "lookat1 (X): " << xmlData->lookat.lookat1 << std::endl;
-    // std::cout << "lookat2 (Y): " << xmlData->lookat.lookat2 << std::endl;
-    // std::cout << "lookat3 (Z): " << xmlData->lookat.lookat3 << std::endl;
-
-    // // Exibindo dados de Up
-    // std::cout << "\nUp Vector:" << std::endl;
-    // std::cout << "up1 (X): " << xmlData->up.up1 << std::endl;
-    // std::cout << "up2 (Y): " << xmlData->up.up2 << std::endl;
-    // std::cout << "up3 (Z): " << xmlData->up.up3 << std::endl;
-
-    // // Exibindo dados de Projection
-    // std::cout << "\nProjection:" << std::endl;
-    // std::cout << "FOV: " << xmlData->projection.fov << std::endl;
-    // std::cout << "Near: " << xmlData->projection.near << std::endl;
-    // std::cout << "Far: " << xmlData->projection.far << std::endl;
-
-    // Exibindo Modelos
-    // std::cout << "\nModels:" << std::endl;
-    // for (const std::string& model : xmlData->models) {
-    //     std::cout << "Model file: " << model << std::endl;
-    // }
-
-    // Libera memória alocada
-    delete xmlData;
-
-    //// 
-
-
-
-    //for para cada model de models 
-    Primitive p = fileToPrimitive(argv[1]); 
-     
-    primitives.push_back(p);
-
-    beta_ = asin(5.0f / radius);
+    deleteXMLDataFormat(xmlData);
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
-    glutInitWindowSize(800, 800);
-    glutCreateWindow("Fase 1");
-
+    glutInitWindowSize(windowWidth, windowHeight);
+    glutCreateWindow("Fase1");
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
-    glutKeyboardFunc(keyProc); 
-
-
-    // box vs plane 
+    glutKeyboardFunc(keyProc);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE); // ao ativado, é descartado algumas faces dos triangulos com base na orientacao do winding order (ordem dos vertices)
-
-
-
-     // glCullFace(GL_BACK); 
+    glEnable(GL_CULL_FACE);
+    
     glutMainLoop();
 
     return 0;
