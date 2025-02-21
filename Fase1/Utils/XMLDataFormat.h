@@ -29,6 +29,11 @@ float getZLookAt(XMLDataFormat* data);
 float getXUp(XMLDataFormat* data);
 float getYUp(XMLDataFormat* data);
 float getZUp(XMLDataFormat* data);
+float getFov(XMLDataFormat* data) ; 
+float getNear(XMLDataFormat* data) ; 
+float getFar(XMLDataFormat* data) ; 
+const std::list<std::string>& getModels(const XMLDataFormat* data) ; 
+
 void deleteXMLDataFormat(XMLDataFormat* data);
 
 #endif 

@@ -3,63 +3,90 @@
 Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f, int invert = 0) {
     Primitive plano = newEmptyPrimitive();
     if (!plano) return plano; // Retorna se houve erro
+    // length = 4
+    // div = 1 
 
-    float coordinate2 = (float)length / 2;
-    float div_side = (float)length / divisions;
+    float half = (float) length / 2; // 2  -> 1               // 2 -> 1 
+    float div_side = (float) length / divisions; // 4 -> 2    // 2 -> 1 
 
-    float x1 = -coordinate2, z1 = -coordinate2;
-    float x2 = -coordinate2, z2 = -coordinate2 + div_side;
-    float x3 = -coordinate2 + div_side, z3 = -coordinate2;
-    float x4 = -coordinate2 + div_side, z4 = -coordinate2 + div_side;
+    float x1,x2,x3,x4,z1,z2,z3,z4; 
 
-    float arrx[4] = {x1, x2, x3, x4};
-    float arrz[4] = {z1, z2, z3, z4};
 
-    if (invert) { // Se "invert" for 1, inverte os índices dos triângulos
-        arrx[1] = x3;
-        arrx[2] = x2;
-        arrz[1] = z3;
-        arrz[2] = z2;
-    }
+     x1 = -half, z1 = -half; // -1 -1 
+     x2 = -half, z2 = -half + div_side; // -1 -1+2 -> -1 1
+     x3 = -half + div_side, z3 = -half; // -1 + 2 , -1 -> 1 , -1 
+     x4 = -half + div_side, z4 = -half + div_side; // 1 1 
+
+
+    // float arrx[4] = {x1, x2, x3, x4}, arrz[4] = {z1, z2, z3, z4};
+
+    // if (invert) { // Se "invert" for 1, inverte os índices dos triângulos
+    //     arrx[1] = x3;
+    //     arrx[2] = x2;
+    //     arrz[1] = z3;
+    //     arrz[2] = z2;
+    // }
 
     for (int linha = 0; linha < divisions; ++linha) {
-        for (int coluna = 0, step = 0; coluna < divisions; ++coluna, step += div_side) {
-            float xOffset = coluna * div_side;
-
-            if (axis == 'X') {  // Plano YZ
-                addPoint(plano, newPoint(h, arrx[0] + xOffset, arrz[0] + step));
-                addPoint(plano, newPoint(h, arrx[1] + xOffset, arrz[1] + step));
-                addPoint(plano, newPoint(h, arrx[2] + xOffset, arrz[2] + step));
-
-                addPoint(plano, newPoint(h, arrx[1] + xOffset, arrz[1] + step));
-                addPoint(plano, newPoint(h, arrx[3] + xOffset, arrz[3] + step));
-                addPoint(plano, newPoint(h, arrx[2] + xOffset, arrz[2] + step));
+        for (int coluna = 0; coluna < divisions; ++coluna) {
+            float xStart = -half + coluna * div_side;
+            float zStart = -half + linha * div_side;
+            
+            // Definindo os 4 vértices do quadrado atual
+            x1 = xStart;
+            z1 = zStart;
+            
+            x2 = xStart;
+            z2 = zStart + div_side;
+            
+            x3 = xStart + div_side;
+            z3 = zStart;
+            
+            x4 = xStart + div_side;
+            z4 = zStart + div_side;
+            
+            // Armazenando os valores nos arrays
+            float arrx[4] = {x1, x2, x3, x4};
+            float arrz[4] = {z1, z2, z3, z4};
+    
+            if (invert) { // Se "invert" for 1, inverte os índices dos triângulos
+                arrx[1] = x3;
+                arrx[2] = x2;
+                arrz[1] = z3;
+                arrz[2] = z2;
+            }
+    
+            // Adicionando os pontos para o plano no eixo correto
+            if (axis == 'X') {
+                addPoint(plano, newPoint(h, arrx[0], arrz[0]));
+                addPoint(plano, newPoint(h, arrx[1], arrz[1]));
+                addPoint(plano, newPoint(h, arrx[2], arrz[2]));
+    
+                addPoint(plano, newPoint(h, arrx[1], arrz[1]));
+                addPoint(plano, newPoint(h, arrx[3], arrz[3]));
+                addPoint(plano, newPoint(h, arrx[2], arrz[2]));
             } 
-            else if (axis == 'Y') { // Plano XZ
-                addPoint(plano, newPoint(arrx[0] + xOffset, h, arrz[0] + step));
-                addPoint(plano, newPoint(arrx[1] + xOffset, h, arrz[1] + step));
-                addPoint(plano, newPoint(arrx[2] + xOffset, h, arrz[2] + step));
-
-                addPoint(plano, newPoint(arrx[1] + xOffset, h, arrz[1] + step));
-                addPoint(plano, newPoint(arrx[3] + xOffset, h, arrz[3] + step));
-                addPoint(plano, newPoint(arrx[2] + xOffset, h, arrz[2] + step));
+            else if (axis == 'Y') {
+                addPoint(plano, newPoint(arrx[0], h, arrz[0]));
+                addPoint(plano, newPoint(arrx[1], h, arrz[1]));
+                addPoint(plano, newPoint(arrx[2], h, arrz[2]));
+    
+                addPoint(plano, newPoint(arrx[1], h, arrz[1]));
+                addPoint(plano, newPoint(arrx[3], h, arrz[3]));
+                addPoint(plano, newPoint(arrx[2], h, arrz[2]));
             } 
-            else if (axis == 'Z') { // Plano XY
-                addPoint(plano, newPoint(arrx[0] + xOffset, arrz[0] + step, h));
-                addPoint(plano, newPoint(arrx[1] + xOffset, arrz[1] + step, h));
-                addPoint(plano, newPoint(arrx[2] + xOffset, arrz[2] + step, h));
-
-                addPoint(plano, newPoint(arrx[1] + xOffset, arrz[1] + step, h));
-                addPoint(plano, newPoint(arrx[3] + xOffset, arrz[3] + step, h));
-                addPoint(plano, newPoint(arrx[2] + xOffset, arrz[2] + step, h));
+            else if (axis == 'Z') {
+                addPoint(plano, newPoint(arrx[0], arrz[0], h));
+                addPoint(plano, newPoint(arrx[1], arrz[1], h));
+                addPoint(plano, newPoint(arrx[2], arrz[2], h));
+    
+                addPoint(plano, newPoint(arrx[1], arrz[1], h));
+                addPoint(plano, newPoint(arrx[3], arrz[3], h));
+                addPoint(plano, newPoint(arrx[2], arrz[2], h));
             }
         }
-
-        // atualizar coordenadas Z de forma modular
-        for (float& z : arrz) {
-            z += div_side;
-        }
     }
+    
 
     return plano;
 }

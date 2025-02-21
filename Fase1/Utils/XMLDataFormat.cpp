@@ -70,7 +70,6 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                   result->window.width = atoi(windowElement->Attribute("width"));
                   result->window.height = atoi(windowElement->Attribute("height"));
               }
-  
 
             // Camera parameters
             TiXmlElement* camera = root->FirstChildElement("camera");
@@ -115,7 +114,7 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                         if (file) {
                             result->models.push_back(file);
                         }
-                    }
+                    }   
                 }
             }
         } else {
@@ -192,6 +191,25 @@ float getYUp(XMLDataFormat* data) {
 
 float getZUp(XMLDataFormat* data) {
     return data ? data->up.up3 : 0.0f;
+}
+
+float getFov(XMLDataFormat* data) {
+    return data ? data->projection.fov : 0.0f;
+}
+float getNear(XMLDataFormat* data) {
+    return data ? data->projection.near : 0.0f;
+}
+float getFar(XMLDataFormat* data) {
+    return data ? data->projection.far : 0.0f;
+}
+
+const std::list<std::string>& getModels(const XMLDataFormat* data) {
+    if (data) {
+        return data->models;
+    }
+    // Retorna uma lista vazia se `data` for nulo
+    static const std::list<std::string> emptyList;
+    return emptyList;
 }
 
 

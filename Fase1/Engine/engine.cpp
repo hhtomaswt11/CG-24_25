@@ -7,9 +7,9 @@ using namespace std;
 
 #define WHITE 1.0f, 1.0f, 1.0f
 
-// Variáveis da câmara
-float alpha = M_PI / 4, 
-      beta_ = M_PI / 4, 
+
+float alpha =  M_PI / 1000, 
+      beta_ =  M_PI / 1000, 
       radius = 5.0f;
 
 float lookAtx = 0.0f, 
@@ -34,18 +34,29 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void drawPrimitives(const list<Primitive>& figs) {
-    glColor3f(WHITE);
-    glBegin(GL_TRIANGLES);
-    for (const auto& fig : figs) {
-        for (const auto& point : getPoints(fig)) {
-            float 
-            px = getX(point), 
-            py = getY(point), 
-            pz = getZ(point); 
-            glVertex3f(px,py,pz);
-        }
+void drawPrimitives(const std::list<std::string> figs) {
+
+
+    for (const std::string& model : figs) {
+        Primitive p = fileToPrimitive(model.c_str()); 
+
+
+
+        glColor3f(WHITE);
+        glBegin(GL_TRIANGLES);
+       // for (const auto& fig : figs) {
+            for (const auto& point : getPoints(p)) {
+                float 
+                px = getX(point), 
+                py = getY(point), 
+                pz = getZ(point); 
+                glVertex3f(px,py,pz);
+            }
+       // }
+
     }
+
+   
     glEnd();
 }
 
@@ -53,6 +64,7 @@ void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     gluLookAt(radius * cos(beta_) * sin(alpha), radius * sin(beta_), radius * cos(beta_) * cos(alpha),
+        // 5,5,5,
               lookAtx, lookAty, lookAtz, 
               upx, upy, upz);
 
@@ -77,12 +89,20 @@ void renderScene(void) {
 
     glColor3f(1.0f, 1.0f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, mode);
-    drawPrimitives(primitives);
+
+
+    // for (Primitive p : primitives) {
+    //     primitiveToFile(p); 
+    // }
+
+
+
+    // drawPrimitives();
 
     glutSwapBuffers();
 }
 
-void keyProc(unsigned char key, int, int) {
+    void keyProc(unsigned char key, int, int) {
     if(key == 119 || key == 87){ // w 
         beta_ += (beta_ <= 1.48f ? 0.1f : 0.0f); 
     }
@@ -111,10 +131,98 @@ void keyProc(unsigned char key, int, int) {
     glutPostRedisplay();
 }
 
-int main(int argc, char* argv[]) {
-    std::list<std::string> models = {"box.3d", "plane.3d"};
 
+
+
+
+
+
+int main(int argc, char* argv[]) {
+     XMLDataFormat *xmlData = xmlToXMLDataFormat(argv[1]); 
+
+    const std::list<std::string>& files = getModels(xmlData);// {"box.3d", "plane.3d"};
+    
+    
+    float width = getWidth(xmlData), height =  getHeight(xmlData); 
+    float x = getXPosCam(xmlData), y = getYPosCam(xmlData), z = getZPosCam(xmlData); 
+
+    lookAtx = getXLookAt(xmlData);
+    lookAty = getYLookAt(xmlData);
+    lookAtz = getZLookAt(xmlData);
+
+    // Obtendo valores de Up
+    upx = getXUp(xmlData);
+    upy = getYUp(xmlData);
+    upz = getZUp(xmlData);
+
+    // Obtendo valores de Projection
+    float fov = getFov(xmlData);
+    float nearPlane = getNear(xmlData);
+    float farPlane = getFar(xmlData);
+
+    drawPrimitives(files) ;
+    // if (files.empty()) {
+    //     std::cout << "No models found." << std::endl;
+    // } else {
+    //     // Itera sobre cada modelo usando um loop for-each
+    //     // std::cout << "Models:" << std::endl;
+    //     for (const std::string& model : files) {
+    //         // std::cout << "- " << model << std::endl;
+    //         fileToPrimitive(model.c_str()); 
+    //     }
+    // }
+
+    // 
+    // if (!xmlData) {
+    //     std::cerr << "Failed to parse XML file." << std::endl;
+    //     return -1;
+    // }
+
+    // // Exibindo dados de Window
+    // std::cout << "Window:" << std::endl;
+    // std::cout << "Width: " << xmlData->window.width << std::endl;
+    // std::cout << "Height: " << xmlData->window.height << std::endl;
+
+    // // Exibindo dados de PosCamera
+    // std::cout << "\nCamera Position:" << std::endl;
+    // std::cout << "cam1 (X): " << xmlData->poscamera.cam1 << std::endl;
+    // std::cout << "cam2 (Y): " << xmlData->poscamera.cam2 << std::endl;
+    // std::cout << "cam3 (Z): " << xmlData->poscamera.cam3 << std::endl;
+
+    // // Exibindo dados de LookAt
+    // std::cout << "\nLookAt:" << std::endl;
+    // std::cout << "lookat1 (X): " << xmlData->lookat.lookat1 << std::endl;
+    // std::cout << "lookat2 (Y): " << xmlData->lookat.lookat2 << std::endl;
+    // std::cout << "lookat3 (Z): " << xmlData->lookat.lookat3 << std::endl;
+
+    // // Exibindo dados de Up
+    // std::cout << "\nUp Vector:" << std::endl;
+    // std::cout << "up1 (X): " << xmlData->up.up1 << std::endl;
+    // std::cout << "up2 (Y): " << xmlData->up.up2 << std::endl;
+    // std::cout << "up3 (Z): " << xmlData->up.up3 << std::endl;
+
+    // // Exibindo dados de Projection
+    // std::cout << "\nProjection:" << std::endl;
+    // std::cout << "FOV: " << xmlData->projection.fov << std::endl;
+    // std::cout << "Near: " << xmlData->projection.near << std::endl;
+    // std::cout << "Far: " << xmlData->projection.far << std::endl;
+
+    // Exibindo Modelos
+    // std::cout << "\nModels:" << std::endl;
+    // for (const std::string& model : xmlData->models) {
+    //     std::cout << "Model file: " << model << std::endl;
+    // }
+
+    // Libera memória alocada
+    delete xmlData;
+
+    //// 
+
+
+
+    //for para cada model de models 
     Primitive p = fileToPrimitive(argv[1]); 
+     
     primitives.push_back(p);
 
     beta_ = asin(5.0f / radius);
@@ -129,9 +237,14 @@ int main(int argc, char* argv[]) {
     glutReshapeFunc(changeSize);
     glutKeyboardFunc(keyProc); 
 
-    glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_CULL_FACE); // ao ativado, é descartado algumas faces dos triangulos com base na orientacao do winding order (ordem dos vertices)
 
+    // box vs plane 
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE); // ao ativado, é descartado algumas faces dos triangulos com base na orientacao do winding order (ordem dos vertices)
+
+
+
+     // glCullFace(GL_BACK); 
     glutMainLoop();
 
     return 0;
