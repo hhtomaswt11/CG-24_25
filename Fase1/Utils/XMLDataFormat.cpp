@@ -1,5 +1,9 @@
+// #include <tinyxml.h>
+// #include <tinystr.h>
+
 #include "XMLDataFormat.h"
 #include "../tinyXML/tinyxml.h"
+#include "../tinyXML/tinystr.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -51,6 +55,31 @@ XMLDataFormat* newXMLDataFormat() {
 }
 
 
+void buildPosCamera(TiXmlElement* posCamera, PosCamera& pos) {
+        pos.cam1 = atof(posCamera->Attribute("x"));
+        pos.cam2 = atof(posCamera->Attribute("y"));
+        pos.cam3 = atof(posCamera->Attribute("z"));
+}
+
+void buildLookAtCamera(TiXmlElement* lookAtCamera, LookAt& lookAt) {
+        lookAt.lookat1 = atof(lookAtCamera->Attribute("x"));
+        lookAt.lookat2 = atof(lookAtCamera->Attribute("y"));
+        lookAt.lookat3 = atof(lookAtCamera->Attribute("z"));
+}
+
+void buildUpCamera(TiXmlElement* upCamera, Up& up) {
+        up.up1 = atof(upCamera->Attribute("x"));
+        up.up2 = atof(upCamera->Attribute("y"));
+        up.up3 = atof(upCamera->Attribute("z"));
+}
+
+void buildProjectionCamera(TiXmlElement* projectionCamera, Projection& projection) {
+        projection.fov = atof(projectionCamera->Attribute("fov"));
+        projection.near = atof(projectionCamera->Attribute("near"));
+        projection.far = atof(projectionCamera->Attribute("far"));
+}
+
+
 XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
     XMLDataFormat* result = newXMLDataFormat();
     if (result) {
@@ -63,15 +92,14 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                 return result;
             }
 
-
-              // Lendo os parâmetros da janela
+              // Parametros da janela - leitura 
               TiXmlElement* windowElement = root->FirstChildElement("window");
               if (windowElement) {
                   result->window.width = atoi(windowElement->Attribute("width"));
                   result->window.height = atoi(windowElement->Attribute("height"));
               }
 
-            // Camera parameters
+            // Parametros da camera 
             TiXmlElement* camera = root->FirstChildElement("camera");
             if (camera) {
                 TiXmlElement* posCamera = camera->FirstChildElement("position");
@@ -79,32 +107,17 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                 TiXmlElement* upCamera = camera->FirstChildElement("up");
                 TiXmlElement* projectionCamera = camera->FirstChildElement("projection");
 
-                if (posCamera) {
-                    result->poscamera.cam1 = atof(posCamera->Attribute("x"));
-                    result->poscamera.cam2 = atof(posCamera->Attribute("y"));
-                    result->poscamera.cam3 = atof(posCamera->Attribute("z"));
+                if (posCamera && lookAtCamera && upCamera && projectionCamera){ buildPosCamera(posCamera, result->poscamera);
+                buildLookAtCamera(lookAtCamera, result->lookat); 
+                buildUpCamera(upCamera, result->up); 
+                buildProjectionCamera(projectionCamera, result->projection); 
                 }
-
-                if (lookAtCamera) {
-                    result->lookat.lookat1 = atof(lookAtCamera->Attribute("x"));
-                    result->lookat.lookat2 = atof(lookAtCamera->Attribute("y"));
-                    result->lookat.lookat3 = atof(lookAtCamera->Attribute("z"));
+                else{
+                    std::cerr << "Error: Invalid camera parameters "<< std::endl;
                 }
+        }
 
-                if (upCamera) {
-                    result->up.up1 = atof(upCamera->Attribute("x"));
-                    result->up.up2 = atof(upCamera->Attribute("y"));
-                    result->up.up3 = atof(upCamera->Attribute("z"));
-                }
-
-                if (projectionCamera) {
-                    result->projection.fov = atof(projectionCamera->Attribute("fov"));
-                    result->projection.near = atof(projectionCamera->Attribute("near"));
-                    result->projection.far = atof(projectionCamera->Attribute("far"));
-                }
-            }
-
-            // Parsing models
+            // Parsing models! 
             TiXmlElement* group = root->FirstChildElement("group");
             if (group) {
                 TiXmlElement* models = group->FirstChildElement("models");
@@ -125,16 +138,17 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
 }
 
 
-// You should return a reference to the models list, but only if the XMLDataFormat instance is valid
 std::list<std::string>& getModels(XMLDataFormat* data) {
     if (data) {
         return data->models;
     }
-    static std::list<std::string> emptyList; // Return an empty list if data is null
+    static std::list<std::string> emptyList; 
     return emptyList;
 }
 
-// Função para definir a posição da câmera
+
+// SETTERS 
+
 void setCamPosition(XMLDataFormat* data, float x, float y, float z) {
     if (data) {
         data->poscamera.cam1 = x;

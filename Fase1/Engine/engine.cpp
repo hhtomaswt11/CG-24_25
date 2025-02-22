@@ -115,6 +115,33 @@ void keyProc(unsigned char key, int, int) {
     glutPostRedisplay();
 }
 
+void initializeCameraAndWindow(XMLDataFormat* xmlData) {
+    if (xmlData) {
+        // Camera - Posicao e Orientacao
+        camX = getXPosCam(xmlData);
+        camY = getYPosCam(xmlData);
+        camZ = getZPosCam(xmlData);
+
+        lookAtx = getXLookAt(xmlData);
+        lookAty = getYLookAt(xmlData);
+        lookAtz = getZLookAt(xmlData);
+
+        upx = getXUp(xmlData);
+        upy = getYUp(xmlData);
+        upz = getZUp(xmlData);
+
+        // Parametros de projecao
+        fov = getFov(xmlData);
+        nearPlane = getNear(xmlData);
+        farPlane = getFar(xmlData);
+
+        // Tamanho da Janela
+        windowWidth = getWidth(xmlData);
+        windowHeight = getHeight(xmlData);
+    }
+}
+
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         cerr << "Uso: " << argv[0] << " <XML file>" << endl;
@@ -127,21 +154,8 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    camX = getXPosCam(xmlData);
-    camY = getYPosCam(xmlData);
-    camZ = getZPosCam(xmlData);
-    lookAtx = getXLookAt(xmlData);
-    lookAty = getYLookAt(xmlData);
-    lookAtz = getZLookAt(xmlData);
-    upx = getXUp(xmlData);
-    upy = getYUp(xmlData);
-    upz = getZUp(xmlData);
-    fov = getFov(xmlData);
-    nearPlane = getNear(xmlData);
-    farPlane = getFar(xmlData);
-
-    windowWidth = getWidth(xmlData);
-    windowHeight = getHeight(xmlData);
+    // os valores de camera parametros de projecao e tamanho de janela sao definidos com base no xml 
+    initializeCameraAndWindow(xmlData);
 
     computeSphericalCoordinates();
 

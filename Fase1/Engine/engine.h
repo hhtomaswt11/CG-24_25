@@ -19,6 +19,7 @@ void renderScene(void) ;
 void keyProc(unsigned char key, int, int) ; 
 void updateCameraPosition(void) ;
 void loadXMLFile(const char *filename) ;
+void initializeCameraAndWindow(XMLDataFormat* xmlData); 
 
 
 #endif //ENGINE_H
