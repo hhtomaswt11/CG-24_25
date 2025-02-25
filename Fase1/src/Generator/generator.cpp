@@ -175,7 +175,7 @@ int main(int argc, char* argv[]) {
         path_3d = argv[4];
          std::cout << "Path 3D: " << path_3d << std::endl;
 
-        primitive = buildPlane(atoi(argv[2]), atoi(argv[3]), 'Y', 0,0); // tentar por o .3d a abrir no Models
+        primitive = buildPlane(atoi(argv[2]), atoi(argv[3]), 'Y', 0,1); // tentar por o .3d a abrir no Models
         std::cout << "DEBUG: Saving file to -> " << path_3d << std::endl; 
         primitiveToFile(primitive, path_3d);
         deletePrimitive(primitive);
