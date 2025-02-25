@@ -29,3 +29,4 @@ Desta forma, os executáveis generator.exe e executable.exe são gerados.
 ```text
 mkdir build; cd build ; cmake .. ; cmake --build .  ; ./generator box 2 3 box_2_3.3d  ; ./engine ../test_files_phase_1/test_1_4.xml ; cd ..
 ```
+

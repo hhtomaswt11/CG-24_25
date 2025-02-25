@@ -1,4 +1,4 @@
-#include "point.h"
+#include "../../include/Utils/point.h"
 
 struct point{
     float x, y, z;

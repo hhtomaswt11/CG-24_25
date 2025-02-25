@@ -1,7 +1,7 @@
-CMakeFiles/Utils_lib.dir/Utils/point.cpp.o: \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/point.cpp \
+CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o: \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/point.cpp \
  /usr/include/stdc-predef.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/point.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/../../include/Utils/point.h \
  /usr/include/c++/11/math.h /usr/include/c++/11/cmath \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \

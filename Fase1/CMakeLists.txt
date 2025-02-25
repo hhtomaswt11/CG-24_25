@@ -6,18 +6,21 @@ PROJECT(fase1)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define os executáveis a serem construídos neste projecto
-add_executable(engine ./Engine/engine.cpp)
-add_executable(generator ./Generator/generator.cpp)
+add_executable(engine ./src/Engine/engine.cpp)
+add_executable(generator ./src/Generator/generator.cpp)
+
 
 # Biblioteca das figuras e dos pontos
 add_library(
-        Utils_lib
-        ./Utils/point.cpp
-        ./Utils/point.h
-        ./Utils/primitive.cpp
-        ./Utils/primitive.h
-        ./Utils/XMLDataFormat.cpp
-        ./Utils/XMLDataFormat.h
+    Utils_lib
+    ./src/Utils/point.cpp
+    ./include/Utils/point.h
+    
+    ./src/Utils/primitive.cpp
+    ./include/Utils/primitive.h
+    
+    ./src/Utils/XMLDataFormat.cpp
+    ./include/Utils/XMLDataFormat.h
 )
 
 # Biblioteca de parsing de XML
@@ -31,11 +34,17 @@ add_library(
         ./tinyXML/tinyxml.cpp
 )
 
-target_link_libraries(tinyXML)
+target_include_directories(engine PRIVATE ./include/Utils)
+target_include_directories(generator PRIVATE ./include/Utils)
+
+
+target_link_libraries(tinyXML) # remover no futuro 
 
 # Associa a biblioteca das figuras e dos pontos aos executáveis
 target_link_libraries(generator Utils_lib)
 target_link_libraries(engine Utils_lib tinyXML )
+
+
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})

@@ -8,9 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/XMLDataFormat.cpp" "CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o" "gcc" "CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o.d"
-  "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/point.cpp" "CMakeFiles/Utils_lib.dir/Utils/point.cpp.o" "gcc" "CMakeFiles/Utils_lib.dir/Utils/point.cpp.o.d"
-  "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/primitive.cpp" "CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o" "gcc" "CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o.d"
+  "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/XMLDataFormat.cpp" "CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o" "gcc" "CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o.d"
+  "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/point.cpp" "CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o" "gcc" "CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o.d"
+  "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/primitive.cpp" "CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o" "gcc" "CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

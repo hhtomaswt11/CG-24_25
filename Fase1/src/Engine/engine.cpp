@@ -1,4 +1,4 @@
-#include "engine.h"
+#include "../../include/Engine/engine.h"
 
 using namespace std;
 
@@ -11,7 +11,7 @@ float upx, upy, upz;
 float fov, nearPlane, farPlane;
 float windowWidth, windowHeight;
 bool showAxes = true;
-int mode = GL_LINE;
+int mode = GL_LINE; 
 
 list<Primitive> primitives;
 
@@ -49,22 +49,55 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
+
 void drawPrimitives() {
-    glColor3f(WHITE);
-    glBegin(GL_TRIANGLES);
+    glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f);  // Branco
+
+    glPolygonMode(GL_FRONT_AND_BACK, mode); // _AND_BACK, mode); // GL_FILL);  // Garantir que ambos os lados sejam desenhados
+
     for (const auto& p : primitives) {
-        for (const auto& point : getPoints(p)) {
-            glVertex3f(getX(point), getY(point), getZ(point));
+        // Obter pontos e índices
+        const auto& pontos = getPoints(p);
+        const auto& indices = getIndices(p);
+
+        // Converter pontos para array de floats
+        std::vector<float> vertices;
+        for (const auto& ponto : pontos) {
+            vertices.push_back(getX(ponto));
+            vertices.push_back(getY(ponto));
+            vertices.push_back(getZ(ponto));
         }
+
+        // Ativar e especificar o formato dos vértices
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+
+        // Desenhar com índices usando glDrawElements
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+
+        // Desativar arrays de vértices
+        glDisableClientState(GL_VERTEX_ARRAY);
     }
-    glEnd();
+    glPopMatrix();
 }
+
+
 
 void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
 
+    // Garantir que o Depth Test está ativado
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+
+    glLoadIdentity();
+    gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
+    
     if (showAxes) {
         glBegin(GL_LINES);
         glColor3f(1.0f, 0.0f, 0.0f);
@@ -79,10 +112,17 @@ void renderScene() {
         glEnd();
     }
 
-    glPolygonMode(GL_FRONT, mode);
+    glPolygonMode(GL_FRONT, mode); // _AND_BACK, mode); // GL_FILL);
     drawPrimitives();
     glutSwapBuffers();
 }
+
+
+
+
+
+
+
 
 void keyProc(unsigned char key, int, int) {
     if (key == 'w' || key == 'W') {
@@ -117,7 +157,6 @@ void keyProc(unsigned char key, int, int) {
 
 void initializeCameraAndWindow(XMLDataFormat* xmlData) {
     if (xmlData) {
-        // Camera - Posicao e Orientacao
         camX = getXPosCam(xmlData);
         camY = getYPosCam(xmlData);
         camZ = getZPosCam(xmlData);
@@ -130,16 +169,25 @@ void initializeCameraAndWindow(XMLDataFormat* xmlData) {
         upy = getYUp(xmlData);
         upz = getZUp(xmlData);
 
-        // Parametros de projecao
         fov = getFov(xmlData);
         nearPlane = getNear(xmlData);
         farPlane = getFar(xmlData);
 
-        // Tamanho da Janela
         windowWidth = getWidth(xmlData);
         windowHeight = getHeight(xmlData);
     }
+
+    // Configuração correta de Face Culling e Depth Test
+    glEnable(GL_DEPTH_TEST);     // Ativar Depth Test para ocultação de faces
+    glDepthFunc(GL_LESS);        // Configurar função de Depth
+
+    glEnable(GL_CULL_FACE);      // Ativar Culling de Faces
+    glCullFace(GL_BACK);         // Descartar as faces de trás
+    glFrontFace(GL_CCW);         // Faces frontais são as de sentido anti-horário
+
+    // glDisable(GL_CULL_FACE); 
 }
+
 
 
 int main(int argc, char* argv[]) {
@@ -160,8 +208,16 @@ int main(int argc, char* argv[]) {
     computeSphericalCoordinates();
 
     for (const string& model : getModels(xmlData)) {
-        primitives.push_back(fileToPrimitive(model.c_str()));
+        Primitive prim = fileToPrimitive(model.c_str());
+        if (prim) {
+            std::cout << "Primitiva carregada: " << model << std::endl;
+            primitives.push_back(prim);
+        } else {
+            std::cerr << "Erro: Não foi possível carregar a primitiva: " << model << std::endl;
+        }
     }
+
+    
 
     deleteXMLDataFormat(xmlData);
 
@@ -174,8 +230,8 @@ int main(int argc, char* argv[]) {
     glutReshapeFunc(changeSize);
     glutKeyboardFunc(keyProc);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
     
+    //  glutIdleFunc(glutPostRedisplay);  // atualização constante da janela
     glutMainLoop();
 
     return 0;

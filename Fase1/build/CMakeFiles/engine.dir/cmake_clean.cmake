@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/engine.dir/Engine/engine.cpp.o"
-  "CMakeFiles/engine.dir/Engine/engine.cpp.o.d"
+  "CMakeFiles/engine.dir/src/Engine/engine.cpp.o"
+  "CMakeFiles/engine.dir/src/Engine/engine.cpp.o.d"
   "engine"
   "engine.pdb"
 )

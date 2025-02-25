@@ -168,125 +168,125 @@ tinyXML/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tinyXML.dir/build.make CMakeFiles/tinyXML.dir/build
 .PHONY : tinyXML/fast
 
-Engine/engine.o: Engine/engine.cpp.o
-.PHONY : Engine/engine.o
+src/Engine/engine.o: src/Engine/engine.cpp.o
+.PHONY : src/Engine/engine.o
 
 # target to build an object file
-Engine/engine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Engine/engine.cpp.o
-.PHONY : Engine/engine.cpp.o
+src/Engine/engine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/src/Engine/engine.cpp.o
+.PHONY : src/Engine/engine.cpp.o
 
-Engine/engine.i: Engine/engine.cpp.i
-.PHONY : Engine/engine.i
+src/Engine/engine.i: src/Engine/engine.cpp.i
+.PHONY : src/Engine/engine.i
 
 # target to preprocess a source file
-Engine/engine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Engine/engine.cpp.i
-.PHONY : Engine/engine.cpp.i
+src/Engine/engine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/src/Engine/engine.cpp.i
+.PHONY : src/Engine/engine.cpp.i
 
-Engine/engine.s: Engine/engine.cpp.s
-.PHONY : Engine/engine.s
+src/Engine/engine.s: src/Engine/engine.cpp.s
+.PHONY : src/Engine/engine.s
 
 # target to generate assembly for a file
-Engine/engine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/Engine/engine.cpp.s
-.PHONY : Engine/engine.cpp.s
+src/Engine/engine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/src/Engine/engine.cpp.s
+.PHONY : src/Engine/engine.cpp.s
 
-Generator/generator.o: Generator/generator.cpp.o
-.PHONY : Generator/generator.o
+src/Generator/generator.o: src/Generator/generator.cpp.o
+.PHONY : src/Generator/generator.o
 
 # target to build an object file
-Generator/generator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/Generator/generator.cpp.o
-.PHONY : Generator/generator.cpp.o
+src/Generator/generator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/src/Generator/generator.cpp.o
+.PHONY : src/Generator/generator.cpp.o
 
-Generator/generator.i: Generator/generator.cpp.i
-.PHONY : Generator/generator.i
+src/Generator/generator.i: src/Generator/generator.cpp.i
+.PHONY : src/Generator/generator.i
 
 # target to preprocess a source file
-Generator/generator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/Generator/generator.cpp.i
-.PHONY : Generator/generator.cpp.i
+src/Generator/generator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/src/Generator/generator.cpp.i
+.PHONY : src/Generator/generator.cpp.i
 
-Generator/generator.s: Generator/generator.cpp.s
-.PHONY : Generator/generator.s
+src/Generator/generator.s: src/Generator/generator.cpp.s
+.PHONY : src/Generator/generator.s
 
 # target to generate assembly for a file
-Generator/generator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/Generator/generator.cpp.s
-.PHONY : Generator/generator.cpp.s
+src/Generator/generator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/src/Generator/generator.cpp.s
+.PHONY : src/Generator/generator.cpp.s
 
-Utils/XMLDataFormat.o: Utils/XMLDataFormat.cpp.o
-.PHONY : Utils/XMLDataFormat.o
+src/Utils/XMLDataFormat.o: src/Utils/XMLDataFormat.cpp.o
+.PHONY : src/Utils/XMLDataFormat.o
 
 # target to build an object file
-Utils/XMLDataFormat.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o
-.PHONY : Utils/XMLDataFormat.cpp.o
+src/Utils/XMLDataFormat.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o
+.PHONY : src/Utils/XMLDataFormat.cpp.o
 
-Utils/XMLDataFormat.i: Utils/XMLDataFormat.cpp.i
-.PHONY : Utils/XMLDataFormat.i
+src/Utils/XMLDataFormat.i: src/Utils/XMLDataFormat.cpp.i
+.PHONY : src/Utils/XMLDataFormat.i
 
 # target to preprocess a source file
-Utils/XMLDataFormat.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.i
-.PHONY : Utils/XMLDataFormat.cpp.i
+src/Utils/XMLDataFormat.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.i
+.PHONY : src/Utils/XMLDataFormat.cpp.i
 
-Utils/XMLDataFormat.s: Utils/XMLDataFormat.cpp.s
-.PHONY : Utils/XMLDataFormat.s
+src/Utils/XMLDataFormat.s: src/Utils/XMLDataFormat.cpp.s
+.PHONY : src/Utils/XMLDataFormat.s
 
 # target to generate assembly for a file
-Utils/XMLDataFormat.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.s
-.PHONY : Utils/XMLDataFormat.cpp.s
+src/Utils/XMLDataFormat.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.s
+.PHONY : src/Utils/XMLDataFormat.cpp.s
 
-Utils/point.o: Utils/point.cpp.o
-.PHONY : Utils/point.o
+src/Utils/point.o: src/Utils/point.cpp.o
+.PHONY : src/Utils/point.o
 
 # target to build an object file
-Utils/point.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/point.cpp.o
-.PHONY : Utils/point.cpp.o
+src/Utils/point.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o
+.PHONY : src/Utils/point.cpp.o
 
-Utils/point.i: Utils/point.cpp.i
-.PHONY : Utils/point.i
+src/Utils/point.i: src/Utils/point.cpp.i
+.PHONY : src/Utils/point.i
 
 # target to preprocess a source file
-Utils/point.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/point.cpp.i
-.PHONY : Utils/point.cpp.i
+src/Utils/point.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.i
+.PHONY : src/Utils/point.cpp.i
 
-Utils/point.s: Utils/point.cpp.s
-.PHONY : Utils/point.s
+src/Utils/point.s: src/Utils/point.cpp.s
+.PHONY : src/Utils/point.s
 
 # target to generate assembly for a file
-Utils/point.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/point.cpp.s
-.PHONY : Utils/point.cpp.s
+src/Utils/point.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.s
+.PHONY : src/Utils/point.cpp.s
 
-Utils/primitive.o: Utils/primitive.cpp.o
-.PHONY : Utils/primitive.o
+src/Utils/primitive.o: src/Utils/primitive.cpp.o
+.PHONY : src/Utils/primitive.o
 
 # target to build an object file
-Utils/primitive.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o
-.PHONY : Utils/primitive.cpp.o
+src/Utils/primitive.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o
+.PHONY : src/Utils/primitive.cpp.o
 
-Utils/primitive.i: Utils/primitive.cpp.i
-.PHONY : Utils/primitive.i
+src/Utils/primitive.i: src/Utils/primitive.cpp.i
+.PHONY : src/Utils/primitive.i
 
 # target to preprocess a source file
-Utils/primitive.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.i
-.PHONY : Utils/primitive.cpp.i
+src/Utils/primitive.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.i
+.PHONY : src/Utils/primitive.cpp.i
 
-Utils/primitive.s: Utils/primitive.cpp.s
-.PHONY : Utils/primitive.s
+src/Utils/primitive.s: src/Utils/primitive.cpp.s
+.PHONY : src/Utils/primitive.s
 
 # target to generate assembly for a file
-Utils/primitive.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.s
-.PHONY : Utils/primitive.cpp.s
+src/Utils/primitive.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_lib.dir/build.make CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.s
+.PHONY : src/Utils/primitive.cpp.s
 
 tinyXML/tinystr.o: tinyXML/tinystr.cpp.o
 .PHONY : tinyXML/tinystr.o
@@ -396,21 +396,21 @@ help:
 	@echo "... engine"
 	@echo "... generator"
 	@echo "... tinyXML"
-	@echo "... Engine/engine.o"
-	@echo "... Engine/engine.i"
-	@echo "... Engine/engine.s"
-	@echo "... Generator/generator.o"
-	@echo "... Generator/generator.i"
-	@echo "... Generator/generator.s"
-	@echo "... Utils/XMLDataFormat.o"
-	@echo "... Utils/XMLDataFormat.i"
-	@echo "... Utils/XMLDataFormat.s"
-	@echo "... Utils/point.o"
-	@echo "... Utils/point.i"
-	@echo "... Utils/point.s"
-	@echo "... Utils/primitive.o"
-	@echo "... Utils/primitive.i"
-	@echo "... Utils/primitive.s"
+	@echo "... src/Engine/engine.o"
+	@echo "... src/Engine/engine.i"
+	@echo "... src/Engine/engine.s"
+	@echo "... src/Generator/generator.o"
+	@echo "... src/Generator/generator.i"
+	@echo "... src/Generator/generator.s"
+	@echo "... src/Utils/XMLDataFormat.o"
+	@echo "... src/Utils/XMLDataFormat.i"
+	@echo "... src/Utils/XMLDataFormat.s"
+	@echo "... src/Utils/point.o"
+	@echo "... src/Utils/point.i"
+	@echo "... src/Utils/point.s"
+	@echo "... src/Utils/primitive.o"
+	@echo "... src/Utils/primitive.i"
+	@echo "... src/Utils/primitive.s"
 	@echo "... tinyXML/tinystr.o"
 	@echo "... tinyXML/tinystr.i"
 	@echo "... tinyXML/tinystr.s"

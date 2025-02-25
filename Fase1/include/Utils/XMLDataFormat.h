@@ -3,8 +3,8 @@
 
 #include <list>
 #include <string>
-#include "../tinyXML/tinyxml.h"
-#include "../tinyXML/tinystr.h"
+#include "../../tinyXML/tinyxml.h"
+#include "../../tinyXML/tinystr.h"
 
 typedef struct XMLDataFormat xmlDataFormat; 
 typedef struct PosCamera camera; 

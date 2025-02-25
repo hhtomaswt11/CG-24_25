@@ -1,9 +1,9 @@
 // #include <tinyxml.h>
 // #include <tinystr.h>
 
-#include "XMLDataFormat.h"
-#include "../tinyXML/tinyxml.h"
-#include "../tinyXML/tinystr.h"
+#include "../../include/Utils/XMLDataFormat.h"
+#include "../../tinyXML/tinyxml.h"
+#include "../../tinyXML/tinystr.h"
 #include <cstdlib>
 #include <iostream>
 

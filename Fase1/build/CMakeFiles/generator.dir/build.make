@@ -69,28 +69,28 @@ include CMakeFiles/generator.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/generator.dir/flags.make
 
-CMakeFiles/generator.dir/Generator/generator.cpp.o: CMakeFiles/generator.dir/flags.make
-CMakeFiles/generator.dir/Generator/generator.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/generator.cpp
-CMakeFiles/generator.dir/Generator/generator.cpp.o: CMakeFiles/generator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/generator.dir/Generator/generator.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/generator.dir/Generator/generator.cpp.o -MF CMakeFiles/generator.dir/Generator/generator.cpp.o.d -o CMakeFiles/generator.dir/Generator/generator.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/generator.cpp
+CMakeFiles/generator.dir/src/Generator/generator.cpp.o: CMakeFiles/generator.dir/flags.make
+CMakeFiles/generator.dir/src/Generator/generator.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Generator/generator.cpp
+CMakeFiles/generator.dir/src/Generator/generator.cpp.o: CMakeFiles/generator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/generator.dir/src/Generator/generator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/generator.dir/src/Generator/generator.cpp.o -MF CMakeFiles/generator.dir/src/Generator/generator.cpp.o.d -o CMakeFiles/generator.dir/src/Generator/generator.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Generator/generator.cpp
 
-CMakeFiles/generator.dir/Generator/generator.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/generator.dir/Generator/generator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/generator.cpp > CMakeFiles/generator.dir/Generator/generator.cpp.i
+CMakeFiles/generator.dir/src/Generator/generator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/generator.dir/src/Generator/generator.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Generator/generator.cpp > CMakeFiles/generator.dir/src/Generator/generator.cpp.i
 
-CMakeFiles/generator.dir/Generator/generator.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/generator.dir/Generator/generator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/generator.cpp -o CMakeFiles/generator.dir/Generator/generator.cpp.s
+CMakeFiles/generator.dir/src/Generator/generator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/generator.dir/src/Generator/generator.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Generator/generator.cpp -o CMakeFiles/generator.dir/src/Generator/generator.cpp.s
 
 # Object files for target generator
 generator_OBJECTS = \
-"CMakeFiles/generator.dir/Generator/generator.cpp.o"
+"CMakeFiles/generator.dir/src/Generator/generator.cpp.o"
 
 # External object files for target generator
 generator_EXTERNAL_OBJECTS =
 
-generator: CMakeFiles/generator.dir/Generator/generator.cpp.o
+generator: CMakeFiles/generator.dir/src/Generator/generator.cpp.o
 generator: CMakeFiles/generator.dir/build.make
 generator: libUtils_lib.a
 generator: /usr/lib/x86_64-linux-gnu/libGL.so

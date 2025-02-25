@@ -4,6 +4,8 @@
 #include <list>
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <map>
 #include "point.h"
 
 typedef struct primitive* Primitive;
@@ -11,8 +13,8 @@ typedef struct primitive* Primitive;
 
 Primitive newEmptyPrimitive();
 
-Primitive newPrimitive(const std::list<Point>& points);
-
+// Primitive newPrimitive(const std::list<Point>& points);
+Primitive newPrimitive(const std::vector<Point>& points) ; 
 void addPrimitive(Primitive &dest, const Primitive &src) ; 
 
 void addTriangle(Primitive plano, const Point& p1, const Point& p2, const Point& p3); 
@@ -25,7 +27,15 @@ void primitiveToFile(Primitive f, const char* path);
 
 Primitive fileToPrimitive(const char* path);
 
-const std::list<Point>& getPoints(Primitive f);
+void setIndices(Primitive f, const std::vector<int>& indices) ; 
+
+const std::vector<int>& getIndices(const Primitive f) ; 
+
+Point getPoint(const Primitive f, int index) ; 
+
+//const std::list<Point>& getPoints(Primitive f);
+
+const std::vector<Point>& getPoints(const Primitive f) ; 
 
 void deletePrimitiveSimple(Primitive f); 
 

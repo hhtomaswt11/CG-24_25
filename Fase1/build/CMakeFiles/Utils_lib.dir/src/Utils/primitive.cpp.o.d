@@ -1,8 +1,7 @@
-CMakeFiles/engine.dir/Engine/engine.cpp.o: \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/engine.cpp \
+CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o: \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/primitive.cpp \
  /usr/include/stdc-predef.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/engine.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../Utils/primitive.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/../../include/Utils/primitive.h \
  /usr/include/c++/11/list /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
@@ -154,7 +153,19 @@ CMakeFiles/engine.dir/Engine/engine.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
  /usr/include/c++/11/bits/fstream.tcc /usr/include/c++/11/iostream \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../Utils/point.h \
+ /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
+ /usr/include/c++/11/bits/stl_vector.h \
+ /usr/include/c++/11/bits/stl_bvector.h \
+ /usr/include/c++/11/bits/vector.tcc /usr/include/c++/11/map \
+ /usr/include/c++/11/bits/stl_tree.h \
+ /usr/include/c++/11/bits/node_handle.h \
+ /usr/include/c++/11/bits/stl_map.h /usr/include/c++/11/tuple \
+ /usr/include/c++/11/utility /usr/include/c++/11/bits/stl_relops.h \
+ /usr/include/c++/11/array /usr/include/c++/11/bits/uses_allocator.h \
+ /usr/include/c++/11/bits/invoke.h \
+ /usr/include/c++/11/bits/stl_multimap.h \
+ /usr/include/c++/11/bits/erase_if.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/../../include/Utils/point.h \
  /usr/include/c++/11/math.h /usr/include/c++/11/cmath /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
@@ -178,13 +189,4 @@ CMakeFiles/engine.dir/Engine/engine.cpp.o: \
  /usr/include/c++/11/tr1/poly_hermite.tcc \
  /usr/include/c++/11/tr1/poly_laguerre.tcc \
  /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/stdlib.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../Utils/point.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../Utils/XMLDataFormat.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../Utils/../tinyXML/tinyxml.h \
- /usr/include/string.h /usr/include/strings.h /usr/include/assert.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../Utils/../tinyXML/tinystr.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../Utils/../tinyXML/tinystr.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/../tinyXML/tinyxml.h \
- /usr/include/GL/glut.h /usr/include/GL/freeglut_std.h \
- /usr/include/GL/gl.h /usr/include/GL/glext.h \
- /usr/include/KHR/khrplatform.h /usr/include/GL/glu.h
+ /usr/include/c++/11/sstream /usr/include/c++/11/bits/sstream.tcc

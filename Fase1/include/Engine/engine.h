@@ -6,7 +6,7 @@
 #include "../Utils/primitive.h"
 #include "../Utils/point.h"
 #include "../Utils/XMLDataFormat.h"
-#include "../tinyXML/tinyxml.h"
+#include "../../tinyXML/tinyxml.h"
 #include <list>
 #include <GL/glut.h>
 #include <iostream>

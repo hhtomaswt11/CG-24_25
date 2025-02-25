@@ -1,8 +1,9 @@
-CMakeFiles/generator.dir/Generator/generator.cpp.o: \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/generator.cpp \
+CMakeFiles/engine.dir/src/Engine/engine.cpp.o: \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/engine.cpp \
  /usr/include/stdc-predef.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/generator.h \
- /usr/include/c++/11/cstring \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/engine.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../Utils/primitive.h \
+ /usr/include/c++/11/list /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -13,14 +14,7 @@ CMakeFiles/generator.dir/Generator/generator.cpp.o: \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h \
- /usr/include/c++/11/pstl/pstl_config.h /usr/include/string.h \
- /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
- /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
- /usr/include/strings.h \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/../Utils/primitive.h \
- /usr/include/c++/11/list /usr/include/c++/11/bits/stl_algobase.h \
+ /usr/include/c++/11/pstl/pstl_config.h \
  /usr/include/c++/11/bits/functexcept.h \
  /usr/include/c++/11/bits/exception_defines.h \
  /usr/include/c++/11/bits/cpp_type_traits.h \
@@ -51,8 +45,11 @@ CMakeFiles/generator.dir/Generator/generator.cpp.o: \
  /usr/include/c++/11/istream /usr/include/c++/11/ios \
  /usr/include/c++/11/iosfwd /usr/include/c++/11/bits/stringfwd.h \
  /usr/include/c++/11/bits/postypes.h /usr/include/c++/11/cwchar \
- /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/floatn.h \
+ /usr/include/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+ /usr/include/x86_64-linux-gnu/bits/floatn.h \
  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
@@ -60,6 +57,8 @@ CMakeFiles/generator.dir/Generator/generator.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/c++/11/exception /usr/include/c++/11/bits/exception_ptr.h \
  /usr/include/c++/11/bits/cxxabi_init_exception.h \
  /usr/include/c++/11/typeinfo /usr/include/c++/11/bits/hash_bytes.h \
@@ -155,7 +154,19 @@ CMakeFiles/generator.dir/Generator/generator.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
  /usr/include/c++/11/bits/fstream.tcc /usr/include/c++/11/iostream \
- /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Generator/../Utils/point.h \
+ /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
+ /usr/include/c++/11/bits/stl_vector.h \
+ /usr/include/c++/11/bits/stl_bvector.h \
+ /usr/include/c++/11/bits/vector.tcc /usr/include/c++/11/map \
+ /usr/include/c++/11/bits/stl_tree.h \
+ /usr/include/c++/11/bits/node_handle.h \
+ /usr/include/c++/11/bits/stl_map.h /usr/include/c++/11/tuple \
+ /usr/include/c++/11/utility /usr/include/c++/11/bits/stl_relops.h \
+ /usr/include/c++/11/array /usr/include/c++/11/bits/uses_allocator.h \
+ /usr/include/c++/11/bits/invoke.h \
+ /usr/include/c++/11/bits/stl_multimap.h \
+ /usr/include/c++/11/bits/erase_if.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../Utils/point.h \
  /usr/include/c++/11/math.h /usr/include/c++/11/cmath /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
@@ -178,4 +189,14 @@ CMakeFiles/generator.dir/Generator/generator.cpp.o: \
  /usr/include/c++/11/tr1/modified_bessel_func.tcc \
  /usr/include/c++/11/tr1/poly_hermite.tcc \
  /usr/include/c++/11/tr1/poly_laguerre.tcc \
- /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/stdlib.h
+ /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/stdlib.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../Utils/point.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../Utils/XMLDataFormat.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../Utils/../../tinyXML/tinyxml.h \
+ /usr/include/string.h /usr/include/strings.h /usr/include/assert.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../Utils/../../tinyXML/tinystr.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../Utils/../../tinyXML/tinystr.h \
+ /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/../../include/Engine/../../tinyXML/tinyxml.h \
+ /usr/include/GL/glut.h /usr/include/GL/freeglut_std.h \
+ /usr/include/GL/gl.h /usr/include/GL/glext.h \
+ /usr/include/KHR/khrplatform.h /usr/include/GL/glu.h

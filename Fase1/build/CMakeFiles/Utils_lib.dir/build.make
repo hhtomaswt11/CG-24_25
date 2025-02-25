@@ -69,60 +69,60 @@ include CMakeFiles/Utils_lib.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Utils_lib.dir/flags.make
 
-CMakeFiles/Utils_lib.dir/Utils/point.cpp.o: CMakeFiles/Utils_lib.dir/flags.make
-CMakeFiles/Utils_lib.dir/Utils/point.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/point.cpp
-CMakeFiles/Utils_lib.dir/Utils/point.cpp.o: CMakeFiles/Utils_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Utils_lib.dir/Utils/point.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Utils_lib.dir/Utils/point.cpp.o -MF CMakeFiles/Utils_lib.dir/Utils/point.cpp.o.d -o CMakeFiles/Utils_lib.dir/Utils/point.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/point.cpp
+CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o: CMakeFiles/Utils_lib.dir/flags.make
+CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/point.cpp
+CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o: CMakeFiles/Utils_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o -MF CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o.d -o CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/point.cpp
 
-CMakeFiles/Utils_lib.dir/Utils/point.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Utils_lib.dir/Utils/point.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/point.cpp > CMakeFiles/Utils_lib.dir/Utils/point.cpp.i
+CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/point.cpp > CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.i
 
-CMakeFiles/Utils_lib.dir/Utils/point.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_lib.dir/Utils/point.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/point.cpp -o CMakeFiles/Utils_lib.dir/Utils/point.cpp.s
+CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/point.cpp -o CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.s
 
-CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o: CMakeFiles/Utils_lib.dir/flags.make
-CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/primitive.cpp
-CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o: CMakeFiles/Utils_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o -MF CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o.d -o CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/primitive.cpp
+CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o: CMakeFiles/Utils_lib.dir/flags.make
+CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/primitive.cpp
+CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o: CMakeFiles/Utils_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o -MF CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o.d -o CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/primitive.cpp
 
-CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/primitive.cpp > CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.i
+CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/primitive.cpp > CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.i
 
-CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/primitive.cpp -o CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.s
+CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/primitive.cpp -o CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.s
 
-CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o: CMakeFiles/Utils_lib.dir/flags.make
-CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/XMLDataFormat.cpp
-CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o: CMakeFiles/Utils_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o -MF CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o.d -o CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/XMLDataFormat.cpp
+CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o: CMakeFiles/Utils_lib.dir/flags.make
+CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/XMLDataFormat.cpp
+CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o: CMakeFiles/Utils_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o -MF CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o.d -o CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/XMLDataFormat.cpp
 
-CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/XMLDataFormat.cpp > CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.i
+CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/XMLDataFormat.cpp > CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.i
 
-CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Utils/XMLDataFormat.cpp -o CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.s
+CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/XMLDataFormat.cpp -o CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.s
 
 # Object files for target Utils_lib
 Utils_lib_OBJECTS = \
-"CMakeFiles/Utils_lib.dir/Utils/point.cpp.o" \
-"CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o" \
-"CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o"
+"CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o" \
+"CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o" \
+"CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o"
 
 # External object files for target Utils_lib
 Utils_lib_EXTERNAL_OBJECTS =
 
-libUtils_lib.a: CMakeFiles/Utils_lib.dir/Utils/point.cpp.o
-libUtils_lib.a: CMakeFiles/Utils_lib.dir/Utils/primitive.cpp.o
-libUtils_lib.a: CMakeFiles/Utils_lib.dir/Utils/XMLDataFormat.cpp.o
+libUtils_lib.a: CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o
+libUtils_lib.a: CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o
+libUtils_lib.a: CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o
 libUtils_lib.a: CMakeFiles/Utils_lib.dir/build.make
 libUtils_lib.a: CMakeFiles/Utils_lib.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libUtils_lib.a"

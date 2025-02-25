@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/./include/Utils
 
 CXX_FLAGS =  -Wall -Wextra
 

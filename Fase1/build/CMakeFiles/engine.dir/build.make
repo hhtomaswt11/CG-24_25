@@ -69,28 +69,28 @@ include CMakeFiles/engine.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/engine.dir/flags.make
 
-CMakeFiles/engine.dir/Engine/engine.cpp.o: CMakeFiles/engine.dir/flags.make
-CMakeFiles/engine.dir/Engine/engine.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/engine.cpp
-CMakeFiles/engine.dir/Engine/engine.cpp.o: CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/engine.dir/Engine/engine.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/engine.dir/Engine/engine.cpp.o -MF CMakeFiles/engine.dir/Engine/engine.cpp.o.d -o CMakeFiles/engine.dir/Engine/engine.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/engine.cpp
+CMakeFiles/engine.dir/src/Engine/engine.cpp.o: CMakeFiles/engine.dir/flags.make
+CMakeFiles/engine.dir/src/Engine/engine.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/engine.cpp
+CMakeFiles/engine.dir/src/Engine/engine.cpp.o: CMakeFiles/engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/engine.dir/src/Engine/engine.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/engine.dir/src/Engine/engine.cpp.o -MF CMakeFiles/engine.dir/src/Engine/engine.cpp.o.d -o CMakeFiles/engine.dir/src/Engine/engine.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/engine.cpp
 
-CMakeFiles/engine.dir/Engine/engine.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/Engine/engine.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/engine.cpp > CMakeFiles/engine.dir/Engine/engine.cpp.i
+CMakeFiles/engine.dir/src/Engine/engine.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/src/Engine/engine.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/engine.cpp > CMakeFiles/engine.dir/src/Engine/engine.cpp.i
 
-CMakeFiles/engine.dir/Engine/engine.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/Engine/engine.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/Engine/engine.cpp -o CMakeFiles/engine.dir/Engine/engine.cpp.s
+CMakeFiles/engine.dir/src/Engine/engine.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/src/Engine/engine.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Engine/engine.cpp -o CMakeFiles/engine.dir/src/Engine/engine.cpp.s
 
 # Object files for target engine
 engine_OBJECTS = \
-"CMakeFiles/engine.dir/Engine/engine.cpp.o"
+"CMakeFiles/engine.dir/src/Engine/engine.cpp.o"
 
 # External object files for target engine
 engine_EXTERNAL_OBJECTS =
 
-engine: CMakeFiles/engine.dir/Engine/engine.cpp.o
+engine: CMakeFiles/engine.dir/src/Engine/engine.cpp.o
 engine: CMakeFiles/engine.dir/build.make
 engine: libUtils_lib.a
 engine: libtinyXML.a
