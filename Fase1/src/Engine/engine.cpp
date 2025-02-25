@@ -89,12 +89,6 @@ void renderScene() {
     glLoadIdentity();
     gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
 
-    // Garantir que o Depth Test está ativado
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-
     glLoadIdentity();
     gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
     
@@ -177,15 +171,6 @@ void initializeCameraAndWindow(XMLDataFormat* xmlData) {
         windowHeight = getHeight(xmlData);
     }
 
-    // Configuração correta de Face Culling e Depth Test
-    glEnable(GL_DEPTH_TEST);     // Ativar Depth Test para ocultação de faces
-    glDepthFunc(GL_LESS);        // Configurar função de Depth
-
-    glEnable(GL_CULL_FACE);      // Ativar Culling de Faces
-    glCullFace(GL_BACK);         // Descartar as faces de trás
-    glFrontFace(GL_CCW);         // Faces frontais são as de sentido anti-horário
-
-    // glDisable(GL_CULL_FACE); 
 }
 
 
@@ -230,6 +215,7 @@ int main(int argc, char* argv[]) {
     glutReshapeFunc(changeSize);
     glutKeyboardFunc(keyProc);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     
     //  glutIdleFunc(glutPostRedisplay);  // atualização constante da janela
     glutMainLoop();

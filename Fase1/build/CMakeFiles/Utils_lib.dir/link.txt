@@ -1,2 +1,0 @@
-/usr/bin/ar qc libUtils_lib.a CMakeFiles/Utils_lib.dir/src/Utils/point.cpp.o CMakeFiles/Utils_lib.dir/src/Utils/primitive.cpp.o CMakeFiles/Utils_lib.dir/src/Utils/XMLDataFormat.cpp.o
-/usr/bin/ranlib libUtils_lib.a

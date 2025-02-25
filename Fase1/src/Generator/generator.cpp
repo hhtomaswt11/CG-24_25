@@ -3,7 +3,7 @@
 #include <map>
 
 
-Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f, int invert = 0) {
+Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f, int invertFaces = 0) {
     Primitive plano = newEmptyPrimitive();
     if (!plano) return plano;
 
@@ -15,7 +15,6 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
     float div_side = (float)length / divisions;
 
     // Gerar pontos únicos e armazenar índices corretos
-    std::cout << "Gerando pontos para o plano:" << std::endl;
     for (int linha = 0; linha <= divisions; ++linha) {
         for (int coluna = 0; coluna <= divisions; ++coluna) {
             float x = -half + coluna * div_side;
@@ -40,88 +39,53 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         }
     }
 
-std::cout << "Gerando índices para o plano:" << std::endl;
-for (int linha = 0; linha < divisions; ++linha) {
-    for (int coluna = 0; coluna < divisions; ++coluna) {
-        int i1 = linha * (divisions + 1) + coluna;
-        int i2 = linha * (divisions + 1) + coluna + 1;
-        int i3 = (linha + 1) * (divisions + 1) + coluna;
-        int i4 = (linha + 1) * (divisions + 1) + coluna + 1;
+    std::cout << "Gerando índices para o plano:" << std::endl;
+    for (int linha = 0; linha < divisions; ++linha) {
+        for (int coluna = 0; coluna < divisions; ++coluna) {
+            int i1 = linha * (divisions + 1) + coluna;         // Vértice inferior esquerdo
+            int i2 = linha * (divisions + 1) + coluna + 1;     // Vértice inferior direito
+            int i3 = (linha + 1) * (divisions + 1) + coluna;   // Vértice superior esquerdo
+            int i4 = (linha + 1) * (divisions + 1) + coluna + 1; // Vértice superior direito
 
-        // // Ordem Correta (CCW) SEM INVERTER
-        // indices.push_back(i1); // Inferior Esquerda
-        // indices.push_back(i3); // Superior Esquerda
-        // indices.push_back(i2); // Inferior Direita
+            if (invertFaces) {
+                // Inverte a ordem dos vértices para CW (útil para faces opostas)
+                indices.push_back(i1); // Inferior Esquerda
+                indices.push_back(i3); // Superior Esquerda
+                indices.push_back(i2); // Inferior Direita
 
-        // indices.push_back(i2); // Inferior Direita
-        // indices.push_back(i3); // Superior Esquerda
-        // indices.push_back(i4); // Superior Direita
-        indices.push_back(i1); // Inferior Esquerda
-        indices.push_back(i2); // Inferior Direita
-        indices.push_back(i3); // Superior Esquerda
+                indices.push_back(i2); // Inferior Direita
+                indices.push_back(i3); // Superior Esquerda
+                indices.push_back(i4); // Superior Direita
+            } else {
+                // Ordem normal CCW
+                indices.push_back(i1); // Inferior Esquerda
+                indices.push_back(i2); // Inferior Direita
+                indices.push_back(i3); // Superior Esquerda
 
-        indices.push_back(i3); // Superior Esquerda
-        indices.push_back(i2); // Inferior Direita
-        indices.push_back(i4); // Superior Direita
+                indices.push_back(i2); // Inferior Direita
+                indices.push_back(i4); // Superior Direita
+                indices.push_back(i3); // Superior Esquerda
+            }
 
-
-//         // Ordem Correta (CCW)
-// if (invert) {
-    
-//     // Triângulo 1 - Invertido (CW)
-//     indices.push_back(i1);
-//     indices.push_back(i3);
-//     indices.push_back(i2);
-
-//     // Triângulo 2 - Invertido (CW)
-//     indices.push_back(i3);
-//     indices.push_back(i4);
-//     indices.push_back(i2);
-
-// }
-// else{
-//     indices.push_back(i1); // Inferior Esquerda
-//     indices.push_back(i2); // Inferior Direita
-//     indices.push_back(i3); // Superior Esquerda
-    
-//     indices.push_back(i3); // Superior Esquerda
-//     indices.push_back(i2); // Inferior Direita
-//     indices.push_back(i4); // Superior Direita
-    
-    
-// }
-
-        std::cout << "Triângulo: " << i1 << ", " << i3 << ", " << i2 << std::endl;
-        std::cout << "Triângulo: " << i2 << ", " << i3 << ", " << i4 << std::endl;
+            std::cout << "Triângulo 1: " << i1 << ", " << i2 << ", " << i3 << std::endl;
+            std::cout << "Triângulo 2: " << i2 << ", " << i4 << ", " << i3 << std::endl;
+        }
     }
-}
-
 
     for (const auto& p : uniquePoints) {
         addPoint(plano, p);
     }
     setIndices(plano, indices);
 
-
     for (int i = 0; i < indices.size(); i += 3) {
-        std::cout << "Triângulo: " 
+        std::cout << "Triângulo final: " 
                   << indices[i] << ", " 
                   << indices[i + 1] << ", " 
                   << indices[i + 2] << std::endl;
     }
 
-    
     return plano;
 }
-
-
-
-
-
-
-
-
-
 
 Primitive buildBox(int length, int divisions) {
     Primitive box = newEmptyPrimitive();
@@ -140,25 +104,23 @@ Primitive buildBox(int length, int divisions) {
     // Gerar as 6 faces do cubo corretamente
     std::cout << "Gerando faces para o cubo:" << std::endl;
 
+    // Face Superior (+Y)
+    Primitive faceBaixo = buildPlane(length, divisions, y, -dimension2, 0);
 
-// Face Superior (+Y)
-Primitive faceCima = buildPlane(length, divisions, y, dimension2, 0);
+    // Face Inferior (-Y), invertida para ficar virada para fora
+    Primitive faceCima = buildPlane(length, divisions, y, dimension2, 1);
 
-// Face Inferior (-Y), invertida para ficar virada para fora
-Primitive faceBaixo = buildPlane(length, divisions, y, -dimension2, 1);
+    // Face Frente (+Z)
+    Primitive faceFrente = buildPlane(length, divisions, z, -dimension2, 1);
 
-// Face Frente (+Z)
-Primitive faceFrente = buildPlane(length, divisions, z, dimension2, 0);
+    // Face Trás (-Z), invertida para ficar virada para fora
+    Primitive faceTras = buildPlane(length, divisions, z, dimension2, 0);
 
-// Face Trás (-Z), invertida para ficar virada para fora
-Primitive faceTras = buildPlane(length, divisions, z, -dimension2, 1);
+    // Face Direita (+X)
+    Primitive faceDireita = buildPlane(length, divisions, x, -dimension2, 1);
 
-// Face Direita (+X)
-Primitive faceDireita = buildPlane(length, divisions, x, dimension2, 1);
-
-// Face Esquerda (-X)
-Primitive faceEsquerda = buildPlane(length, divisions, x, -dimension2, 0);
-
+    // Face Esquerda (-X)
+    Primitive faceEsquerda = buildPlane(length, divisions, x, dimension2, 0);
 
     // Adicionar todos os pontos e índices
     auto addFaceToBox = [&](Primitive face) {
