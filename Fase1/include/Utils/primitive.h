@@ -31,7 +31,9 @@ void setIndices(Primitive f, const std::vector<int>& indices) ;
 
 const std::vector<int>& getIndices(const Primitive f) ; 
 
-Point getPoint(const Primitive f, int index) ; 
+Point getPoint(const Primitive f, std::vector<Point>::size_type index) ; 
+
+// Point getPoint(const Primitive f, int index) ; 
 
 //const std::list<Point>& getPoints(Primitive f);
 

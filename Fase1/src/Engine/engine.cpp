@@ -111,13 +111,6 @@ void renderScene() {
     glutSwapBuffers();
 }
 
-
-
-
-
-
-
-
 void keyProc(unsigned char key, int, int) {
     if (key == 'w' || key == 'W') {
         Beta += ANGLE_INCREMENT;
@@ -195,7 +188,7 @@ int main(int argc, char* argv[]) {
     for (const string& model : getModels(xmlData)) {
         Primitive prim = fileToPrimitive(model.c_str());
         if (prim) {
-            std::cout << "Primitiva carregada: " << model << std::endl;
+            std::cout << "Loaded primitive. Results in: " << model << std::endl;
             primitives.push_back(prim);
         } else {
             std::cerr << "Erro: Não foi possível carregar a primitiva: " << model << std::endl;
@@ -210,7 +203,7 @@ int main(int argc, char* argv[]) {
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(windowWidth, windowHeight);
-    glutCreateWindow("Fase1");
+    glutCreateWindow("CG @UMINHO - Fase 1 - Grupo 36");
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
     glutKeyboardFunc(keyProc);

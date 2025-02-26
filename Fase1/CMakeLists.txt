@@ -12,7 +12,7 @@ add_executable(generator ./src/Generator/generator.cpp)
 
 # Biblioteca das figuras e dos pontos
 add_library(
-    Utils_lib
+    Utils_n_Build_lib
     ./src/Utils/point.cpp
     ./include/Utils/point.h
     
@@ -21,6 +21,9 @@ add_library(
     
     ./src/Utils/XMLDataFormat.cpp
     ./include/Utils/XMLDataFormat.h
+
+    ./src/Generator/buildPrimitives.cpp
+    ./include/Generator/buildPrimitives.h
 )
 
 # Biblioteca de parsing de XML
@@ -41,8 +44,8 @@ target_include_directories(generator PRIVATE ./include/Utils)
 target_link_libraries(tinyXML) # remover no futuro 
 
 # Associa a biblioteca das figuras e dos pontos aos executáveis
-target_link_libraries(generator Utils_lib)
-target_link_libraries(engine Utils_lib tinyXML )
+target_link_libraries(generator Utils_n_Build_lib)
+target_link_libraries(engine Utils_n_Build_lib tinyXML )
 
 
 

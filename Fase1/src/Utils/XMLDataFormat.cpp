@@ -131,7 +131,8 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                 }
             }
         } else {
-            std::cerr << "Error loading XML file: " << filePath << std::endl;
+            std::cerr << "XML file does not exist. Error loading XML file: " << filePath << std::endl;
+            exit(1); 
         }
     }
     return result;
