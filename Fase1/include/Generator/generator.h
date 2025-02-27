@@ -2,7 +2,8 @@
 #define GENERATOR_H
 
 #include "buildPrimitives.h"
- 
-void helper(); 
+#include "../UI/ui.h"
+// void helper(); 
+// void printSuccessMessage(int argc, char *argv[]) ; 
 
 #endif 

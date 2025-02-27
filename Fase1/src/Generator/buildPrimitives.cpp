@@ -44,7 +44,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         }
     }
 
-    std::cout << "Loading indexes for plane:" << std::endl;
+    // std::cout << "Loading indexes for plane:" << std::endl;
     for (int linha = 0; linha < divisions; ++linha) {
         for (int coluna = 0; coluna < divisions; ++coluna) {   // (divisions + 1) = número de vertices por linha -> para considerar todos os vertices das linhas anteriores 
             int i1 = linha * (divisions + 1) + coluna;         // Vértice inferior esquerdo
@@ -86,13 +86,13 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
 
     setIndices(plano, indices);
 
-    // debug 
-    for (std::vector<int>::size_type i = 0; i < indices.size(); i += 3) {
-    std::cout << "Triangle connection: " 
-    << indices[i] << ", " 
-    << indices[i + 1] << ", " 
-    << indices[i + 2] << std::endl;
-    }
+    // // debug 
+    // for (std::vector<int>::size_type i = 0; i < indices.size(); i += 3) {
+    // std::cout << "Triangle connection: " 
+    // << indices[i] << ", " 
+    // << indices[i + 1] << ", " 
+    // << indices[i + 2] << std::endl;
+    // }
 
 
     return plano;
@@ -105,36 +105,36 @@ Primitive buildBox(int length, int divisions) {
     Primitive box = newEmptyPrimitive();
     if (!box) return box;
 
-    float dimension2 = (float)length / 2;
+    float half = (float)length / 2;
     char 
         x = 'X',
         y = 'Y',
         z = 'Z'; 
 
     // Lista temporária para armazenar todos os pontos e índices
-    std::vector<Point> allPoints;
-    std::vector<int> allIndices;
+    std::vector<Point> allPoints; // armazena todos os pontos unicos 
+    std::vector<int> allIndices; // define a ordem dos vertices para formar triangulos em todas as faces do cubo 
 
     // Gerar as 6 faces do cubo corretamente
     std::cout << "Gerando faces para o cubo:" << std::endl;
 
     // Face Superior (+Y)
-    Primitive faceBaixo = buildPlane(length, divisions, y, -dimension2, 0);
+    Primitive faceBaixo = buildPlane(length, divisions, y, -half, 0);
 
     // Face Inferior (-Y), invertida para ficar virada para fora
-    Primitive faceCima = buildPlane(length, divisions, y, dimension2, 1);
+    Primitive faceCima = buildPlane(length, divisions, y, half, 1);
 
     // Face Frente (+Z)
-    Primitive faceFrente = buildPlane(length, divisions, z, -dimension2, 1);
+    Primitive faceFrente = buildPlane(length, divisions, z, -half, 1);
 
     // Face Trás (-Z), invertida para ficar virada para fora
-    Primitive faceTras = buildPlane(length, divisions, z, dimension2, 0);
+    Primitive faceTras = buildPlane(length, divisions, z, half, 0);
 
     // Face Direita (+X)
-    Primitive faceDireita = buildPlane(length, divisions, x, -dimension2, 1);
+    Primitive faceDireita = buildPlane(length, divisions, x, -half, 1);
 
     // Face Esquerda (-X)
-    Primitive faceEsquerda = buildPlane(length, divisions, x, dimension2, 0);
+    Primitive faceEsquerda = buildPlane(length, divisions, x, half, 0);
 
     // Adicionar todos os pontos e índices
     auto addFaceToBox = [&](Primitive face) {

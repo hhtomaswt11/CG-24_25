@@ -94,7 +94,8 @@ engine: CMakeFiles/engine.dir/src/Engine/engine.cpp.o
 engine: CMakeFiles/engine.dir/build.make
 engine: libUtils_n_Build_lib.a
 engine: libtinyXML.a
-engine: /usr/lib/x86_64-linux-gnu/libGL.so
+engine: /usr/lib/x86_64-linux-gnu/libOpenGL.so
+engine: /usr/lib/x86_64-linux-gnu/libGLX.so
 engine: /usr/lib/x86_64-linux-gnu/libGLU.so
 engine: /usr/lib/x86_64-linux-gnu/libglut.so
 engine: /usr/lib/x86_64-linux-gnu/libXmu.so

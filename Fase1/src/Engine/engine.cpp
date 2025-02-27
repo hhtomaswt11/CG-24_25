@@ -12,6 +12,8 @@ float fov, nearPlane, farPlane;
 float windowWidth, windowHeight;
 bool showAxes = true;
 int mode = GL_LINE; 
+float colorR = 1.0f, colorG = 1.0f, colorB = 1.0f;
+
 
 list<Primitive> primitives;
 
@@ -52,7 +54,8 @@ void changeSize(int w, int h) {
 
 void drawPrimitives() {
     glPushMatrix();
-    glColor3f(1.0f, 1.0f, 1.0f);  // Branco
+    glColor3f(colorR, colorG, colorB); // Use a cor atual
+    // glColor3f(1.0f, 1.0f, 1.0f);  // Branco
 
     glPolygonMode(GL_FRONT_AND_BACK, mode); // _AND_BACK, mode); // GL_FILL);  // Garantir que ambos os lados sejam desenhados
 
@@ -89,8 +92,8 @@ void renderScene() {
     glLoadIdentity();
     gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
 
-    glLoadIdentity();
-    gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
+    // glLoadIdentity();
+    // gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
     
     if (showAxes) {
         glBegin(GL_LINES);
@@ -126,17 +129,23 @@ void keyProc(unsigned char key, int, int) {
     else if (key == 'd' || key == 'D') {
         Alpha += ANGLE_INCREMENT;
     }
-    else if (key == 'q' || key == 'Q') {
+    else if (key == '+'){ // } || key == 'Q') {
         radius -= ZOOM_INCREMENT;
         if (radius < 1.0f) radius = 1.0f;
     }
-    else if (key == 'e' || key == 'E') {
+    else if (key == '-'){// } || key == 'E') {
         radius += ZOOM_INCREMENT;
     }
     else if (key == 'f' || key == 'F') mode = GL_FILL;
     else if (key == 'l' || key == 'L') mode = GL_LINE;
     else if (key == 'b' || key == 'B') mode = GL_POINT;
     else if (key == 'x' || key == 'X') showAxes = !showAxes;
+    else if (key == 'y' || key == 'Y') {
+        colorR = 1.0f;
+        colorG = 1.0f;
+        colorB = 0.0f;
+    }
+    
     
     updateCameraPosition();
     glutPostRedisplay();

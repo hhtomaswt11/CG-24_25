@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o"
   "CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o.d"
+  "CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o"
+  "CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o.d"
   "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/XMLDataFormat.cpp.o"
   "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/XMLDataFormat.cpp.o.d"
   "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/point.cpp.o"

@@ -125,12 +125,27 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.s: cmake_forc
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Generator/buildPrimitives.cpp -o CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.s
 
+CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o: CMakeFiles/Utils_n_Build_lib.dir/flags.make
+CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o: /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/UI/ui.cpp
+CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o: CMakeFiles/Utils_n_Build_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o -MF CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o.d -o CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o -c /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/UI/ui.cpp
+
+CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/UI/ui.cpp > CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.i
+
+CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/UI/ui.cpp -o CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.s
+
 # Object files for target Utils_n_Build_lib
 Utils_n_Build_lib_OBJECTS = \
 "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/point.cpp.o" \
 "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o" \
 "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/XMLDataFormat.cpp.o" \
-"CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o"
+"CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o" \
+"CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o"
 
 # External object files for target Utils_n_Build_lib
 Utils_n_Build_lib_EXTERNAL_OBJECTS =
@@ -139,9 +154,10 @@ libUtils_n_Build_lib.a: CMakeFiles/Utils_n_Build_lib.dir/src/Utils/point.cpp.o
 libUtils_n_Build_lib.a: CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o
 libUtils_n_Build_lib.a: CMakeFiles/Utils_n_Build_lib.dir/src/Utils/XMLDataFormat.cpp.o
 libUtils_n_Build_lib.a: CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o
+libUtils_n_Build_lib.a: CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o
 libUtils_n_Build_lib.a: CMakeFiles/Utils_n_Build_lib.dir/build.make
 libUtils_n_Build_lib.a: CMakeFiles/Utils_n_Build_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libUtils_n_Build_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libUtils_n_Build_lib.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/Utils_n_Build_lib.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Utils_n_Build_lib.dir/link.txt --verbose=$(VERBOSE)
 

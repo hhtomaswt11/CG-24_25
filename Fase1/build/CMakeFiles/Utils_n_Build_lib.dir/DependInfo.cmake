@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Generator/buildPrimitives.cpp" "CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o" "gcc" "CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o.d"
+  "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/UI/ui.cpp" "CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o" "gcc" "CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o.d"
   "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/XMLDataFormat.cpp" "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/XMLDataFormat.cpp.o" "gcc" "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/XMLDataFormat.cpp.o.d"
   "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/point.cpp" "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/point.cpp.o" "gcc" "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/point.cpp.o.d"
   "/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase1/src/Utils/primitive.cpp" "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o" "gcc" "CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o.d"

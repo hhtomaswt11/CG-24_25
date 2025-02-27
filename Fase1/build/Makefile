@@ -240,6 +240,30 @@ src/Generator/generator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/src/Generator/generator.cpp.s
 .PHONY : src/Generator/generator.cpp.s
 
+src/UI/ui.o: src/UI/ui.cpp.o
+.PHONY : src/UI/ui.o
+
+# target to build an object file
+src/UI/ui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_n_Build_lib.dir/build.make CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o
+.PHONY : src/UI/ui.cpp.o
+
+src/UI/ui.i: src/UI/ui.cpp.i
+.PHONY : src/UI/ui.i
+
+# target to preprocess a source file
+src/UI/ui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_n_Build_lib.dir/build.make CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.i
+.PHONY : src/UI/ui.cpp.i
+
+src/UI/ui.s: src/UI/ui.cpp.s
+.PHONY : src/UI/ui.s
+
+# target to generate assembly for a file
+src/UI/ui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Utils_n_Build_lib.dir/build.make CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.s
+.PHONY : src/UI/ui.cpp.s
+
 src/Utils/XMLDataFormat.o: src/Utils/XMLDataFormat.cpp.o
 .PHONY : src/Utils/XMLDataFormat.o
 
@@ -429,6 +453,9 @@ help:
 	@echo "... src/Generator/generator.o"
 	@echo "... src/Generator/generator.i"
 	@echo "... src/Generator/generator.s"
+	@echo "... src/UI/ui.o"
+	@echo "... src/UI/ui.i"
+	@echo "... src/UI/ui.s"
 	@echo "... src/Utils/XMLDataFormat.o"
 	@echo "... src/Utils/XMLDataFormat.i"
 	@echo "... src/Utils/XMLDataFormat.s"

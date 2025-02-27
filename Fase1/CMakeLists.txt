@@ -10,7 +10,7 @@ add_executable(engine ./src/Engine/engine.cpp)
 add_executable(generator ./src/Generator/generator.cpp)
 
 
-# Biblioteca das figuras e dos pontos
+# Biblioteca das figuras, dos pontos e user-interface
 add_library(
     Utils_n_Build_lib
     ./src/Utils/point.cpp
@@ -24,6 +24,9 @@ add_library(
 
     ./src/Generator/buildPrimitives.cpp
     ./include/Generator/buildPrimitives.h
+
+    ./src/UI/ui.cpp 
+    ./include/UI/ui.h 
 )
 
 # Biblioteca de parsing de XML
@@ -48,7 +51,7 @@ target_link_libraries(generator Utils_n_Build_lib)
 target_link_libraries(engine Utils_n_Build_lib tinyXML )
 
 
-
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 link_directories(${OpenGL_LIBRARY_DIRS})

@@ -93,7 +93,8 @@ generator_EXTERNAL_OBJECTS =
 generator: CMakeFiles/generator.dir/src/Generator/generator.cpp.o
 generator: CMakeFiles/generator.dir/build.make
 generator: libUtils_n_Build_lib.a
-generator: /usr/lib/x86_64-linux-gnu/libGL.so
+generator: /usr/lib/x86_64-linux-gnu/libOpenGL.so
+generator: /usr/lib/x86_64-linux-gnu/libGLX.so
 generator: /usr/lib/x86_64-linux-gnu/libGLU.so
 generator: /usr/lib/x86_64-linux-gnu/libglut.so
 generator: /usr/lib/x86_64-linux-gnu/libXmu.so
