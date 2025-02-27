@@ -40,7 +40,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
                 
                 uniquePoints.push_back(p);
                 std::cout << "New point: (" << getX(p) << ", " << getY(p) << ", " << getZ(p) << ")" << std::endl;
-            }
+            } 
         }
     }
 

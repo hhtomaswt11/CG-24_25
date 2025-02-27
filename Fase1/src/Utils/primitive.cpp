@@ -12,8 +12,8 @@
 
 
 struct primitive {
-  std::vector<Point> points;  // Alterado de list para vector
-  std::vector<int> indices;  // Adicionar esta linha
+  std::vector<Point> points; 
+  std::vector<int> indices;  
  // std::list<Color> colors;
 };
 

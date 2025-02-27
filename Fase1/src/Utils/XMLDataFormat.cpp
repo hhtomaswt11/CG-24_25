@@ -2,8 +2,6 @@
 // #include <tinystr.h>
 
 #include "../../include/Utils/XMLDataFormat.h"
-#include "../../tinyXML/tinyxml.h"
-#include "../../tinyXML/tinystr.h"
 #include <cstdlib>
 #include <iostream>
 

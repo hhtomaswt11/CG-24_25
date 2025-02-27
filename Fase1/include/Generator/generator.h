@@ -3,4 +3,6 @@
 
 #include "buildPrimitives.h"
  
+void helper(); 
+
 #endif 
