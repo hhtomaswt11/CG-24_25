@@ -5,7 +5,7 @@
 #include "../Utils/primitive.h"
 
 
- Primitive buildPlane(int length, int divisions, char axis , float h , int invert) ; 
+ Primitive buildPlane(int length, int divisions, char axis , float h , bool invertFaces , bool invertDiagonal); ; 
 
  Primitive buildBox(int length, int divisions); 
 

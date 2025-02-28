@@ -1,23 +1,18 @@
 #include "../../include/Generator/buildPrimitives.h"
 
 
-Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f, int invertFaces = 0) {
+Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f, bool invertFaces = false, bool invertDiagonal = false) {
     Primitive plano = newEmptyPrimitive();
     if (!plano) return plano;
 
-    std::vector<Point> uniquePoints; // armazena os pontos unicos 
+    std::vector<Point> uniquePoints; // Armazena os pontos únicos
+    std::map<std::tuple<float, float, float>, int> pointIndexMap; // Mapeia coordenadas para índices
+    std::vector<int> indices; // Armazena os índices que definem a ordem dos vértices
 
-    std::map<std::tuple<float, float, float>, int> pointIndexMap; // mapeia as coordenadas para um indice de modo a evitar pontos duplicados
-    // mapa: tuplo (coordenadas x y z ) -> indice do ponto no vetor uniquePoints 
+    float half = (float)length / 2; // Metade do comprimento do plano
+    float div_side = (float)length / divisions; // Tamanho de cada subdivisão
 
-
-    std::vector<int> indices; // armazena os indices que definem a ordem dos vertices para formar triangulos 
-
-    //  plane 4 4 
-    float half = (float)length / 2; // metade do comprimento do plano para centraliza lo  2 
-    float div_side = (float)length / divisions; // tamanho de cada subdivisao na malha  2 
-
-    // Gerar pontos únicos e armazenar índices corretos
+    // Gerar pontos únicos
     for (int linha = 0; linha <= divisions; ++linha) {
         for (int coluna = 0; coluna <= divisions; ++coluna) {
             float x = -half + coluna * div_side;
@@ -26,7 +21,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
             Point p;
             if (axis == 'X')
                 p = newPoint(h, x, z);
-            else if (axis == 'Y') // padrao 
+            else if (axis == 'Y')
                 p = newPoint(x, h, z);
             else if (axis == 'Z')
                 p = newPoint(x, z, h);
@@ -34,70 +29,75 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
             std::tuple<float, float, float> key = std::make_tuple(getX(p), getY(p), getZ(p));
 
             // Verifica se o ponto já existe no mapa
-            if (pointIndexMap.find(key) == pointIndexMap.end()) { // verifica se o ponto existe no mapa pointIndexMap (que armazena pontos unicos)
-                // se o ponto nao existir, adicionamos ao mapa e tambem ao vetor uniquePoints
-                pointIndexMap[key] = uniquePoints.size(); // adiciona o ponto ao pointIndexMap. O valor armazenado é o indice do ponto no vetor uniquePoints 
-                
+            if (pointIndexMap.find(key) == pointIndexMap.end()) {
+                pointIndexMap[key] = uniquePoints.size();
                 uniquePoints.push_back(p);
-                std::cout << "New point: (" << getX(p) << ", " << getY(p) << ", " << getZ(p) << ")" << std::endl;
-            } 
+            }
         }
     }
 
-    // std::cout << "Loading indexes for plane:" << std::endl;
+    // Gerar índices
     for (int linha = 0; linha < divisions; ++linha) {
-        for (int coluna = 0; coluna < divisions; ++coluna) {   // (divisions + 1) = número de vertices por linha -> para considerar todos os vertices das linhas anteriores 
+        for (int coluna = 0; coluna < divisions; ++coluna) {
             int i1 = linha * (divisions + 1) + coluna;         // Vértice inferior esquerdo
             int i2 = linha * (divisions + 1) + coluna + 1;     // Vértice inferior direito
             int i3 = (linha + 1) * (divisions + 1) + coluna;   // Vértice superior esquerdo
             int i4 = (linha + 1) * (divisions + 1) + coluna + 1; // Vértice superior direito
 
-            if (invertFaces) {
-                // Inverte a ordem dos vértices para CW (para faces opostas)
-                indices.push_back(i1); // Inferior Esquerda
-                indices.push_back(i3); // Superior Esquerda
-                indices.push_back(i2); // Inferior Direita
+            if (invertDiagonal) {
+                // Inverte a diagonal
+                if (invertFaces) {
+                    // Inverte a ordem dos vértices (clockwise)
+                    indices.push_back(i1); // Inferior Esquerda
+                    indices.push_back(i4); // Superior Direita
+                    indices.push_back(i2); // Inferior Direita
 
-                indices.push_back(i2); // Inferior Direita
-                indices.push_back(i3); // Superior Esquerda
-                indices.push_back(i4); // Superior Direita
+                    indices.push_back(i1); // Inferior Esquerda
+                    indices.push_back(i3); // Superior Esquerda
+                    indices.push_back(i4); // Superior Direita
+                } else {
+                    // Ordem normal (counter-clockwise)
+                    indices.push_back(i1); // Inferior Esquerda
+                    indices.push_back(i2); // Inferior Direita
+                    indices.push_back(i4); // Superior Direita
+
+                    indices.push_back(i1); // Inferior Esquerda
+                    indices.push_back(i4); // Superior Direita
+                    indices.push_back(i3); // Superior Esquerda
+                }
             } else {
-                // Ordem normal CCW
-                indices.push_back(i1); // Inferior Esquerda
-                indices.push_back(i2); // Inferior Direita
-                indices.push_back(i3); // Superior Esquerda
+                // Mantém a diagonal original
+                if (invertFaces) {
+                    // Inverte a ordem dos vértices (clockwise)
+                    indices.push_back(i1); // Inferior Esquerda
+                    indices.push_back(i3); // Superior Esquerda
+                    indices.push_back(i2); // Inferior Direita
 
-                indices.push_back(i2); // Inferior Direita
-                indices.push_back(i4); // Superior Direita
-                indices.push_back(i3); // Superior Esquerda
+                    indices.push_back(i2); // Inferior Direita
+                    indices.push_back(i3); // Superior Esquerda
+                    indices.push_back(i4); // Superior Direita
+                } else {
+                    // Ordem normal (counter-clockwise)
+                    indices.push_back(i1); // Inferior Esquerda
+                    indices.push_back(i2); // Inferior Direita
+                    indices.push_back(i3); // Superior Esquerda
+
+                    indices.push_back(i2); // Inferior Direita
+                    indices.push_back(i4); // Superior Direita
+                    indices.push_back(i3); // Superior Esquerda
+                }
             }
-
-            //std::cout << "Triângulo 1: " << i1 << ", " << i2 << ", " << i3 << std::endl;
-            //std::cout << "Triângulo 2: " << i2 << ", " << i4 << ", " << i3 << std::endl;
-
-            // Usar índices economiza memória porque reaproveita vértices.
-            // É a forma mais eficiente de desenhar superfícies 3D em OpenGL 
         }
     }
 
+    // Adicionar pontos e índices à primitiva
     for (const auto& p : uniquePoints) {
         addPoint(plano, p);
-        }
-
+    }
     setIndices(plano, indices);
-
-    // // debug 
-    // for (std::vector<int>::size_type i = 0; i < indices.size(); i += 3) {
-    // std::cout << "Triangle connection: " 
-    // << indices[i] << ", " 
-    // << indices[i + 1] << ", " 
-    // << indices[i + 2] << std::endl;
-    // }
-
 
     return plano;
 }
-
 
 
 
@@ -106,37 +106,32 @@ Primitive buildBox(int length, int divisions) {
     if (!box) return box;
 
     float half = (float)length / 2;
-    char 
-        x = 'X',
-        y = 'Y',
-        z = 'Z'; 
 
     // Lista temporária para armazenar todos os pontos e índices
-    std::vector<Point> allPoints; // armazena todos os pontos unicos 
-    std::vector<int> allIndices; // define a ordem dos vertices para formar triangulos em todas as faces do cubo 
+    std::vector<Point> allPoints; // Armazena todos os pontos únicos
+    std::vector<int> allIndices;  // Define a ordem dos vértices para formar triângulos
 
-    // Gerar as 6 faces do cubo corretamente
-    std::cout << "Gerando faces para o cubo:" << std::endl;
+    // Gerar as 6 faces do cubo
+    std::cout << "Building box faces:" << std::endl;
 
     // Face Superior (+Y)
-    Primitive faceBaixo = buildPlane(length, divisions, y, -half, 0);
+    Primitive faceCima = buildPlane(length, divisions, 'Y', half, true, true);
 
-    // Face Inferior (-Y), invertida para ficar virada para fora
-    Primitive faceCima = buildPlane(length, divisions, y, half, 1);
+    // Face Inferior (-Y)
+    Primitive faceBaixo = buildPlane(length, divisions, 'Y', -half, false, false);
 
     // Face Frente (+Z)
-    Primitive faceFrente = buildPlane(length, divisions, z, -half, 1);
+    Primitive faceFrente = buildPlane(length, divisions, 'Z', -half, true, false);
 
-    // Face Trás (-Z), invertida para ficar virada para fora
-    Primitive faceTras = buildPlane(length, divisions, z, half, 0);
+    // Face Trás (-Z)
+    Primitive faceTras = buildPlane(length, divisions, 'Z', half, false, true);
 
     // Face Direita (+X)
-    Primitive faceDireita = buildPlane(length, divisions, x, -half, 1);
+    Primitive faceDireita = buildPlane(length, divisions, 'X', -half, true, false);
 
     // Face Esquerda (-X)
-    Primitive faceEsquerda = buildPlane(length, divisions, x, half, 0);
+    Primitive faceEsquerda = buildPlane(length, divisions, 'X', half, false, true);
 
-    // Adicionar todos os pontos e índices
     auto addFaceToBox = [&](Primitive face) {
         auto pontos = getPoints(face);
         auto indices = getIndices(face);
@@ -151,6 +146,7 @@ Primitive buildBox(int length, int divisions) {
         }
     };
 
+    // Adicionar todas as faces ao cubo
     addFaceToBox(faceCima);
     addFaceToBox(faceBaixo);
     addFaceToBox(faceFrente);
@@ -158,12 +154,11 @@ Primitive buildBox(int length, int divisions) {
     addFaceToBox(faceDireita);
     addFaceToBox(faceEsquerda);
 
-    // Configurar os pontos e índices finais na primitiva do cubo
     for (const auto& p : allPoints) {
         addPoint(box, p);
     }
     setIndices(box, allIndices);
-
+    
     // Limpeza da memória temporária
     deletePrimitive2(faceCima);
     deletePrimitive2(faceBaixo);
@@ -174,6 +169,8 @@ Primitive buildBox(int length, int divisions) {
 
     return box;
 }
+
+
 
 Primitive buildSphere(int radius, int slices, int stacks) {
     Primitive sphere = newEmptyPrimitive();
