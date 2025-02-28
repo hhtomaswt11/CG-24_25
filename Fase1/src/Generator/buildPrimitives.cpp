@@ -174,3 +174,63 @@ Primitive buildBox(int length, int divisions) {
 
     return box;
 }
+
+Primitive buildSphere(int radius, int slices, int stacks) {
+    Primitive sphere = newEmptyPrimitive();
+    if (!sphere) return sphere;
+
+    std::cout << "Gerando esfera: raio = " << radius << ", slices = " << slices << ", stacks = " << stacks << std::endl;
+
+    std::vector<Point> points;
+    std::vector<int> indices;
+
+    // Gerar os vértices da esfera
+    for (int stack = 0; stack <= stacks; ++stack) {
+        float phi = M_PI * stack / stacks;
+        for (int slice = 0; slice <= slices; ++slice) {
+            float theta = 2 * M_PI * slice / slices;
+            float x = radius * sin(phi) * cos(theta);
+            float y = radius * cos(phi);
+            float z = radius * sin(phi) * sin(theta);
+
+            Point p = newPoint(x, y, z);
+            points.push_back(p);
+            std::cout << "Ponto: (" << x << ", " << y << ", " << z << ")" << std::endl;
+        }
+    }
+
+    // Gerar os índices para os triângulos
+    for (int stack = 0; stack < stacks; ++stack) {
+        for (int slice = 0; slice < slices; ++slice) {
+            int current = stack * (slices + 1) + slice;
+            int next = current + slices + 1;
+
+            // Primeiro triângulo
+            indices.push_back(current);
+            indices.push_back(current + 1);
+            indices.push_back(next);
+
+            // Segundo triângulo
+            indices.push_back(current + 1);
+            indices.push_back(next + 1);
+            indices.push_back(next);
+
+            std::cout << "Triângulos: " 
+                      << current << ", " << (current + 1) << ", " << next << " e "
+                      << (current + 1) << ", " << (next + 1) << ", " << next << std::endl;
+        }
+    }
+
+    // Adicionar todos os pontos à primitiva
+    for (const auto& p : points) {
+        addPoint(sphere, p);
+    }
+
+    // Configurar os índices
+    setIndices(sphere, indices);
+
+    std::cout << "Total de pontos: " << points.size() << std::endl;
+    std::cout << "Total de índices: " << indices.size() << std::endl;
+
+    return sphere;
+}
