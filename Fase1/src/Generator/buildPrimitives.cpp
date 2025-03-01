@@ -272,10 +272,21 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
     std::vector<Point> points;
     std::vector<int> indices;
 
+    // Função para verificar se um ponto já existe
+    auto addUniquePoint = [&](const Point& p) -> int {
+        for (size_t i = 0; i < points.size(); ++i) {
+            if (getX(points[i]) == getX(p) && getY(points[i]) == getY(p) && getZ(points[i]) == getZ(p)) {
+                return i;  // Retorna o índice do ponto existente
+            }
+        }
+        points.push_back(p);  // Se não encontrar, adiciona o ponto
+        return points.size() - 1;  // Retorna o índice do novo ponto
+    };
+
+
     // Criar base do cone
     Point center = newPoint(0.0f, 0.0f, 0.0f);
-    points.push_back(center);
-    int centerIndex = 0;
+    int centerIndex = addUniquePoint(center);  // Adicionar o centro da base (ponto único)
 
     std::vector<int> baseIndices;
     for (int i = 0; i < slices; i++) {
@@ -284,10 +295,11 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         float z = radius * sin(angle);
 
         Point p = newPoint(x, 0.0f, z);
-        points.push_back(p);
-        baseIndices.push_back(points.size() - 1);
+        int index = addUniquePoint(p); // Adiciona vértice da borda e verifica se é único
+        baseIndices.push_back(index); // Armazena o índice do ponto da borda
     }
 
+    // Adicionar os triângulos para a base
     for (int i = 0; i < slices; i++) {
         int next = (i + 1) % slices;
         indices.push_back(centerIndex);
@@ -295,10 +307,11 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         indices.push_back(baseIndices[next]);
     }
 
-    // Criar corpo do cone
-    std::vector<std::vector<int>> stackIndices(stacks + 1, std::vector<int>(slices));
+    // Criar corpo do cone (sem duplicar vértices da base)
+    std::vector<std::vector<int>> stackIndices(stacks);
 
-    for (int stack = 0; stack <= stacks; ++stack) {
+    // Gerar vértices para as camadas do corpo
+    for (int stack = 0; stack < stacks; ++stack) {
         float currHeight = (float)stack / stacks * height;
         float currRadius = radius * (1.0f - (float)stack / stacks);
 
@@ -308,12 +321,13 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
             float z = currRadius * sin(theta);
 
             Point p = newPoint(x, currHeight, z);
-            points.push_back(p);
-            stackIndices[stack][slice] = points.size() - 1;
+            int index = addUniquePoint(p); // Adicionar ponto do corpo, verificando se é único
+            stackIndices[stack].push_back(index); // Armazena o índice do ponto da camada
         }
     }
 
-    for (int stack = 0; stack < stacks; ++stack) {
+    // Conectar as camadas do corpo
+    for (int stack = 0; stack < stacks - 1; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
             int nextSlice = (slice + 1) % slices;
             int i1 = stackIndices[stack][slice];
@@ -331,23 +345,26 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         }
     }
 
-    // Criar topo do cone
+    // Criar topo do cone (um único vértice no topo)
     Point top = newPoint(0.0f, height, 0.0f);
-    int topIndex = points.size();
-    points.push_back(top);
+    int topIndex = addUniquePoint(top); // Adicionar o topo (único ponto no topo)
 
+    // Conectar topo com a última camada (sem duplicar vértices)
     for (int slice = 0; slice < slices; ++slice) {
-        int curr = stackIndices[stacks][slice];
-        int next = stackIndices[stacks][(slice + 1) % slices];
+        int curr = stackIndices[stacks - 1][slice]; // Vértice do corpo na última camada
+        int next = stackIndices[stacks - 1][(slice + 1) % slices]; // Próximo vértice na última camada
         indices.push_back(topIndex);
         indices.push_back(next);
         indices.push_back(curr);
     }
 
+    // Adicionar todos os pontos ao cone
     for (const auto& p : points) {
         addPoint(cone, p);
     }
 
+    // Definir os índices (conexões entre os vértices)
     setIndices(cone, indices);
+
     return cone;
 }
