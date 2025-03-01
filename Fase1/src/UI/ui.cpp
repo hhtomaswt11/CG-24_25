@@ -13,17 +13,36 @@ const char* CYAN = "\033[36m";
 const char* WHITE = "\033[37m";
 
 void helper() {
-    printf("%s\t{-- HELPER --}%s\n", CYAN, RESET);
-    printf("%sPLANE %s[LENGTH] [DIVISIONS]%s plane.3d\n", RED, YELLOW, MAGENTA);
-    printf("%sBOX %s[LENGTH] [DIVISIONS PER SIDE]%s box.3d\n", RED, YELLOW, MAGENTA);
-    printf("%sSPHERE %s[RADIUS] [SLICES] [STACKS]%s sphere.3d\n", RED, YELLOW, MAGENTA);
-    printf("%sCONE %s[BOTTOM RADIUS] [HEIGHT] [SLICES] [STACKS]%s cone.3d\n", RED, YELLOW, MAGENTA);
+    printf("%s╔═══════════════════════════════════════════════╗%s\n", CYAN, RESET);
+    printf("%s║               -- HELP MENU --               ║%s\n", CYAN, RESET);
+    printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
+
+    printf("%s» %sPLANE    %s[LENGTH] [DIVISIONS]%s        → plane.3d\n", RED, YELLOW, MAGENTA, RESET);
+    printf("%s» %sBOX      %s[LENGTH] [DIVISIONS PER SIDE]%s → box.3d\n", RED, YELLOW, MAGENTA, RESET);
+    printf("%s» %sSPHERE   %s[RADIUS] [SLICES] [STACKS]%s   → sphere.3d\n", RED, YELLOW, MAGENTA, RESET);
+    printf("%s» %sCONE     %s[BOTTOM RADIUS] [HEIGHT] [SLICES] [STACKS]%s → cone.3d\n", RED, YELLOW, MAGENTA, RESET);
+
+    printf("%s╔═══════════════════════════════════════════════╗%s\n", CYAN, RESET);
+    printf("%s║               -- END OF MENU --               ║%s\n", CYAN, RESET);
+    printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
 }
 
+
 void printSuccessMessage(int argc, char *argv[]) {
-    printf("%sExecuted successfully: %s%s ", GREEN, YELLOW, argv[1]); 
+    printf("%s╔═══════════════════════════════════════════╗%s\n", GREEN, RESET);
+    printf("%s║           EXECUTED SUCCESSFULLY!          ║%s\n", GREEN, RESET);
+    printf("%s╚═══════════════════════════════════════════╝%s\n", GREEN, RESET);
+
+    printf("%s» %sCommand:%s %s%s ", GREEN, CYAN, YELLOW, argv[1], RESET);
+    
     for (int i = 2; i < argc; i++) {
-        printf("%s%s ", YELLOW, argv[i]);          
+        printf("%s%s ", YELLOW, argv[i]);
     }
+    
     printf("%s\n", RESET);
+
+    printf("%s╔═══════════════════════════════════════════╗%s\n", GREEN, RESET);
+    printf("%s║                -- END --                  ║%s\n", GREEN, RESET);
+    printf("%s╚═══════════════════════════════════════════╝%s\n", GREEN, RESET);
 }
+
