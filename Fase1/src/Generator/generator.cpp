@@ -43,13 +43,14 @@ int main(int argc, char* argv[]) {
     }
 
     //  else if(strcmp(argv[1], "cone") == 0){
-    //     path_3d = argv[4];
-    //     primitive = buildCone(
+    //     path_3d = argv[6];
+    //     primitive = buildCone( atoi(argv[2]), atoi(argv[3]) , atoi(argv[4]) , atoi(argv[5]) ) ; 
     //     // std::cout << "DEBUG: Saving file to -> " << path_3d << std::endl;
     //     primitiveToFile(primitive, path_3d);
     //     deletePrimitive(primitive);
     //     printSuccessMessage(argc, argv); 
     //  }
+
 }
 
 

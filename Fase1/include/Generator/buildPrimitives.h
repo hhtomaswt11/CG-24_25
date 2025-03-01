@@ -11,4 +11,6 @@
 
  Primitive buildSphere(int radius, int slices, int stacks);
  
+ Primitive buildCone(int radius, int height, int slices, int stacks) ; 
+
 #endif 

@@ -59,9 +59,21 @@ void primitiveToFile(const Primitive f, const char* path) {
 
     // Escrever índices para triângulos
     file << "Indices: " << f->indices.size() << "\n";
+   // file << "Triangulos: " << f->indices.size() / 3 << "\n";
     for (size_t i = 0; i < f->indices.size(); i += 3) {
         file << f->indices[i] << "," << f->indices[i + 1] << "," << f->indices[i + 2] << "\n";
     }
+
+
+    // for (size_t i = 0; i < f->indices.size(); ++i) {
+    //     file << f->indices[i];
+    //     if ((i + 1) % 3 == 0) {
+    //         file << "\n";
+    //     } else {
+    //         file << ",";
+    //     }
+    // }
+    
 }
 
 
