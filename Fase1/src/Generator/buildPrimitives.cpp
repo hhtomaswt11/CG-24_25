@@ -261,7 +261,6 @@ Primitive buildSphere(int radius, int slices, int stacks) {
 
 
 Primitive buildCone(int radius, int height, int slices, int stacks) {
-    // Validação de parâmetros
     if (radius <= 0 || height <= 0 || slices < 3 || stacks < 1) {
         std::cerr << "Erro: Parâmetros inválidos para gerar o cone." << std::endl;
         return nullptr;
@@ -270,23 +269,15 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
     Primitive cone = newEmptyPrimitive();
     if (!cone) return cone;
 
-    std::cout << "Gerando cone: raio = " << radius 
-              << ", altura = " << height 
-              << ", slices = " << slices 
-              << ", stacks = " << stacks << std::endl;
-
     std::vector<Point> points;
     std::vector<int> indices;
 
-    // Reserva de espaço para melhorar a performance
-    points.reserve((slices + 1) * (stacks + 1) + 1);
-    indices.reserve(slices * stacks * 6);
-
-    // Gerar a base do cone
+    // Criar base do cone
     Point center = newPoint(0.0f, 0.0f, 0.0f);
     points.push_back(center);
     int centerIndex = 0;
 
+    std::vector<int> baseIndices;
     for (int i = 0; i < slices; i++) {
         float angle = 2.0f * M_PI * i / slices;
         float x = radius * cos(angle);
@@ -294,86 +285,69 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
 
         Point p = newPoint(x, 0.0f, z);
         points.push_back(p);
-
-        // Conectar a base do cone
-        int nextIndex = (i + 1) % slices + 1;
-        indices.push_back(centerIndex);
-        indices.push_back(i + 1);
-        indices.push_back(nextIndex);
-
-        std::cout << "Base: Triângulo: " << centerIndex << ", " << (i + 1) << ", " << nextIndex << std::endl;
+        baseIndices.push_back(points.size() - 1);
     }
 
-    // Faces laterais do cone
-    for (int stack = 0; stack < stacks; ++stack) {
+    for (int i = 0; i < slices; i++) {
+        int next = (i + 1) % slices;
+        indices.push_back(centerIndex);
+        indices.push_back(baseIndices[i]);
+        indices.push_back(baseIndices[next]);
+    }
+
+    // Criar corpo do cone
+    std::vector<std::vector<int>> stackIndices(stacks + 1, std::vector<int>(slices));
+
+    for (int stack = 0; stack <= stacks; ++stack) {
         float currHeight = (float)stack / stacks * height;
-        float nextHeight = (float)(stack + 1) / stacks * height;
         float currRadius = radius * (1.0f - (float)stack / stacks);
-        float nextRadius = radius * (1.0f - (float)(stack + 1) / stacks);
 
         for (int slice = 0; slice < slices; ++slice) {
             float theta = 2.0f * M_PI * slice / slices;
-            float nextTheta = 2.0f * M_PI * (slice + 1) / slices;
+            float x = currRadius * cos(theta);
+            float z = currRadius * sin(theta);
 
-            // Vértices da stack atual
-            Point p1 = newPoint(currRadius * cos(theta), currHeight, currRadius * sin(theta));
-            Point p2 = newPoint(currRadius * cos(nextTheta), currHeight, currRadius * sin(nextTheta));
-
-            // Vértices da próxima stack
-            Point p3 = newPoint(nextRadius * cos(theta), nextHeight, nextRadius * sin(theta));
-            Point p4 = newPoint(nextRadius * cos(nextTheta), nextHeight, nextRadius * sin(nextTheta));
-
-            // Adiciona os pontos ao vetor
-            points.push_back(p1);
-            points.push_back(p2);
-            points.push_back(p3);
-            points.push_back(p4);
-
-            int index = points.size() - 4;
-
-            // Triângulo Inferior (Counter-Clockwise)
-            indices.push_back(index);
-            indices.push_back(index + 2);
-            indices.push_back(index + 1);
-
-            // Triângulo Superior (Counter-Clockwise)
-            indices.push_back(index + 1);
-            indices.push_back(index + 2);
-            indices.push_back(index + 3);
-
-            std::cout << "Faces: Triângulos: " 
-                      << index << ", " << (index + 2) << ", " << (index + 1) << " e "
-                      << (index + 1) << ", " << (index + 2) << ", " << (index + 3) << std::endl;
+            Point p = newPoint(x, currHeight, z);
+            points.push_back(p);
+            stackIndices[stack][slice] = points.size() - 1;
         }
     }
 
-    // Topo do cone
+    for (int stack = 0; stack < stacks; ++stack) {
+        for (int slice = 0; slice < slices; ++slice) {
+            int nextSlice = (slice + 1) % slices;
+            int i1 = stackIndices[stack][slice];
+            int i2 = stackIndices[stack][nextSlice];
+            int i3 = stackIndices[stack + 1][slice];
+            int i4 = stackIndices[stack + 1][nextSlice];
+
+            indices.push_back(i1);
+            indices.push_back(i3);
+            indices.push_back(i4);
+
+            indices.push_back(i1);
+            indices.push_back(i4);
+            indices.push_back(i2);
+        }
+    }
+
+    // Criar topo do cone
     Point top = newPoint(0.0f, height, 0.0f);
     int topIndex = points.size();
     points.push_back(top);
 
     for (int slice = 0; slice < slices; ++slice) {
-        int curr = slice + 1;
-        int next = (slice + 1) % slices + 1;
-        
+        int curr = stackIndices[stacks][slice];
+        int next = stackIndices[stacks][(slice + 1) % slices];
         indices.push_back(topIndex);
         indices.push_back(next);
         indices.push_back(curr);
-
-        std::cout << "Topo: Triângulo: " 
-                  << topIndex << ", " << next << ", " << curr << std::endl;
     }
 
-    // Adicionar todos os pontos à primitiva
     for (const auto& p : points) {
         addPoint(cone, p);
     }
 
-    // Configurar os índices
     setIndices(cone, indices);
-
-    std::cout << "Total de pontos: " << points.size() << std::endl;
-    std::cout << "Total de índices: " << indices.size() << std::endl;
-
     return cone;
 }
