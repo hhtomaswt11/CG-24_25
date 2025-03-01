@@ -38,8 +38,11 @@ int main(int argc, char* argv[]) {
     else if(strcmp(argv[1], "sphere") == 0){
         path_3d = argv[5];
         primitive = buildSphere(atoi(argv[2]), atoi(argv[3]), atoi(argv[4])); 
-        std::cout << "DEBUG: Saving file to -> " << path_3d << std::endl;
+        // std::cout << "DEBUG: Saving file to -> " << path_3d << std::endl;
         primitiveToFile(primitive, path_3d);
+        deletePrimitive(primitive);
+        printSuccessMessage(argc, argv); 
+
     }
 
     //  else if(strcmp(argv[1], "cone") == 0){

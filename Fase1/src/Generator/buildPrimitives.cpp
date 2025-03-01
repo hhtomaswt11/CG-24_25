@@ -175,7 +175,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     Primitive sphere = newEmptyPrimitive();
     if (!sphere) return sphere;
 
-    std::cout << "Gerando esfera: raio = " << radius << ", slices = " << slices << ", stacks = " << stacks << std::endl;
+    // std::cout << "Gerando esfera: raio = " << radius << ", slices = " << slices << ", stacks = " << stacks << std::endl;
 
     std::vector<Point> points;
     std::vector<int> indices;
@@ -198,7 +198,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
 
             Point p = newPoint(x, y, z);
             points.push_back(p);
-            std::cout << "Ponto: (" << x << ", " << y << ", " << z << ")" << std::endl;
+            // std::cout << "Ponto: (" << x << ", " << y << ", " << z << ")" << std::endl;
         }
     }
 
@@ -253,8 +253,8 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     // Configurar os índices
     setIndices(sphere, indices);
 
-    std::cout << "Total de pontos: " << points.size() << std::endl;
-    std::cout << "Total de índices: " << indices.size() << std::endl;
+    //std::cout << "Total de pontos: " << points.size() << std::endl;
+    //std::cout << "Total de índices: " << indices.size() << std::endl;
 
     return sphere;
 }
