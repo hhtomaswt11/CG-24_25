@@ -54,17 +54,15 @@ void changeSize(int w, int h) {
 
 void drawPrimitives() {
     glPushMatrix();
-    glColor3f(colorR, colorG, colorB); // Use a cor atual
-    // glColor3f(1.0f, 1.0f, 1.0f);  // Branco
+    glColor3f(colorR, colorG, colorB);
 
-    glPolygonMode(GL_FRONT_AND_BACK, mode); // _AND_BACK, mode); // GL_FILL);  // Garantir que ambos os lados sejam desenhados
+    glPolygonMode(GL_FRONT_AND_BACK, mode); 
 
     for (const auto& p : primitives) {
-        // Obter pontos e índices
         const auto& pontos = getPoints(p);
         const auto& indices = getIndices(p);
 
-        // Converter pontos para array de floats
+        
         std::vector<float> vertices;
         for (const auto& ponto : pontos) {
             vertices.push_back(getX(ponto));
@@ -72,11 +70,11 @@ void drawPrimitives() {
             vertices.push_back(getZ(ponto));
         }
 
-        // Ativar e especificar o formato dos vértices
-        glEnableClientState(GL_VERTEX_ARRAY);
+        
+        glEnableClientState(GL_VERTEX_ARRAY); // para ativar e especificar o formato dos vértices
         glVertexPointer(3, GL_FLOAT, 0, vertices.data());
 
-        // Desenhar com índices usando glDrawElements
+        // desenhar com os índices 
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 
         // Desativar arrays de vértices
@@ -92,9 +90,6 @@ void renderScene() {
     glLoadIdentity();
     gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
 
-    // glLoadIdentity();
-    // gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
-    
     if (showAxes) {
         glBegin(GL_LINES);
         glColor3f(1.0f, 0.0f, 0.0f);
@@ -109,7 +104,7 @@ void renderScene() {
         glEnd();
     }
 
-    glPolygonMode(GL_FRONT, mode); // _AND_BACK, mode); // GL_FILL);
+    glPolygonMode(GL_FRONT, mode); 
     drawPrimitives();
     glutSwapBuffers();
 }
@@ -129,23 +124,22 @@ void keyProc(unsigned char key, int, int) {
     else if (key == 'd' || key == 'D') {
         Alpha += ANGLE_INCREMENT;
     }
-    else if (key == '+'){ // } || key == 'Q') {
+    else if (key == '+'){
         radius -= ZOOM_INCREMENT;
         if (radius < 1.0f) radius = 1.0f;
     }
-    else if (key == '-'){// } || key == 'E') {
+    else if (key == '-'){
         radius += ZOOM_INCREMENT;
     }
-    else if (key == 'f' || key == 'F') mode = GL_FILL;
-    else if (key == 'l' || key == 'L') mode = GL_LINE;
-    else if (key == 'b' || key == 'B') mode = GL_POINT;
+    else if (key == 'l' || key == 'L') mode = GL_LINE; // line 
+    else if (key == 'b' || key == 'B') mode = GL_POINT; // blank 
+    else if (key == 'f' || key == 'F') mode = GL_FILL; // filled 
     else if (key == 'x' || key == 'X') showAxes = !showAxes;
     else if (key == 'y' || key == 'Y') {
         colorR = 1.0f;
         colorG = 1.0f;
         colorB = 0.0f;
     }
-    
     
     updateCameraPosition();
     glutPostRedisplay();
@@ -176,7 +170,6 @@ void initializeCameraAndWindow(XMLDataFormat* xmlData) {
 }
 
 
-
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         cerr << "Uso: " << argv[0] << " <XML file>" << endl;
@@ -195,7 +188,7 @@ int main(int argc, char* argv[]) {
     computeSphericalCoordinates();
 
     for (const string& model : getModels(xmlData)) {
-        Primitive prim = fileToPrimitive(model.c_str());
+        Primitive prim = from3dFileToPrimitive(model.c_str());
         if (prim) {
             std::cout << "Loaded primitive. Results in: " << model << std::endl;
             primitives.push_back(prim);
@@ -203,8 +196,6 @@ int main(int argc, char* argv[]) {
             std::cerr << "Erro: Não foi possível carregar a primitiva: " << model << std::endl;
         }
     }
-
-    
 
     deleteXMLDataFormat(xmlData);
 
@@ -219,7 +210,6 @@ int main(int argc, char* argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
-    //  glutIdleFunc(glutPostRedisplay);  // atualização constante da janela
     glutMainLoop();
 
     return 0;

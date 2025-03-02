@@ -14,15 +14,14 @@
 struct primitive {
   std::vector<Point> points; 
   std::vector<int> indices;  
- // std::list<Color> colors;
 };
 
 
 
 Primitive newEmptyPrimitive() {
-    Primitive p = new struct primitive;  // Using 'new' instead of 'malloc'
+    Primitive p = new struct primitive;  
     if (p) {
-        p->points.clear();  // Initializes an empty list
+        p->points.clear();  
         p->indices.clear(); 
     }
     return p;
@@ -33,13 +32,13 @@ Primitive newEmptyPrimitive() {
 Primitive newPrimitive(const std::vector<Point>& points) {
     Primitive p = newEmptyPrimitive();
     if (p) {
-        p->points = points;  // Assign the list of points
+        p->points = points;  
     }
     return p;
 }
 
 
-void primitiveToFile(const Primitive f, const char* path) {
+void fromPrimitiveTo3dFile(const Primitive f, const char* path) {
     if (!f || f->points.empty()) {
         std::cerr << "Primitive is empty or NULL.\n";
         return;
@@ -51,33 +50,23 @@ void primitiveToFile(const Primitive f, const char* path) {
         return;
     }
 
-    // Escrever pontos únicos
+    // escrever os pontos únicos 
     file << "Vertices: " << f->points.size() << "\n";
     for (const auto& p : f->points) {
         file << getX(p) << "," << getY(p) << "," << getZ(p) << "\n";
     }
 
-    // Escrever índices para triângulos
+    // escrever índices para triângulos
     file << "Indices: " << f->indices.size() << "\n";
    // file << "Triangulos: " << f->indices.size() / 3 << "\n";
     for (size_t i = 0; i < f->indices.size(); i += 3) {
         file << f->indices[i] << "," << f->indices[i + 1] << "," << f->indices[i + 2] << "\n";
     }
-
-
-    // for (size_t i = 0; i < f->indices.size(); ++i) {
-    //     file << f->indices[i];
-    //     if ((i + 1) % 3 == 0) {
-    //         file << "\n";
-    //     } else {
-    //         file << ",";
-    //     }
-    // }
     
 }
 
 
-Primitive fileToPrimitive(const char* path) {
+Primitive from3dFileToPrimitive(const char* path) {
     Primitive f = newEmptyPrimitive();
     std::ifstream file(path);
 
@@ -89,11 +78,11 @@ Primitive fileToPrimitive(const char* path) {
     std::string line;
     int vertexCount;
     
-    // Ler a quantidade de vértices
+ 
     std::getline(file, line);
-    sscanf(line.c_str(), "Vertices: %d", &vertexCount); // nao mudar esta linha 
+    sscanf(line.c_str(), "Vertices: %d", &vertexCount);
 
-    // Carregar pontos
+    // carregar os pontos da primitiva 
     std::cout << "Loading points from file: " << path << std::endl;
     for (int i = 0; i < vertexCount; ++i) {
         std::getline(file, line);
@@ -104,10 +93,10 @@ Primitive fileToPrimitive(const char* path) {
         std::cout << "Loaded point: (" << x << ", " << y << ", " << z << ")" << std::endl;
     }
 
-    // Carregar índices
+    // carregar os índices da primitiva 
     int indexCount;
     std::getline(file, line);
-    sscanf(line.c_str(), "Indices: %d", &indexCount); // nao mudar esta linha 
+    sscanf(line.c_str(), "Indices: %d", &indexCount);
 
     std::cout << "Loading indexes from file: " << path << std::endl;
     for (int i = 0; i < indexCount / 3; ++i) {
@@ -175,18 +164,11 @@ const std::vector<Point>& getPoints(const Primitive f) {
     return f->points;
 }
 
-// Point getPoint(const Primitive f, int index) {
-//     if (f && index >= 0 && index < f->points.size()) {
-//         return f->points[index];
-//     }
-//     return nullptr;  // Retorna NULL se o índice estiver fora dos limites
-// }
-
 Point getPoint(const Primitive f, std::vector<Point>::size_type index) {
     if (f && index < f->points.size()) {
         return f->points[index];
     }
-    return nullptr;  // Retorna nullptr se o índice estiver fora dos limites
+    return nullptr;  
 }
 
 
@@ -194,18 +176,18 @@ Point getPoint(const Primitive f, std::vector<Point>::size_type index) {
 
 void deletePrimitiveSimple(Primitive f) {
     if (f) {
-        f->points.clear();  //limpa os pontos
+        f->points.clear();  
         f->indices.clear(); 
-        delete f;  // Libera a estrutura Primitive
+        delete f; 
     }
 }
 
 void deletePrimitive(Primitive f) {
     if (f) {
         for (auto& p : f->points) {
-            deletePoint(p);  // Clean up each point in the list
+            deletePoint(p); 
         }
-        f->points.clear();  // Clear the list of points
+        f->points.clear();  
         f->indices.clear(); 
         delete f;  
     }
@@ -213,7 +195,7 @@ void deletePrimitive(Primitive f) {
 
 void deletePrimitive2(Primitive f) {
     if (f) {
-        f->points.clear();  // Just clear the list
+        f->points.clear();  
         f->indices.clear(); 
         delete f; 
     }

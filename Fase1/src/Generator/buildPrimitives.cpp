@@ -5,14 +5,14 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
     Primitive plano = newEmptyPrimitive();
     if (!plano) return plano;
 
-    std::vector<Point> uniquePoints; // Armazena os pontos únicos
-    std::map<std::tuple<float, float, float>, int> pointIndexMap; // Mapeia coordenadas para índices
-    std::vector<int> indices; // Armazena os índices que definem a ordem dos vértices
+    std::vector<Point> uniquePoints; // armazena os pontos únicos
+    std::map<std::tuple<float, float, float>, int> pointIndexMap; // mapeia coordenadas para índices
+    std::vector<int> indices; // armazena os índices que definem a ordem dos vértices
 
-    float half = (float)length / 2; // Metade do comprimento do plano
-    float div_side = (float)length / divisions; // Tamanho de cada subdivisão
+    float half = (float)length / 2; 
+    float div_side = (float)length / divisions; // tamanho da subdivisao
 
-    // Gerar pontos únicos
+    // gerar os pontos únicos
     for (int linha = 0; linha <= divisions; ++linha) {
         for (int coluna = 0; coluna <= divisions; ++coluna) {
             float x = -half + coluna * div_side;
@@ -28,7 +28,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
 
             std::tuple<float, float, float> key = std::make_tuple(getX(p), getY(p), getZ(p));
 
-            // Verifica se o ponto já existe no mapa
+            // verifica se o ponto já existe no mapa. se nao existir, adicionamos 
             if (pointIndexMap.find(key) == pointIndexMap.end()) {
                 pointIndexMap[key] = uniquePoints.size();
                 uniquePoints.push_back(p);
@@ -36,7 +36,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         }
     }
 
-    // Gerar índices
+    //geracao dos indices 
     for (int linha = 0; linha < divisions; ++linha) {
         for (int coluna = 0; coluna < divisions; ++coluna) {
             int i1 = linha * (divisions + 1) + coluna;         // Vértice inferior esquerdo
@@ -45,9 +45,9 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
             int i4 = (linha + 1) * (divisions + 1) + coluna + 1; // Vértice superior direito
 
             if (invertDiagonal) {
-                // Inverte a diagonal
+                // para inverter a diagonal
                 if (invertFaces) {
-                    // Inverte a ordem dos vértices (clockwise)
+                    // inverte a ordem dos vértices (clockwise)
                     indices.push_back(i1); // Inferior Esquerda
                     indices.push_back(i4); // Superior Direita
                     indices.push_back(i2); // Inferior Direita
@@ -66,7 +66,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
                     indices.push_back(i3); // Superior Esquerda
                 }
             } else {
-                // Mantém a diagonal original
+                // para manter a diagonal original
                 if (invertFaces) {
                     // Inverte a ordem dos vértices (clockwise)
                     indices.push_back(i1); // Inferior Esquerda
@@ -90,7 +90,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         }
     }
 
-    // Adicionar pontos e índices à primitiva
+    // adicionar pontos e índices à primitiva
     for (const auto& p : uniquePoints) {
         addPoint(plano, p);
     }
@@ -107,12 +107,12 @@ Primitive buildBox(int length, int divisions) {
 
     float half = (float)length / 2;
 
-    // Lista temporária para armazenar todos os pontos e índices
-    std::vector<Point> allPoints; // Armazena todos os pontos únicos
-    std::vector<int> allIndices;  // Define a ordem dos vértices para formar triângulos
+    // lista temporária para armazenar todos os pontos e índices
+    std::vector<Point> allPoints; // armazena todos os pontos únicos
+    std::vector<int> allIndices;  // define a ordem dos vértices para formar triângulos
 
-    // Gerar as 6 faces do cubo
-    std::cout << "Building box faces:" << std::endl;
+
+    // std::cout << "Building box faces:" << std::endl;
 
     // Face Superior (+Y)
     Primitive faceCima = buildPlane(length, divisions, 'Y', half, true, true);
@@ -137,16 +137,16 @@ Primitive buildBox(int length, int divisions) {
         auto indices = getIndices(face);
         int offset = allPoints.size();
 
-        // Adicionar pontos ao vetor global
+        // adicionar pontos ao vetor global
         allPoints.insert(allPoints.end(), pontos.begin(), pontos.end());
 
-        // Ajustar e adicionar índices
+        // adicionar índices
         for (auto index : indices) {
             allIndices.push_back(index + offset);
         }
     };
 
-    // Adicionar todas as faces ao cubo
+    // adicionar todas as faces ao cubo
     addFaceToBox(faceCima);
     addFaceToBox(faceBaixo);
     addFaceToBox(faceFrente);
@@ -157,9 +157,10 @@ Primitive buildBox(int length, int divisions) {
     for (const auto& p : allPoints) {
         addPoint(box, p);
     }
+
     setIndices(box, allIndices);
     
-    // Limpeza da memória temporária
+   
     deletePrimitive2(faceCima);
     deletePrimitive2(faceBaixo);
     deletePrimitive2(faceFrente);
@@ -180,13 +181,13 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     std::vector<Point> points;
     std::vector<int> indices;
 
-    // Adicionar polo norte
+    // adicionar polo norte
     Point poleNorth = newPoint(0, radius, 0);
     points.push_back(poleNorth);
     int northIndex = 0;
 
-    // Gerar vértices para a esfera
-    for (int stack = 1; stack < stacks; ++stack) {  // Começa de 1 e vai até < stacks
+    // geracao dos vertices 
+    for (int stack = 1; stack < stacks; ++stack) {  // de 1 e vai até < stacks
         float phi = M_PI * stack / stacks; // Latitude
         float y = radius * cos(phi);
         float xy = radius * sin(phi);
@@ -202,13 +203,15 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         }
     }
 
-    // Adicionar polo sul
+    // adicionar polo sul
     Point poleSouth = newPoint(0, -radius, 0);
     points.push_back(poleSouth);
     int southIndex = points.size() - 1;
 
-    // Gerar índices para os triângulos
-    // Conectar ao Polo Norte
+
+    // gerar índices para os triângulos
+
+    // conectar ao Polo Norte
     for (int slice = 0; slice < slices; ++slice) {
         int nextSlice = (slice + 1) % slices;
         indices.push_back(northIndex);
@@ -216,7 +219,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         indices.push_back(1 + slice);
     }
 
-    // Conectar stacks intermediárias
+    // conectar as stacks intermediárias! 
     for (int stack = 0; stack < stacks - 2; ++stack) {
         int currentStackStart = 1 + stack * slices;
         int nextStackStart = currentStackStart + slices;
@@ -224,19 +227,19 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         for (int slice = 0; slice < slices; ++slice) {
             int nextSlice = (slice + 1) % slices;
 
-            // Triângulo inferior
+            // triângulo inferior
             indices.push_back(currentStackStart + slice);
             indices.push_back(currentStackStart + nextSlice);
             indices.push_back(nextStackStart + slice);
 
-            // Triângulo superior
+            // triângulo superior
             indices.push_back(currentStackStart + nextSlice);
             indices.push_back(nextStackStart + nextSlice);
             indices.push_back(nextStackStart + slice);
         }
     }
 
-    // Conectar à base (Polo Sul)
+    // conectar à base (Polo Sul)
     int lastStackStart = 1 + (stacks - 2) * slices;
     for (int slice = 0; slice < slices; ++slice) {
         int nextSlice = (slice + 1) % slices;
@@ -245,12 +248,11 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         indices.push_back(lastStackStart + nextSlice);
     }
 
-    // Adicionar todos os pontos à primitiva
-    for (const auto& p : points) {
+  
+    for (const auto& p : points) {   // adicionar todos os pontos à primitiva
         addPoint(sphere, p);
     }
 
-    // Configurar os índices
     setIndices(sphere, indices);
 
     //std::cout << "Total de pontos: " << points.size() << std::endl;
@@ -272,21 +274,21 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
     std::vector<Point> points;
     std::vector<int> indices;
 
-    // Função para verificar se um ponto já existe
-    auto addUniquePoint = [&](const Point& p) -> int {
+   
+    auto addUniquePoint = [&](const Point& p) -> int {  // para verificar se um ponto já existe
         for (size_t i = 0; i < points.size(); ++i) {
             if (getX(points[i]) == getX(p) && getY(points[i]) == getY(p) && getZ(points[i]) == getZ(p)) {
-                return i;  // Retorna o índice do ponto existente
+                return i;  // retorna o índice do ponto existente
             }
         }
-        points.push_back(p);  // Se não encontrar, adiciona o ponto
-        return points.size() - 1;  // Retorna o índice do novo ponto
+        points.push_back(p);  // se não encontrar, entao adiciona o ponto
+        return points.size() - 1;  // índice do novo ponto
     };
 
 
     // Criar base do cone
     Point center = newPoint(0.0f, 0.0f, 0.0f);
-    int centerIndex = addUniquePoint(center);  // Adicionar o centro da base (ponto único)
+    int centerIndex = addUniquePoint(center);  // adicionar o centro da base -> ponto único
 
     std::vector<int> baseIndices;
     for (int i = 0; i < slices; i++) {
@@ -295,23 +297,23 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         float z = radius * sin(angle);
 
         Point p = newPoint(x, 0.0f, z);
-        int index = addUniquePoint(p); // Adiciona vértice da borda e verifica se é único
-        baseIndices.push_back(index); // Armazena o índice do ponto da borda
+        int index = addUniquePoint(p); // adiciona vértice da borda e verifica se é único! 
+        baseIndices.push_back(index); // armazena o índice do ponto da borda
     }
 
-    // Adicionar os triângulos para a base
-    for (int i = 0; i < slices; i++) {
+  
+    for (int i = 0; i < slices; i++) {   // adicionar os triângulos para a base
         int next = (i + 1) % slices;
         indices.push_back(centerIndex);
         indices.push_back(baseIndices[i]);
         indices.push_back(baseIndices[next]);
     }
 
-    // Criar corpo do cone (sem duplicar vértices da base)
+    // criar corpo do cone -> sem duplicar vértices da base
     std::vector<std::vector<int>> stackIndices(stacks);
 
-    // Gerar vértices para as camadas do corpo
-    for (int stack = 0; stack < stacks; ++stack) {
+     
+    for (int stack = 0; stack < stacks; ++stack) { // gerar vértices para as camadas do corpo
         float currHeight = (float)stack / stacks * height;
         float currRadius = radius * (1.0f - (float)stack / stacks);
 
@@ -321,13 +323,13 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
             float z = currRadius * sin(theta);
 
             Point p = newPoint(x, currHeight, z);
-            int index = addUniquePoint(p); // Adicionar ponto do corpo, verificando se é único
-            stackIndices[stack].push_back(index); // Armazena o índice do ponto da camada
+            int index = addUniquePoint(p); // adicionar ponto do corpo, verificando se é único
+            stackIndices[stack].push_back(index); // para armazenar o índice do ponto da camada
         }
     }
 
-    // Conectar as camadas do corpo
-    for (int stack = 0; stack < stacks - 1; ++stack) {
+   
+    for (int stack = 0; stack < stacks - 1; ++stack) {  // conectar as camadas do corpo
         for (int slice = 0; slice < slices; ++slice) {
             int nextSlice = (slice + 1) % slices;
             int i1 = stackIndices[stack][slice];
@@ -345,25 +347,24 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         }
     }
 
-    // Criar topo do cone (um único vértice no topo)
+    // criar topo do cone -> um único vértice no topo 
     Point top = newPoint(0.0f, height, 0.0f);
-    int topIndex = addUniquePoint(top); // Adicionar o topo (único ponto no topo)
+    int topIndex = addUniquePoint(top); // adicionar o topo -> único ponto no topo  (garantir que usamos apenas os pontos minimos necessarios para a construcao)
 
-    // Conectar topo com a última camada (sem duplicar vértices)
-    for (int slice = 0; slice < slices; ++slice) {
-        int curr = stackIndices[stacks - 1][slice]; // Vértice do corpo na última camada
-        int next = stackIndices[stacks - 1][(slice + 1) % slices]; // Próximo vértice na última camada
+   
+    for (int slice = 0; slice < slices; ++slice) {  // conectar topo com a última camada -> sem duplicar vértices
+        int curr = stackIndices[stacks - 1][slice]; // vértice do corpo na última camada
+        int next = stackIndices[stacks - 1][(slice + 1) % slices]; // próximo vértice na última camada
         indices.push_back(topIndex);
         indices.push_back(next);
         indices.push_back(curr);
     }
 
-    // Adicionar todos os pontos ao cone
     for (const auto& p : points) {
         addPoint(cone, p);
     }
 
-    // Definir os índices (conexões entre os vértices)
+    // definir os índices 
     setIndices(cone, indices);
 
     return cone;

@@ -23,9 +23,9 @@ void addPoint(Primitive f, const Point& p);
 
 void addPoints(Primitive f, Primitive toAdd);
 
-void primitiveToFile(Primitive f, const char* path);
+void fromPrimitiveTo3dFile(Primitive f, const char* path);
 
-Primitive fileToPrimitive(const char* path);
+Primitive from3dFileToPrimitive(const char* path);
 
 void setIndices(Primitive f, const std::vector<int>& indices) ; 
 

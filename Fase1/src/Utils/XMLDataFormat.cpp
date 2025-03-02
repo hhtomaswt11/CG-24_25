@@ -9,7 +9,7 @@ struct Window{
     int width, height;
 };  
 
-struct PosCamera{ // valores inteiros ou manter float ? 
+struct PosCamera{
     float cam1, cam2, cam3; 
 }; 
 
@@ -17,12 +17,11 @@ struct LookAt{
     float lookat1, lookat2, lookat3; 
 }; 
 
-
 struct Up{
     float up1, up2, up3; 
 }; 
 
-struct Projection{ // pode tomar valores float 
+struct Projection{ 
     float fov, near, far; 
 }; 
 
@@ -33,25 +32,24 @@ struct XMLDataFormat {
     Up up; 
     Projection projection; 
 
-    std::list<std::string> models; // List of model file paths
+    std::list<std::string> models; 
 
 };
 
 XMLDataFormat* newXMLDataFormat() {
     XMLDataFormat* newData = new XMLDataFormat();
     if (newData) {
-        // Inicializa os valores da estrutura com 0.0f
         newData->window = {512, 512}; 
         newData->poscamera = {0.0f, 0.0f, 0.0f};
         newData->lookat = {0.0f, 0.0f, 0.0f};
         newData->up = {0.0f, 0.0f, 0.0f};
         newData->projection = {0.0f, 0.0f, 0.0f};
-
-        // A lista de modelos já é inicializada vazia por padrão
     }
     return newData;
 }
 
+
+// BUILDERS 
 
 void buildPosCamera(TiXmlElement* posCamera, PosCamera& pos) {
         pos.cam1 = atof(posCamera->Attribute("x"));
@@ -90,14 +88,14 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                 return result;
             }
 
-              // Parametros da janela - leitura 
+              // parametros da janela - leitura 
               TiXmlElement* windowElement = root->FirstChildElement("window");
               if (windowElement) {
                   result->window.width = atoi(windowElement->Attribute("width"));
                   result->window.height = atoi(windowElement->Attribute("height"));
               }
 
-            // Parametros da camera 
+            // parametros da camera 
             TiXmlElement* camera = root->FirstChildElement("camera");
             if (camera) {
                 TiXmlElement* posCamera = camera->FirstChildElement("position");
@@ -115,7 +113,7 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                 }
         }
 
-            // Parsing models! 
+            // parsing models! 
             TiXmlElement* group = root->FirstChildElement("group");
             if (group) {
                 TiXmlElement* models = group->FirstChildElement("models");
@@ -136,16 +134,6 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
     return result;
 }
 
-
-std::list<std::string>& getModels(XMLDataFormat* data) {
-    if (data) {
-        return data->models;
-    }
-    static std::list<std::string> emptyList; 
-    return emptyList;
-}
-
-
 // SETTERS 
 
 void setCamPosition(XMLDataFormat* data, float x, float y, float z) {
@@ -159,6 +147,7 @@ void setCamPosition(XMLDataFormat* data, float x, float y, float z) {
 
 // GETTERS
 
+// CAMERA
 int getWidth(XMLDataFormat* data) {
     return data ? data->window.width : 0.;
 }
@@ -167,7 +156,7 @@ int getHeight(XMLDataFormat* data) {
     return data ? data->window.height: 0;
 }
 
-// Funções para obter a posição da câmera
+// COORDINATES 
 float getXPosCam(XMLDataFormat* data) {
     return data ? data->poscamera.cam1 : 0.0f;
 }
@@ -180,7 +169,7 @@ float getZPosCam(XMLDataFormat* data) {
     return data ? data->poscamera.cam3 : 0.0f;
 }
 
-// Funções para obter os valores do LookAt
+// LOOKAT 
 float getXLookAt(XMLDataFormat* data) {
     return data ? data->lookat.lookat1 : 0.0f;
 }
@@ -193,7 +182,7 @@ float getZLookAt(XMLDataFormat* data) {
     return data ? data->lookat.lookat3 : 0.0f;
 }
 
-// Funções para obter os valores do Up
+// UP 
 float getXUp(XMLDataFormat* data) {
     return data ? data->up.up1 : 0.0f;
 }
@@ -206,6 +195,7 @@ float getZUp(XMLDataFormat* data) {
     return data ? data->up.up3 : 0.0f;
 }
 
+// PROJECTION 
 float getFov(XMLDataFormat* data) {
     return data ? data->projection.fov : 0.0f;
 }
@@ -216,20 +206,32 @@ float getFar(XMLDataFormat* data) {
     return data ? data->projection.far : 0.0f;
 }
 
+// GET MODELS 
+
+std::list<std::string>& getModels(XMLDataFormat* data) {
+    if (data) {
+        return data->models;
+    }
+    static std::list<std::string> emptyList; 
+    return emptyList;
+}
+
+
 const std::list<std::string>& getModels(const XMLDataFormat* data) {
     if (data) {
         return data->models;
     }
-    // Retorna uma lista vazia se `data` for nulo
     static const std::list<std::string> emptyList;
     return emptyList;
 }
 
 
+
+// DESTROYER 
+
 void deleteXMLDataFormat(XMLDataFormat* data) {
     if (data) {
-        // Since std::list automatically handles memory management, we don't need to manually free the items
-        data->models.clear(); // Clears the list
-        delete data;  // Delete the struct itself
+        data->models.clear(); 
+        delete data;  // apagar a struct em si 
     }
 }
