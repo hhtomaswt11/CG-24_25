@@ -71,8 +71,9 @@ Primitive from3dFileToPrimitive(const char* path) {
     std::ifstream file(path);
 
     if (!file) {
-        std::cerr << "Error opening file: " << path << "\n";
-        return f;
+        std::cerr << "File does not exist. Error opening file: " << path << "\n";
+         // exit(EXIT_FAILURE);
+         return f;
     }
 
     std::string line;
@@ -90,7 +91,7 @@ Primitive from3dFileToPrimitive(const char* path) {
         sscanf(line.c_str(), "%f,%f,%f", &x, &y, &z);
         Point ponto = newPoint(x, y, z);
         addPoint(f, ponto);
-        std::cout << "Loaded point: (" << x << ", " << y << ", " << z << ")" << std::endl;
+        // std::cout << "Loaded point: (" << x << ", " << y << ", " << z << ")" << std::endl;
     }
 
     // carregar os índices da primitiva 
@@ -106,7 +107,7 @@ Primitive from3dFileToPrimitive(const char* path) {
         f->indices.push_back(i1);
         f->indices.push_back(i2);
         f->indices.push_back(i3);
-        std::cout << "Triangle connection: " << i1 << ", " << i2 << ", " << i3 << std::endl;
+        // std::cout << "Triangle connection: " << i1 << ", " << i2 << ", " << i3 << std::endl;
     }
 
     return f;

@@ -114,12 +114,12 @@ void keyProc(unsigned char key, int, int) {
         Beta += ANGLE_INCREMENT;
         if (Beta > PI / 2.0f) Beta = PI / 2.0f;
     }
+    else if (key == 'a' || key == 'A') {
+        Alpha -= ANGLE_INCREMENT;
+    }
     else if (key == 's' || key == 'S') {
         Beta -= ANGLE_INCREMENT;
         if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
-    }
-    else if (key == 'a' || key == 'A') {
-        Alpha -= ANGLE_INCREMENT;
     }
     else if (key == 'd' || key == 'D') {
         Alpha += ANGLE_INCREMENT;
@@ -172,13 +172,14 @@ void initializeCameraAndWindow(XMLDataFormat* xmlData) {
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        cerr << "Uso: " << argv[0] << " <XML file>" << endl;
+        helper_engine();
+       // cerr << "Uso: " << argv[0] << " <XML file>" << endl;
         return -1;
     }
 
     XMLDataFormat* xmlData = xmlToXMLDataFormat(argv[1]);
     if (!xmlData) {
-        cerr << "Falha no parse do xml." << endl;
+        cerr << "Error parsing XML file." << endl;
         return -1;
     }
 
@@ -189,12 +190,15 @@ int main(int argc, char* argv[]) {
 
     for (const string& model : getModels(xmlData)) {
         Primitive prim = from3dFileToPrimitive(model.c_str());
-        if (prim) {
+        std::ifstream file(model.c_str());
+
+        if (prim && file) {
             std::cout << "Loaded primitive. Results in: " << model << std::endl;
             primitives.push_back(prim);
-        } else {
-            std::cerr << "Erro: Não foi possível carregar a primitiva: " << model << std::endl;
-        }
+        } 
+        // else {
+        //     std::cerr << "Error. Could not load file: " << model << std::endl;
+        // }
     }
 
     deleteXMLDataFormat(xmlData);

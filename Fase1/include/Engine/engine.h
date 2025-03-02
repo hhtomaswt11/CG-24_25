@@ -7,6 +7,7 @@
 #include "../Utils/point.h"
 #include "../Utils/XMLDataFormat.h"
 #include "../../tinyXML/tinyxml.h"
+#include "../UI/ui.h"
 #include <list>
 #include <GL/glut.h>
 #include <iostream>
