@@ -5,37 +5,6 @@
 #include <cstdlib>
 #include <iostream>
 
-struct Window{
-    int width, height;
-};  
-
-struct PosCamera{
-    float cam1, cam2, cam3; 
-}; 
-
-struct LookAt{
-    float lookat1, lookat2, lookat3; 
-}; 
-
-struct Up{
-    float up1, up2, up3; 
-}; 
-
-struct Projection{ 
-    float fov, near, far; 
-}; 
-
-struct XMLDataFormat {
-    Window window; 
-    PosCamera poscamera; 
-    LookAt lookat; 
-    Up up; 
-    Projection projection; 
-
-    std::list<std::string> models; 
-
-};
-
 XMLDataFormat* newXMLDataFormat() {
     XMLDataFormat* newData = new XMLDataFormat();
     if (newData) {
@@ -75,6 +44,57 @@ void buildProjectionCamera(TiXmlElement* projectionCamera, Projection& projectio
         projection.far = atof(projectionCamera->Attribute("far"));
 }
 
+void buildTransform(TiXmlElement* transformElement, Transform& transform) {
+    if (transformElement) {
+        TiXmlElement* translateElement = transformElement->FirstChildElement("translate");
+        if (translateElement) {
+            transform.translate[0] = atof(translateElement->Attribute("x"));
+            transform.translate[1] = atof(translateElement->Attribute("y"));
+            transform.translate[2] = atof(translateElement->Attribute("z"));
+        }
+
+        TiXmlElement* rotateElement = transformElement->FirstChildElement("rotate");
+        if (rotateElement) {
+            transform.rotate[0] = atof(rotateElement->Attribute("angle"));
+            transform.rotate[1] = atof(rotateElement->Attribute("x"));
+            transform.rotate[2] = atof(rotateElement->Attribute("y"));
+            transform.rotate[3] = atof(rotateElement->Attribute("z"));
+        }
+
+        TiXmlElement* scaleElement = transformElement->FirstChildElement("scale");
+        if (scaleElement) {
+            transform.scale[0] = atof(scaleElement->Attribute("x"));
+            transform.scale[1] = atof(scaleElement->Attribute("y"));
+            transform.scale[2] = atof(scaleElement->Attribute("z"));
+        }
+    }
+}
+
+void buildGroup(TiXmlElement* groupElement, Group& group) {
+    TiXmlElement* transformElement = groupElement->FirstChildElement("transform");
+    if (transformElement) {
+        buildTransform(transformElement, group.transform);
+    }
+
+    TiXmlElement* modelsElement = groupElement->FirstChildElement("models");
+    if (modelsElement) {
+        for (TiXmlElement* modelElement = modelsElement->FirstChildElement("model");
+             modelElement != nullptr; modelElement = modelElement->NextSiblingElement("model")) {
+            const char* file = modelElement->Attribute("file");
+            if (file) {
+                group.models.push_back(file);  // Add the model file name to the group's models.
+            }
+        }
+    }
+
+    // Recursively handle child groups
+    for (TiXmlElement* childGroupElement = groupElement->FirstChildElement("group");
+         childGroupElement != nullptr; childGroupElement = childGroupElement->NextSiblingElement("group")) {
+        Group childGroup;
+        buildGroup(childGroupElement, childGroup);
+        group.children.push_back(childGroup);  // Add child group to the current group
+    }
+}
 
 XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
     XMLDataFormat* result = newXMLDataFormat();
@@ -113,22 +133,14 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                 }
         }
 
-            // parsing models! 
-            TiXmlElement* group = root->FirstChildElement("group");
-            if (group) {
-                TiXmlElement* models = group->FirstChildElement("models");
-                if (models) {
-                    for (TiXmlElement* model = models->FirstChildElement("model"); model; model = model->NextSiblingElement("model")) {
-                        const char* file = model->Attribute("file");
-                        if (file) {
-                            result->models.push_back(file);
-                        }
-                    }   
-                }
+             // Parse root group
+            TiXmlElement* groupElement = root->FirstChildElement("group");
+            if (groupElement) {
+                buildGroup(groupElement, result->rootGroup);
             }
         } else {
             std::cerr << "XML file does not exist. Error loading XML file: " << filePath << std::endl;
-            exit(1); 
+            exit(1);
         }
     }
     return result;
