@@ -5,6 +5,8 @@ using namespace std;
 #define WHITE 1.0f, 1.0f, 1.0f
 #define PI M_PI
 
+XMLDataFormat* xmlData = nullptr;
+
 float camX, camY, camZ;
 float lookAtx, lookAty, lookAtz;
 float upx, upy, upz;
@@ -52,38 +54,85 @@ void changeSize(int w, int h) {
 }
 
 
-void drawPrimitives() {
-    glPushMatrix();
-    glColor3f(colorR, colorG, colorB);
+void drawPrimitives(const std::list<std::string> figs) {
+    for (const auto& model : figs) {
+        Primitive prim = from3dFileToPrimitive(model.c_str());
+        if (prim) {
+            // Render the primitive
+            glPushMatrix();
+            glColor3f(colorR, colorG, colorB);
+            glPolygonMode(GL_FRONT_AND_BACK, mode);
 
-    glPolygonMode(GL_FRONT_AND_BACK, mode); 
+            const auto& pontos = getPoints(prim);
+            const auto& indices = getIndices(prim);
 
-    for (const auto& p : primitives) {
-        const auto& pontos = getPoints(p);
-        const auto& indices = getIndices(p);
+            std::vector<float> vertices;
+            for (const auto& ponto : pontos) {
+                vertices.push_back(getX(ponto));
+                vertices.push_back(getY(ponto));
+                vertices.push_back(getZ(ponto));
+            }
 
-        
-        std::vector<float> vertices;
-        for (const auto& ponto : pontos) {
-            vertices.push_back(getX(ponto));
-            vertices.push_back(getY(ponto));
-            vertices.push_back(getZ(ponto));
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+
+            glDisableClientState(GL_VERTEX_ARRAY);
+            glPopMatrix();
+        } else {
+            std::cerr << "Error: Could not load model: " << model << std::endl;
         }
-
-        
-        glEnableClientState(GL_VERTEX_ARRAY); // para ativar e especificar o formato dos vértices
-        glVertexPointer(3, GL_FLOAT, 0, vertices.data());
-
-        // desenhar com os índices 
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
-
-        // Desativar arrays de vértices
-        glDisableClientState(GL_VERTEX_ARRAY);
     }
-    glPopMatrix();
 }
 
+void applyTransform(const Transform& transform) {
 
+    // Debugging output
+    std::cout << "Applying Transform: Translate(" 
+              << transform.translate[0] << ", " 
+              << transform.translate[1] << ", " 
+              << transform.translate[2] << ") "
+              << "Rotate(" << transform.rotate[0] << ", " 
+              << transform.rotate[1] << ", " 
+              << transform.rotate[2] << ", " 
+              << transform.rotate[3] << ") "
+              << "Scale(" << transform.scale[0] << ", "
+              << transform.scale[1] << ", "
+              << transform.scale[2] << ")" << std::endl;
+
+
+    // Aplicar translação
+
+    
+    // Aplicar rotação (corrigida para suportar hierarquia)
+    glRotatef(transform.rotate[0], transform.rotate[1], transform.rotate[2], transform.rotate[3]);
+    
+
+    glTranslatef(transform.translate[0], transform.translate[1], transform.translate[2]);
+    
+    // Aplicar escala
+    glScalef(transform.scale[0], transform.scale[1], transform.scale[2]);
+}
+
+void renderGroup(const Group& group) {
+        std::cout << "Rendering Group: " << &group << std::endl;  // Output the address of the group to identify it
+
+
+    glPushMatrix();
+    applyTransform(group.transform);
+    
+    
+    // Renderizar os grupos filhos de forma recursiva
+    for (const auto& child : group.children) {
+        renderGroup(child);
+        std::cout << "Rendering Child Group: " << &child << std::endl;  // Output the address of the child group
+    }
+
+    drawPrimitives(group.models);
+    
+    glPopMatrix();
+}
 
 void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -105,7 +154,7 @@ void renderScene() {
     }
 
     glPolygonMode(GL_FRONT, mode); 
-    drawPrimitives();
+    renderGroup(xmlData->rootGroup);
     glutSwapBuffers();
 }
 
@@ -177,7 +226,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    XMLDataFormat* xmlData = xmlToXMLDataFormat(argv[1]);
+    xmlData = xmlToXMLDataFormat(argv[1]);
     if (!xmlData) {
         cerr << "Error parsing XML file." << endl;
         return -1;
@@ -201,7 +250,6 @@ int main(int argc, char* argv[]) {
         // }
     }
 
-    deleteXMLDataFormat(xmlData);
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -216,5 +264,6 @@ int main(int argc, char* argv[]) {
     
     glutMainLoop();
 
+    deleteXMLDataFormat(xmlData);
     return 0;
 }
