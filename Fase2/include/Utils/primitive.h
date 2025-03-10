@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include "point.h"
 
 typedef struct primitive* Primitive;
 // typedef struct  color* Color; 
