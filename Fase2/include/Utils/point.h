@@ -16,4 +16,4 @@ float getZ(Point p);
 Point dupPoint(Point);
 void deletePoint(Point p);
 
-#endif // POINT
+#endif 

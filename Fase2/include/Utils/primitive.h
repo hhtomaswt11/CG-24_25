@@ -45,4 +45,4 @@ void deletePrimitive(Primitive f);
 
 void deletePrimitive2(Primitive f);
 
-#endif // PRIMITIVE
+#endif 

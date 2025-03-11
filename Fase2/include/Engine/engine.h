@@ -3,16 +3,15 @@
 
 
 
-#include "../Utils/primitive.h"
-#include "../Utils/point.h"
-#include "../Utils/XMLDataFormat.h"
-#include "../../tinyXML/tinyxml.h"
-#include "../UI/ui.h"
 #include <list>
 #include <GL/glut.h>
 #include <iostream>
 #include <list>
 #include <cmath>
+#include "../Utils/XMLDataFormat.h" 
+#include "../Utils/primitive.h"
+#include "../../tinyXML/tinyxml.h"
+#include "../UI/ui.h"
 
 void changeSize(int w, int h) ; 
 void drawPrimitives(const std::list<std::string> figs) ;

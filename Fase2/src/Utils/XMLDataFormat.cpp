@@ -5,6 +5,48 @@
 #include <cstdlib>
 #include <iostream>
 
+struct Window {
+    int width, height;
+};
+
+struct PosCamera {
+    float cam1, cam2, cam3;
+};
+
+struct LookAt {
+    float lookat1, lookat2, lookat3;
+};
+
+struct Up {
+    float up1, up2, up3;
+};
+
+struct Projection {
+    float fov, near, far;
+};
+
+struct Transform {
+    float translate[3] = {0.0f, 0.0f, 0.0f}; // x, y, z
+    float rotate[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // angle, x, y, z
+    float scale[3] = {1.0f, 1.0f, 1.0f}; // x, y, z
+};
+
+struct Group {
+    Transform transform;
+    std::list<std::string> models;
+    std::list<Group*> children;  
+};
+
+struct XMLDataFormat {
+    Window window;
+    PosCamera poscamera;
+    LookAt lookat;
+    Up up;
+    Projection projection;
+    std::list<std::string> models;
+    Group rootGroup;
+};
+
 XMLDataFormat* newXMLDataFormat() {
     XMLDataFormat* newData = new XMLDataFormat();
     if (newData) {
@@ -92,7 +134,9 @@ void buildGroup(TiXmlElement* groupElement, Group& group) {
          childGroupElement != nullptr; childGroupElement = childGroupElement->NextSiblingElement("group")) {
         Group childGroup;
         buildGroup(childGroupElement, childGroup);
-        group.children.push_back(childGroup);  // Add child group to the current group
+        // group.children.push_back(childGroup);  // Add child group to the current group
+        group.children.push_back(new Group(childGroup));
+
     }
 }
 
@@ -218,6 +262,35 @@ float getFar(XMLDataFormat* data) {
     return data ? data->projection.far : 0.0f;
 }
 
+const float* getRotate(const Transform* t) {
+    return t->rotate;
+}
+
+const float* getTranslate(const Transform* t) {
+    return t->translate;
+}
+
+const float* getScale(const Transform* t) {
+    return t->scale;
+}
+
+
+const Group* getRootGroup(const XMLDataFormat* data) {
+    return &data->rootGroup;
+}
+
+const std::list<Group*>& getChildren(const Group* group) { // Agora retorna lista de ponteiros
+    return group->children;
+}
+
+const std::list<std::string>& getModels(const Group* group) {
+    return group->models;
+}
+
+const Transform* getTransform(const Group* group) {
+    return &group->transform;
+}
+
 // GET MODELS 
 
 std::list<std::string>& getModels(XMLDataFormat* data) {
@@ -246,4 +319,11 @@ void deleteXMLDataFormat(XMLDataFormat* data) {
         data->models.clear(); 
         delete data;  // apagar a struct em si 
     }
+}
+
+void deleteGroup(Group* group) {
+    for (auto* child : group->children) {
+        deleteGroup(child);
+    }
+    delete group;
 }

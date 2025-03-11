@@ -58,7 +58,6 @@ void drawPrimitives(const std::list<std::string> figs) {
     for (const auto& model : figs) {
         Primitive prim = from3dFileToPrimitive(model.c_str());
         if (prim) {
-            // Render the primitive
             glPushMatrix();
             glColor3f(colorR, colorG, colorB);
             glPolygonMode(GL_FRONT_AND_BACK, mode);
@@ -87,52 +86,69 @@ void drawPrimitives(const std::list<std::string> figs) {
 }
 
 void applyTransform(const Transform& transform) {
+    // debug 
+    // std::cout << "Transform: Translate(" 
+    //           << transform.translate[0] << ", " 
+    //           << transform.translate[1] << ", " 
+    //           << transform.translate[2] << ") "
+    //           << "Rotate(" << transform.rotate[0] << ", " 
+    //           << transform.rotate[1] << ", " 
+    //           << transform.rotate[2] << ", " 
+    //           << transform.rotate[3] << ") "
+    //           << "Scale(" << transform.scale[0] << ", "
+    //           << transform.scale[1] << ", "
+    //           << transform.scale[2] << ")" << std::endl;
 
-    // Debugging output
-    std::cout << "Applying Transform: Translate(" 
-              << transform.translate[0] << ", " 
-              << transform.translate[1] << ", " 
-              << transform.translate[2] << ") "
-              << "Rotate(" << transform.rotate[0] << ", " 
-              << transform.rotate[1] << ", " 
-              << transform.rotate[2] << ", " 
-              << transform.rotate[3] << ") "
-              << "Scale(" << transform.scale[0] << ", "
-              << transform.scale[1] << ", "
-              << transform.scale[2] << ")" << std::endl;
+    const float* rotate = getRotate(&transform);
+    const float* translate = getTranslate(&transform);
+    const float* scale = getScale(&transform);
 
+    glRotatef(rotate[0], rotate[1], rotate[2], rotate[3]);
+    glTranslatef(translate[0], translate[1], translate[2]);
+    glScalef(scale[0], scale[1], scale[2]);
 
-    // Aplicar translação
-
-    
-    // Aplicar rotação (corrigida para suportar hierarquia)
-    glRotatef(transform.rotate[0], transform.rotate[1], transform.rotate[2], transform.rotate[3]);
-    
-
-    glTranslatef(transform.translate[0], transform.translate[1], transform.translate[2]);
-    
-    // Aplicar escala
-    glScalef(transform.scale[0], transform.scale[1], transform.scale[2]);
+    // glRotatef(transform.rotate[0], transform.rotate[1], transform.rotate[2], transform.rotate[3]);
+    // glTranslatef(transform.translate[0], transform.translate[1], transform.translate[2]);
+    // glScalef(transform.scale[0], transform.scale[1], transform.scale[2]);
 }
+
+// void renderGroup(const Group& group) {
+//     std::cout << "Rendering Group: " << &group << std::endl;
+
+//     glPushMatrix();  // guarda a matriz do grupo principal
+
+//     applyTransform(*getTransform(&group));
+
+    
+//     // renderizar os grupos filhos de forma recursiva
+//     for (const auto& child : getChildren(&group)) {
+//         glPushMatrix();  // guarda o estado antes de desenhar o grupo filho
+//         renderGroup(child);
+//         glPopMatrix();   // restaurar o estado após desenhar o grupo filho
+//     }
+
+//     drawPrimitives(getModels(&group));
+    
+//     glPopMatrix();  // restaurar a matriz do grupo principal
+// }
 
 void renderGroup(const Group& group) {
-        std::cout << "Rendering Group: " << &group << std::endl;  // Output the address of the group to identify it
-
-
     glPushMatrix();
-    applyTransform(group.transform);
-    
-    
-    // Renderizar os grupos filhos de forma recursiva
-    for (const auto& child : group.children) {
-        renderGroup(child);
-        std::cout << "Rendering Child Group: " << &child << std::endl;  // Output the address of the child group
+    applyTransform(*getTransform(&group));
+
+    // Acessar os filhos corretamente usando ponteiros
+    for (const auto* child : getChildren(&group)) {  // Alterado para ponteiros
+        glPushMatrix();
+        renderGroup(*child); // Desreferenciamos o ponteiro
+        glPopMatrix();
     }
 
-    drawPrimitives(group.models);
-    
+    drawPrimitives(getModels(&group));
+
     glPopMatrix();
 }
+
+
 
 void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -154,7 +170,8 @@ void renderScene() {
     }
 
     glPolygonMode(GL_FRONT, mode); 
-    renderGroup(xmlData->rootGroup);
+    renderGroup(*getRootGroup(xmlData));
+
     glutSwapBuffers();
 }
 

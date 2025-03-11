@@ -286,7 +286,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
     };
 
 
-    // Criar base do cone
+    // base do cone
     Point center = newPoint(0.0f, 0.0f, 0.0f);
     int centerIndex = addUniquePoint(center);  // adicionar o centro da base -> ponto único
 

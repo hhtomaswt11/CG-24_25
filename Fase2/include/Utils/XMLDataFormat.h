@@ -6,50 +6,15 @@
 #include "../../tinyXML/tinyxml.h"
 #include "../../tinyXML/tinystr.h"
 
-// Define all structures
-struct Window {
-    int width, height;
-};
+typedef struct Window window; 
+typedef struct PosCamera posCamera; 
+typedef struct LookAt lookAt; 
+typedef struct Up up; 
+typedef struct Projection projection; 
+typedef struct Transform transform; 
+typedef struct Group group; 
+typedef struct XMLDataFormat xmlDataFormat; 
 
-struct PosCamera {
-    float cam1, cam2, cam3;
-};
-
-struct LookAt {
-    float lookat1, lookat2, lookat3;
-};
-
-struct Up {
-    float up1, up2, up3;
-};
-
-struct Projection {
-    float fov, near, far;
-};
-
-struct Transform {
-    float translate[3] = {0.0f, 0.0f, 0.0f}; // x, y, z
-    float rotate[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // angle, x, y, z
-    float scale[3] = {1.0f, 1.0f, 1.0f}; // x, y, z
-};
-
-struct Group {
-    Transform transform;
-    std::list<std::string> models;
-    std::list<Group> children;
-};
-
-struct XMLDataFormat {
-    Window window;
-    PosCamera poscamera;
-    LookAt lookat;
-    Up up;
-    Projection projection;
-    std::list<std::string> models;
-    Group rootGroup;
-};
-
-// Function declarations
 XMLDataFormat* newXMLDataFormat();
 XMLDataFormat* xmlToXMLDataFormat(const char* filePath);
 
@@ -79,6 +44,16 @@ float getFov(XMLDataFormat* data);
 float getNear(XMLDataFormat* data);
 float getFar(XMLDataFormat* data);
 
+const float* getRotate(const Transform* t);
+const float* getTranslate(const Transform* t);
+const float* getScale(const Transform* t);
+
+const Group* getRootGroup(const XMLDataFormat* data);
+const std::list<Group*>& getChildren(const Group* group);
+const std::list<std::string>& getModels(const Group* group);
+const Transform* getTransform(const Group* group);
+
+
 void buildPosCamera(TiXmlElement* posCamera, PosCamera& pos);
 void buildLookAtCamera(TiXmlElement* lookAtCamera, LookAt& lookAt);
 void buildUpCamera(TiXmlElement* upCamera, Up& up);
@@ -88,5 +63,7 @@ void buildTransform(TiXmlElement* transformElement, Transform& transform);
 void buildGroup(TiXmlElement* groupElement, Group& group);
 
 void deleteXMLDataFormat(XMLDataFormat* data);
+void deleteGroup(Group* group); 
+
 
 #endif

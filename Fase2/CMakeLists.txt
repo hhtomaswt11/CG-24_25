@@ -44,7 +44,6 @@ target_include_directories(engine PRIVATE ./include/Utils)
 target_include_directories(generator PRIVATE ./include/Utils)
 
 
-target_link_libraries(tinyXML) # remover no futuro 
 
 # Associa a biblioteca das figuras e dos pontos aos executáveis
 target_link_libraries(generator Utils_n_Build_lib)
