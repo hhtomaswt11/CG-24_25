@@ -369,3 +369,157 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
 
     return cone;
 }
+
+/**Primitive buildRing(float innerRadius, float outerRadius, int slices, int stacks) {
+    if (innerRadius <= 0 || outerRadius <= innerRadius || slices < 3 || stacks < 1) {
+        std::cerr << "Erro: Parâmetros inválidos para gerar o anel." << std::endl;
+        return nullptr;
+    }
+
+    Primitive ring = newEmptyPrimitive();
+    if (!ring) return ring;
+
+    std::vector<Point> points;
+    std::vector<int> indices;
+
+    auto addUniquePoint = [&](const Point& p) -> int {
+        for (size_t i = 0; i < points.size(); ++i) {
+            if (getX(points[i]) == getX(p) && getY(points[i]) == getY(p) && getZ(points[i]) == getZ(p)) {
+                return i;
+            }
+        }
+        points.push_back(p);
+        return points.size() - 1;
+    };
+
+    float radiusStep = (outerRadius - innerRadius) / stacks;
+
+    std::vector<std::vector<int>> stackIndices(stacks + 1);
+
+    for (int stack = 0; stack <= stacks; ++stack) {
+        float currRadius = innerRadius + stack * radiusStep;
+
+        for (int slice = 0; slice < slices; ++slice) {
+            float theta = 2.0f * M_PI * slice / slices;
+            float x = currRadius * cos(theta);
+            float z = currRadius * sin(theta);
+
+            Point p = newPoint(x, 0.0f, z);
+            int index = addUniquePoint(p);
+            stackIndices[stack].push_back(index);
+        }
+    }
+
+    for (int stack = 0; stack < stacks; ++stack) {
+        for (int slice = 0; slice < slices; ++slice) {
+            int nextSlice = (slice + 1) % slices;
+            int i1 = stackIndices[stack][slice];
+            int i2 = stackIndices[stack][nextSlice];
+            int i3 = stackIndices[stack + 1][slice];
+            int i4 = stackIndices[stack + 1][nextSlice];
+
+            // Face superior
+            indices.push_back(i1);
+            indices.push_back(i4);
+            indices.push_back(i3);
+
+            indices.push_back(i1);
+            indices.push_back(i2);
+            indices.push_back(i4);
+
+            // Face inferior (duplicada, mas com ordem invertida)
+            indices.push_back(i3);
+            indices.push_back(i4);
+            indices.push_back(i1);
+
+            indices.push_back(i4);
+            indices.push_back(i2);
+            indices.push_back(i1);
+        }
+    }
+
+    for (const auto& p : points) {
+        addPoint(ring, p);
+    }
+
+    setIndices(ring, indices);
+
+    return ring;
+}**/
+
+Primitive buildRing(float innerRadius, float outerRadius, int slices, int stacks) {
+    if (innerRadius <= 0 || outerRadius <= innerRadius || slices < 3 || stacks < 1) {
+        std::cerr << "Erro: Parâmetros inválidos para gerar o anel." << std::endl;
+        return nullptr;
+    }
+
+    Primitive ring = newEmptyPrimitive();
+    if (!ring) return ring;
+
+    std::vector<Point> points;
+    std::vector<int> indices;
+
+    auto addUniquePoint = [&](const Point& p) -> int {
+        for (size_t i = 0; i < points.size(); ++i) {
+            if (getX(points[i]) == getX(p) && getY(points[i]) == getY(p) && getZ(points[i]) == getZ(p)) {
+                return i;
+            }
+        }
+        points.push_back(p);
+        return points.size() - 1;
+    };
+
+    float radiusStep = (outerRadius - innerRadius) / stacks;
+
+    std::vector<std::vector<int>> stackIndices(stacks + 1);
+
+    for (int stack = 0; stack <= stacks; ++stack) {
+        float currRadius = innerRadius + stack * radiusStep;
+
+        for (int slice = 0; slice < slices; ++slice) {
+            float theta = 2.0f * M_PI * slice / slices;
+            float x = currRadius * cos(theta);
+            float z = currRadius * sin(theta);
+
+            Point p = newPoint(x, 0.0f, z);
+            int index = addUniquePoint(p);
+            stackIndices[stack].push_back(index);
+        }
+    }
+
+    for (int stack = 0; stack < stacks; ++stack) {
+        for (int slice = 0; slice < slices; ++slice) {
+            int nextSlice = (slice + 1) % slices;
+            int i1 = stackIndices[stack][slice];
+            int i2 = stackIndices[stack][nextSlice];
+            int i3 = stackIndices[stack + 1][slice];
+            int i4 = stackIndices[stack + 1][nextSlice];
+
+            // Triangles for the top-facing surface
+            indices.push_back(i1);
+            indices.push_back(i2);
+            indices.push_back(i3);
+
+            indices.push_back(i3);
+            indices.push_back(i2);
+            indices.push_back(i4);
+
+            // Triangles for the bottom-facing surface (flipped order)
+            indices.push_back(i3);
+            indices.push_back(i2);
+            indices.push_back(i1);
+
+            indices.push_back(i4);
+            indices.push_back(i2);
+            indices.push_back(i3);
+        }
+    }
+
+    for (const auto& p : points) {
+        addPoint(ring, p);
+    }
+
+    setIndices(ring, indices);
+
+    return ring;
+}
