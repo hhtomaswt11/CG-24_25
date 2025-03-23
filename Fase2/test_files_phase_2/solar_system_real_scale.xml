@@ -1,10 +1,10 @@
 <world>
     <window width="1900" height="900" />
     <camera>
-        <position x="-39" y="13" z="-12" />
+        <position x="-115" y="13" z="-19" />
         <lookAt x="0" y="0" z="0" />
         <up x="0" y="1" z="0" />
-        <projection fov="45" near="1" far="500" />
+        <projection fov="45" near="1" far="14500" />
     </camera>
 
     <group>
@@ -29,7 +29,7 @@
         <group>
             <transform>
                 <rotate angle="45" x="0" y="1" z="0" />
-                <translate x="4.0" y="0" z="0" />
+                <translate x="3.9" y="0" z="0" />
                 <scale x="0.11" y="0.11" z="0.11" />
             </transform>
             <models>
@@ -41,7 +41,7 @@
         <group>
             <transform>
                 <rotate angle="90" x="0" y="1" z="0" />
-                <translate x="5.0" y="0" z="0" />
+                <translate x="7.2" y="0" z="0" />
                 <scale x="0.21" y="0.21" z="0.21" />
             </transform>
             <models>
@@ -53,7 +53,7 @@
         <group>
             <transform>
                 <rotate angle="135" x="0" y="1" z="0" />
-                <translate x="5.6" y="0" z="0" />
+                <translate x="10" y="0" z="0" />
                 <scale x="0.215" y="0.215" z="0.215" />
             </transform>
             <models>
@@ -75,7 +75,7 @@
         <group>
             <transform>
                 <rotate angle="200" x="0" y="1" z="0" />
-                <translate x="6.4" y="0" z="0" />
+                <translate x="15.2" y="0" z="0" />
                 <scale x="0.13" y="0.13" z="0.13" />
             </transform>
             <models>
@@ -107,7 +107,7 @@
         <group>
             <transform>
                 <rotate angle="250" x="0" y="1" z="0" />
-                <translate x="22.2" y="0" z="0" />
+                <translate x="52" y="0" z="0" />
                 <scale x="0.90" y="0.90" z="0.90" />
             </transform>
             <models>
@@ -117,7 +117,7 @@
                  <group>
                 <transform>
                   <!--<rotate angle="300" x="0" y="1" z="0" />-->
-                    <translate x="-2.9999999999999" y="0" z="0" />
+                    <translate x="-2.84444" y="0" z="0" />
                     <scale x="0.135" y="0.135" z="0.135" />
                 </transform>
                 <models>
@@ -129,7 +129,7 @@
               <group>
                 <transform>
                     <rotate angle="280" x="0" y="1" z="0" />
-                    <translate x="3.6" y="0" z="0" />
+                    <translate x="3.3" y="0" z="0" />
                     <scale x="0.143" y="0.143" z="0.143" />
                 </transform>
                 <models>
@@ -139,7 +139,7 @@
             <!-- Ganimedes -->
             <group>
                 <transform>
-                    <translate x="4.43333" y="0" z="0" />
+                    <translate x="4.433333" y="0" z="0" />
                     <scale x="0.155" y="0.155" z="0.155" />
                 </transform>
                 <models>
@@ -150,7 +150,7 @@
             <group>
                 <transform>
                 <rotate angle="300" x="0" y="1" z="0" />
-                    <translate x="-4.77" y="0" z="0" />
+                    <translate x="-4.1000333" y="0" z="0" />
                     <scale x="0.11" y="0.11" z="0.11" />
                 </transform>
                 <models>
@@ -163,7 +163,7 @@
         <group>
             <transform>
                 <rotate angle="300" x="0" y="1" z="0" />
-                <translate x="33.0" y="0" z="0" />
+                <translate x="95.8" y="0" z="0" />
                 <scale x="0.86" y="0.86" z="0.86" />
             </transform>
             <models>
@@ -185,8 +185,8 @@
         <group>
                  <transform>
                 <rotate angle="350" x="0" y="1" z="0" />
-                <translate x="39.0" y="0" z="0" />
-                <scale x="0.38" y="0.39" z="0.39" />
+                <translate x="192.2" y="0" z="0" />
+                <scale x="0.39" y="0.39" z="0.39" />
             </transform>
             <models>
                 <model file="sphere.3d" />
@@ -197,7 +197,7 @@
         <group>
            <transform>
                 <rotate angle="400" x="0" y="1" z="0" />
-                <translate x="55.0" y="0" z="0" />
+                <translate x="300.5" y="0" z="0" />
                 <scale x="0.38" y="0.38" z="0.38" />
             </transform>
             <models>
