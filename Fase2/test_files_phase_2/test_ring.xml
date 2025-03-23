@@ -12,7 +12,7 @@
 		    <translate x="0" y="1" z="0" />
         </transform>
         <models> 
-            <model file="ring.3d" /> <!-- generator anel 3 5 10 1 anel_3_5_10_1.3d -->
+            <model file="anel_3_5_10_1.3d" /> <!-- generator anel 3 5 10 1 anel_3_5_10_1.3d -->
         </models>
     </group>
 </world>
