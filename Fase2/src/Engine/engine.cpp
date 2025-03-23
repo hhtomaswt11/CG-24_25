@@ -44,9 +44,14 @@ void updateCameraPosition() {
     camZ = lookAtz + radius * cos(Beta) * cos(Alpha);
 }
 
+
 void changeSize(int w, int h) {
     if (h == 0) h = 1;
     float ratio = (float)w / (float)h;
+
+    // informa o opengl que toda a janela (com novo wxh) deve ser usada para desenhar 
+    glViewport(0, 0, w, h);
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(fov, ratio, nearPlane, farPlane);
@@ -86,18 +91,6 @@ void drawPrimitives(const std::list<std::string> figs) {
 }
 
 void applyTransform(const Transform& transform) {
-    // debug 
-    // std::cout << "Transform: Translate(" 
-    //           << transform.translate[0] << ", " 
-    //           << transform.translate[1] << ", " 
-    //           << transform.translate[2] << ") "
-    //           << "Rotate(" << transform.rotate[0] << ", " 
-    //           << transform.rotate[1] << ", " 
-    //           << transform.rotate[2] << ", " 
-    //           << transform.rotate[3] << ") "
-    //           << "Scale(" << transform.scale[0] << ", "
-    //           << transform.scale[1] << ", "
-    //           << transform.scale[2] << ")" << std::endl;
 
     const float* rotate = getRotate(&transform);
     const float* translate = getTranslate(&transform);
@@ -107,39 +100,18 @@ void applyTransform(const Transform& transform) {
     glTranslatef(translate[0], translate[1], translate[2]);
     glScalef(scale[0], scale[1], scale[2]);
 
-    // glRotatef(transform.rotate[0], transform.rotate[1], transform.rotate[2], transform.rotate[3]);
-    // glTranslatef(transform.translate[0], transform.translate[1], transform.translate[2]);
-    // glScalef(transform.scale[0], transform.scale[1], transform.scale[2]);
+
 }
 
-// void renderGroup(const Group& group) {
-//     std::cout << "Rendering Group: " << &group << std::endl;
 
-//     glPushMatrix();  // guarda a matriz do grupo principal
-
-//     applyTransform(*getTransform(&group));
-
-    
-//     // renderizar os grupos filhos de forma recursiva
-//     for (const auto& child : getChildren(&group)) {
-//         glPushMatrix();  // guarda o estado antes de desenhar o grupo filho
-//         renderGroup(child);
-//         glPopMatrix();   // restaurar o estado após desenhar o grupo filho
-//     }
-
-//     drawPrimitives(getModels(&group));
-    
-//     glPopMatrix();  // restaurar a matriz do grupo principal
-// }
 
 void renderGroup(const Group& group) {
     glPushMatrix();
     applyTransform(*getTransform(&group));
 
-    // Acessar os filhos corretamente usando ponteiros
-    for (const auto* child : getChildren(&group)) {  // Alterado para ponteiros
+    for (const auto* child : getChildren(&group)) {  
         glPushMatrix();
-        renderGroup(*child); // Desreferenciamos o ponteiro
+        renderGroup(*child); 
         glPopMatrix();
     }
 
@@ -153,21 +125,28 @@ void renderGroup(const Group& group) {
 void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    gluLookAt(camX, camY, camZ, lookAtx, lookAty, lookAtz, upx, upy, upz);
+    gluLookAt(camX, camY, camZ, 
+              lookAtx, lookAty, lookAtz, 
+              upx, upy, upz);
+
+    float axisLength = 500.0f;  // length dos eixos x y z 
 
     if (showAxes) {
         glBegin(GL_LINES);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(-100.0f, 0.0f, 0.0f);
-        glVertex3f(100.0f, 0.0f, 0.0f);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(0.0f, -100.0f, 0.0f);
-        glVertex3f(0.0f, 100.0f, 0.0f);
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(0.0f, 0.0f, -100.0f);
-        glVertex3f(0.0f, 0.0f, 100.0f);
+        glColor3f(1.0f, 0.0f, 0.0f); // X - vermelho
+        glVertex3f(-axisLength, 0.0f, 0.0f);
+        glVertex3f(axisLength, 0.0f, 0.0f);
+        
+        glColor3f(0.0f, 1.0f, 0.0f); // Y - verde
+        glVertex3f(0.0f, -axisLength, 0.0f);
+        glVertex3f(0.0f, axisLength, 0.0f);
+        
+        glColor3f(0.0f, 0.0f, 1.0f); // Z - azul
+        glVertex3f(0.0f, 0.0f, -axisLength);
+        glVertex3f(0.0f, 0.0f, axisLength);
         glEnd();
     }
+
 
     glPolygonMode(GL_FRONT, mode); 
     renderGroup(*getRootGroup(xmlData));
@@ -270,7 +249,14 @@ int main(int argc, char* argv[]) {
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(100, 100);
+    // monitor 1920x1080
+    int width = 1920,
+        height = 1080,
+        posX = (width - windowWidth) / 2,
+        posY = (height - windowHeight) / 2;
+        
+    glutInitWindowPosition(posX, posY);
+
     glutInitWindowSize(windowWidth, windowHeight);
     glutCreateWindow("CG @UMINHO - Fase 1 - Grupo 36");
     glutDisplayFunc(renderScene);
@@ -282,5 +268,6 @@ int main(int argc, char* argv[]) {
     glutMainLoop();
 
     deleteXMLDataFormat(xmlData);
+
     return 0;
 }

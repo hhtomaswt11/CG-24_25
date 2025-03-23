@@ -13,6 +13,6 @@
  
  Primitive buildCone(int radius, int height, int slices, int stacks) ;
 
- Primitive buildRing(float innerRadius, float outerRadius, int slices, int stacks);
+ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int stacks);
 
 #endif 

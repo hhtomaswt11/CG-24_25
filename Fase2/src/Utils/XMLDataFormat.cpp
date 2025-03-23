@@ -25,11 +25,24 @@ struct Projection {
     float fov, near, far;
 };
 
+// struct Transform {
+//     float translate[3] = {0.0f, 0.0f, 0.0f}; // x, y, z
+//     float rotate[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // angle, x, y, z
+//     float scale[3] = {1.0f, 1.0f, 1.0f}; // x, y, z
+// };
+
 struct Transform {
-    float translate[3] = {0.0f, 0.0f, 0.0f}; // x, y, z
-    float rotate[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // angle, x, y, z
-    float scale[3] = {1.0f, 1.0f, 1.0f}; // x, y, z
+    float translate[3];
+    float rotate[4];
+    float scale[3];
+
+    Transform() {
+        translate[0] = translate[1] = translate[2] = 0.0f;
+        rotate[0] = rotate[1] = rotate[2] = rotate[3] = 0.0f;
+        scale[0] = scale[1] = scale[2] = 1.0f;
+    }
 };
+
 
 struct Group {
     Transform transform;
@@ -57,6 +70,58 @@ XMLDataFormat* newXMLDataFormat() {
         newData->projection = {0.0f, 0.0f, 0.0f};
     }
     return newData;
+}
+
+
+
+XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
+    XMLDataFormat* result = newXMLDataFormat();
+    if (result) {
+        TiXmlDocument doc;
+        if (doc.LoadFile(filePath)) {
+            TiXmlElement* root = doc.FirstChildElement("world");
+
+            if (!root) {
+                std::cerr << "Error: <world> element not found in XML file: " << filePath << std::endl;
+                return result;
+            }
+
+              // parametros da janela - leitura 
+              TiXmlElement* windowElement = root->FirstChildElement("window");
+              if (windowElement) {
+                  result->window.width = atoi(windowElement->Attribute("width"));
+                  result->window.height = atoi(windowElement->Attribute("height"));
+              }
+
+            // parametros da camera 
+            TiXmlElement* camera = root->FirstChildElement("camera");
+            if (camera) {
+                TiXmlElement* posCamera = camera->FirstChildElement("position");
+                TiXmlElement* lookAtCamera = camera->FirstChildElement("lookAt");
+                TiXmlElement* upCamera = camera->FirstChildElement("up");
+                TiXmlElement* projectionCamera = camera->FirstChildElement("projection");
+
+                if (posCamera && lookAtCamera && upCamera && projectionCamera){ buildPosCamera(posCamera, result->poscamera);
+                buildLookAtCamera(lookAtCamera, result->lookat); 
+                buildUpCamera(upCamera, result->up); 
+                buildProjectionCamera(projectionCamera, result->projection); 
+                }
+                else{
+                    std::cerr << "Error: Invalid camera parameters "<< std::endl;
+                }
+        }
+
+            
+            TiXmlElement* groupElement = root->FirstChildElement("group");
+            if (groupElement) {
+                buildGroup(groupElement, result->rootGroup);
+            }
+        } else {
+            std::cerr << "XML file does not exist. Error loading XML file: " << filePath << std::endl;
+            exit(1);
+        }
+    }
+    return result;
 }
 
 
@@ -124,70 +189,18 @@ void buildGroup(TiXmlElement* groupElement, Group& group) {
              modelElement != nullptr; modelElement = modelElement->NextSiblingElement("model")) {
             const char* file = modelElement->Attribute("file");
             if (file) {
-                group.models.push_back(file);  // Add the model file name to the group's models.
+                group.models.push_back(file);  
             }
         }
     }
 
-    // Recursively handle child groups
     for (TiXmlElement* childGroupElement = groupElement->FirstChildElement("group");
          childGroupElement != nullptr; childGroupElement = childGroupElement->NextSiblingElement("group")) {
         Group childGroup;
         buildGroup(childGroupElement, childGroup);
-        // group.children.push_back(childGroup);  // Add child group to the current group
         group.children.push_back(new Group(childGroup));
 
     }
-}
-
-XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
-    XMLDataFormat* result = newXMLDataFormat();
-    if (result) {
-        TiXmlDocument doc;
-        if (doc.LoadFile(filePath)) {
-            TiXmlElement* root = doc.FirstChildElement("world");
-
-            if (!root) {
-                std::cerr << "Error: <world> element not found in XML file: " << filePath << std::endl;
-                return result;
-            }
-
-              // parametros da janela - leitura 
-              TiXmlElement* windowElement = root->FirstChildElement("window");
-              if (windowElement) {
-                  result->window.width = atoi(windowElement->Attribute("width"));
-                  result->window.height = atoi(windowElement->Attribute("height"));
-              }
-
-            // parametros da camera 
-            TiXmlElement* camera = root->FirstChildElement("camera");
-            if (camera) {
-                TiXmlElement* posCamera = camera->FirstChildElement("position");
-                TiXmlElement* lookAtCamera = camera->FirstChildElement("lookAt");
-                TiXmlElement* upCamera = camera->FirstChildElement("up");
-                TiXmlElement* projectionCamera = camera->FirstChildElement("projection");
-
-                if (posCamera && lookAtCamera && upCamera && projectionCamera){ buildPosCamera(posCamera, result->poscamera);
-                buildLookAtCamera(lookAtCamera, result->lookat); 
-                buildUpCamera(upCamera, result->up); 
-                buildProjectionCamera(projectionCamera, result->projection); 
-                }
-                else{
-                    std::cerr << "Error: Invalid camera parameters "<< std::endl;
-                }
-        }
-
-             // Parse root group
-            TiXmlElement* groupElement = root->FirstChildElement("group");
-            if (groupElement) {
-                buildGroup(groupElement, result->rootGroup);
-            }
-        } else {
-            std::cerr << "XML file does not exist. Error loading XML file: " << filePath << std::endl;
-            exit(1);
-        }
-    }
-    return result;
 }
 
 // SETTERS 
@@ -279,7 +292,7 @@ const Group* getRootGroup(const XMLDataFormat* data) {
     return &data->rootGroup;
 }
 
-const std::list<Group*>& getChildren(const Group* group) { // Agora retorna lista de ponteiros
+const std::list<Group*>& getChildren(const Group* group) {
     return group->children;
 }
 

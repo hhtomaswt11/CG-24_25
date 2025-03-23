@@ -14,15 +14,16 @@ const char* WHITE = "\033[37m";
 
 void helper() {
     printf("%s╔═══════════════════════════════════════════════╗%s\n", CYAN, RESET);
-    printf("%s║               -- HELP MENU --                 ║%s\n", CYAN, RESET);
+    printf("%s║           -- HELP GENERATOR MENU --           ║%s\n", CYAN, RESET);
     printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
     printf("%s» %sPLANE    %s[LENGTH] [DIVISIONS]%s        → plane.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sBOX      %s[LENGTH] [DIVISIONS PER SIDE]%s → box.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sSPHERE   %s[RADIUS] [SLICES] [STACKS]%s   → sphere.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sCONE     %s[BOTTOM RADIUS] [HEIGHT] [SLICES] [STACKS]%s → cone.3d\n", RED, YELLOW, MAGENTA, RESET);
-    printf("%s╔═══════════════════════════════════════════════╗%s\n", CYAN, RESET);
-    printf("%s║               -- END OF MENU --               ║%s\n", CYAN, RESET);
-    printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
+    printf("%s» %sRING     %s[INNER RADIUS] [OUTER RADIUS] [SLICES] [STACKS]%s → ring.3d\n", RED, YELLOW, MAGENTA, RESET);
+    printf("%s══════════════════════════════════════════════════════════════════════════════%s\n", CYAN, RESET);
+    // printf("%s║               -- END OF MENU --               ║%s\n", CYAN, RESET);
+    // printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
 }
 
 
@@ -39,20 +40,19 @@ void printSuccessMessage(int argc, char *argv[]) {
     
     printf("%s\n", RESET);
 
-    printf("%s╔═══════════════════════════════════════════╗%s\n", GREEN, RESET);
-    printf("%s║                -- END --                  ║%s\n", GREEN, RESET);
-    printf("%s╚═══════════════════════════════════════════╝%s\n", GREEN, RESET);
+    printf("%s═════════════════════════════════════════════════════════════%s\n", GREEN, RESET);
+
 }
 
 
 void helper_engine() {
-    printf("%s╔═══════════════════════════════════════════════╗%s\n", CYAN, RESET);
-    printf("%s║               -- HELP ENGINE MENU --          ║%s\n", CYAN, RESET);
-    printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
+    printf("%s╔══════════════════════════════════════════════╗%s\n", CYAN, RESET);
+    printf("%s║            -- HELP ENGINE MENU --            ║%s\n", CYAN, RESET);
+    printf("%s╚══════════════════════════════════════════════╝%s\n", CYAN, RESET);
     printf("%s Make sure that the primitives in the XML file have already been generated.\n", RED);
     printf("%s» %s./engine %s[XML FILE]\n", RED, YELLOW, RESET);
-    printf("%s╔═══════════════════════════════════════════════╗%s\n", CYAN, RESET);
-    printf("%s║               -- END OF MENU --               ║%s\n", CYAN, RESET);
-    printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
+    printf("%s═══════════════════════════════════════════════════════════════════════════════════%s\n", CYAN, RESET);
+    // printf("%s║               -- END OF MENU --              ║%s\n", CYAN, RESET);
+    // printf("%s╚══════════════════════════════════════════════╝%s\n", CYAN, RESET);
 }
 
