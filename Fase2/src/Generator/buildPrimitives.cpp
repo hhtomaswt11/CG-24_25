@@ -2,6 +2,11 @@
 
 
 Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f, bool invertFaces = false, bool invertDiagonal = false) {
+
+    if (length <= 0 || divisions <= 0) {
+        std::cerr << "Erro: Parâmetros inválidos para gerar o plano." << std::endl;
+        exit(1); 
+    }
     Primitive plano = newEmptyPrimitive();
     if (!plano) return plano;
 
@@ -102,6 +107,12 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
 
 
 Primitive buildBox(int length, int divisions) {
+    if (length <=0 || divisions <= 0) {
+        std::cerr << "Erro: Parâmetros inválidos para gerar o cubo." << std::endl;
+      
+        exit(1); 
+    }
+
     Primitive box = newEmptyPrimitive();
     if (!box) return box;
 
@@ -111,8 +122,6 @@ Primitive buildBox(int length, int divisions) {
     std::vector<Point> allPoints; // armazena todos os pontos únicos
     std::vector<int> allIndices;  // define a ordem dos vértices para formar triângulos
 
-
-    // std::cout << "Building box faces:" << std::endl;
 
     // Face Superior (+Y)
     Primitive faceCima = buildPlane(length, divisions, 'Y', half, true, true);
@@ -173,6 +182,11 @@ Primitive buildBox(int length, int divisions) {
 
 
 Primitive buildSphere(int radius, int slices, int stacks) {
+    if (radius <= 0 || slices < 3 || stacks < 1) {
+        std::cerr << "Erro: Parâmetros inválidos para gerar a esfera." << std::endl;
+        exit(1);
+    }
+
     Primitive sphere = newEmptyPrimitive();
     if (!sphere) return sphere;
 
@@ -265,7 +279,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
 Primitive buildCone(int radius, int height, int slices, int stacks) {
     if (radius <= 0 || height <= 0 || slices < 3 || stacks < 1) {
         std::cerr << "Erro: Parâmetros inválidos para gerar o cone." << std::endl;
-        return nullptr;
+        exit(1); 
     }
 
     Primitive cone = newEmptyPrimitive();
@@ -371,10 +385,10 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
 }
 
 
-Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int stacks) {
-    if (innerRadius <= 0 || outerRadius <= innerRadius || slices < 3 || stacks < 1) {
+Primitive buildSaturnRing(float innerRadius, float outerRadius, float height, int slices, int stacks) {
+    if (innerRadius <= 0 || outerRadius <= innerRadius || slices < 3 || stacks < 1 || height < 0) {
         std::cerr << "Erro: Parâmetros inválidos para gerar o anel." << std::endl;
-        return nullptr;
+        exit(1); 
     }
 
     Primitive ring = newEmptyPrimitive();
@@ -400,49 +414,84 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
     for (int stack = 0; stack <= stacks; ++stack) {
         float currRadius = innerRadius + stack * radiusStep;
 
+        // pontos para as duas faces (acima e abaixo) de cada camada
         for (int slice = 0; slice < slices; ++slice) {
             float theta = 2.0f * M_PI * slice / slices;
             float x = currRadius * cos(theta);
             float z = currRadius * sin(theta);
 
-            Point p = newPoint(x, 0.0f, z);
-            int index = addUniquePoint(p);
-            stackIndices[stack].push_back(index);
+            //  pontos para a face inferior (-height/2)
+            Point pBottom = newPoint(x, -height / 2, z);
+            int indexBottom = addUniquePoint(pBottom);
+            stackIndices[stack].push_back(indexBottom);
+
+            //  pontos para a face superior (+height/2)
+            Point pTop = newPoint(x, height / 2, z);
+            int indexTop = addUniquePoint(pTop);
+            stackIndices[stack].push_back(indexTop);
         }
     }
 
+    // índices para os triângulos que formam a superfície do anel
     for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
             int nextSlice = (slice + 1) % slices;
-            int i1 = stackIndices[stack][slice];
-            int i2 = stackIndices[stack][nextSlice];
-            int i3 = stackIndices[stack + 1][slice];
-            int i4 = stackIndices[stack + 1][nextSlice];
 
-            // Triangles for the top-facing surface
-            indices.push_back(i1);
-            indices.push_back(i2);
-            indices.push_back(i3);
+            // face superior do anel 
+            int i1Top = stackIndices[stack][2 * slice + 1];
+            int i2Top = stackIndices[stack][2 * nextSlice + 1];
+            int i3Top = stackIndices[stack + 1][2 * slice + 1];
+            int i4Top = stackIndices[stack + 1][2 * nextSlice + 1];
 
-            indices.push_back(i3);
-            indices.push_back(i2);
-            indices.push_back(i4);
+            // triangulos da face superior (top-facing surface)
+            indices.push_back(i1Top);
+            indices.push_back(i2Top);
+            indices.push_back(i3Top);
 
-            // Triangles for the bottom-facing surface (flipped order)
-            indices.push_back(i3);
-            indices.push_back(i2);
-            indices.push_back(i1);
+            indices.push_back(i3Top);
+            indices.push_back(i2Top);
+            indices.push_back(i4Top);
 
-            indices.push_back(i4);
-            indices.push_back(i2);
-            indices.push_back(i3);
+            // indices para a face inferior do anel
+            int i1Bottom = stackIndices[stack][2 * slice];
+            int i2Bottom = stackIndices[stack][2 * nextSlice];
+            int i3Bottom = stackIndices[stack + 1][2 * slice];
+            int i4Bottom = stackIndices[stack + 1][2 * nextSlice];
+
+            // triangulos da face inferior (bottom-facing surface)
+            indices.push_back(i3Bottom);
+            indices.push_back(i2Bottom);
+            indices.push_back(i1Bottom);
+
+            indices.push_back(i4Bottom);
+            indices.push_back(i2Bottom);
+            indices.push_back(i3Bottom);
+
+            // triangulos laterais para as faces do anel (lado externo)
+            indices.push_back(i1Top);
+            indices.push_back(i3Bottom);
+            indices.push_back(i1Bottom);
+
+            indices.push_back(i1Top);
+            indices.push_back(i2Top);
+            indices.push_back(i3Bottom);
+
+            indices.push_back(i3Top);
+            indices.push_back(i4Bottom);
+            indices.push_back(i3Bottom);
+
+            indices.push_back(i3Top);
+            indices.push_back(i2Top);
+            indices.push_back(i4Bottom);
         }
     }
 
+   
     for (const auto& p : points) {
         addPoint(ring, p);
     }
 
+    
     setIndices(ring, indices);
 
     return ring;

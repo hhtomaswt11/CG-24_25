@@ -22,8 +22,7 @@ void loadXMLFile(const char *filename) ;
 void initializeCameraAndWindow(XMLDataFormat* xmlData);
 void applyTransform(const Transform& transform);
 void renderGroup(const Group& group);
-
 extern XMLDataFormat* xmlData;
-
+void showCameraPosition(); 
 
 #endif //ENGINE_H

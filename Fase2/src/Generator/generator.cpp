@@ -26,7 +26,9 @@ int main(int argc, char* argv[]) {
 
         fromPrimitiveTo3dFile(primitive, path_3d);
         deletePrimitive(primitive);
+        if (argc == 5 )
         printSuccessMessage(argc, argv); 
+        else helper(); 
 
     }
     else if(strcmp(argv[1], "box") == 0){
@@ -38,7 +40,10 @@ int main(int argc, char* argv[]) {
 
        fromPrimitiveTo3dFile(primitive, path_3d);
        deletePrimitive(primitive);
+       if( argc == 5)
        printSuccessMessage(argc, argv); 
+       else helper(); 
+
     }
     else if(strcmp(argv[1], "sphere") == 0){
         path_3d = argv[5];
@@ -50,7 +55,9 @@ int main(int argc, char* argv[]) {
 
         fromPrimitiveTo3dFile(primitive, path_3d);
         deletePrimitive(primitive);
+        if (argc == 6)
         printSuccessMessage(argc, argv); 
+        else helper(); 
 
     }
 
@@ -65,17 +72,27 @@ int main(int argc, char* argv[]) {
 
         fromPrimitiveTo3dFile(primitive, path_3d);
         deletePrimitive(primitive);
+        if (argc == 7)
         printSuccessMessage(argc, argv); 
-     }
+        else helper(); 
+
+         }
+        
 
      else if(strcmp(argv[1], "ring") == 0){
-        path_3d = argv[6];
-        int innerRadius = atoi(argv[2]), 
+        path_3d = argv[7];
+        // float innerRadius = atof(argv[2]), 
+        //     outerRadius = atof(argv[3]); 
+        // int    slices = atoi(argv[4]) , 
+        //     stacks = atoi(argv[5]); 
+        
+            float innerRadius = atoi(argv[2]), 
             outerRadius = atoi(argv[3]), 
-            slices = atoi(argv[4]) , 
-            stacks = atoi(argv[5]); 
+            height = atof(argv[4]); 
+           int    slices = atoi(argv[5]) , 
+            stacks = atoi(argv[6]); 
  
-        primitive = buildSaturnRing(innerRadius, outerRadius, slices , stacks ) ;
+        primitive = buildSaturnRing(innerRadius, outerRadius, height , slices , stacks ) ;
 
         fromPrimitiveTo3dFile(primitive, path_3d);
         deletePrimitive(primitive);

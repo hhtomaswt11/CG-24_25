@@ -84,7 +84,7 @@ Primitive from3dFileToPrimitive(const char* path) {
     sscanf(line.c_str(), "Vertices: %d", &vertexCount);
 
     // carregar os pontos da primitiva 
-    std::cout << "Loading points from file: " << path << std::endl;
+    //std::cout << "Loading points from file: " << path << std::endl;
     for (int i = 0; i < vertexCount; ++i) {
         std::getline(file, line);
         float x, y, z;
@@ -99,7 +99,7 @@ Primitive from3dFileToPrimitive(const char* path) {
     std::getline(file, line);
     sscanf(line.c_str(), "Indices: %d", &indexCount);
 
-    std::cout << "Loading indexes from file: " << path << std::endl;
+    //std::cout << "Loading indexes from file: " << path << std::endl;
     for (int i = 0; i < indexCount / 3; ++i) {
         int i1, i2, i3;
         std::getline(file, line);

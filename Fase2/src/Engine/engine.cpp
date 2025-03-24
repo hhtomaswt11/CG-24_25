@@ -1,9 +1,8 @@
 #include "../../include/Engine/engine.h"
 
-using namespace std;
+#define PI M_PI
 
 #define WHITE 1.0f, 1.0f, 1.0f
-#define PI M_PI
 
 XMLDataFormat* xmlData = nullptr;
 
@@ -17,14 +16,14 @@ int mode = GL_LINE;
 float colorR = 1.0f, colorG = 1.0f, colorB = 1.0f;
 
 
-list<Primitive> primitives;
+std::list<Primitive> primitives;
 
 // angulos da cam
 float Alpha, Beta;
 float radius;
 
 // constantes para movimento da cam
-const float ANGLE_INCREMENT = PI / 30;
+const float ANGLE_INCREMENT = PI / 75;
 const float ZOOM_INCREMENT = 0.5f;
 
 // calcula as coordenadas esféricas da câmera
@@ -35,6 +34,10 @@ void computeSphericalCoordinates() {
     radius = sqrt(dx * dx + dy * dy + dz * dz);
     Beta = asin(dy / radius);
     Alpha = atan2(dx, dz);
+}
+
+void showCameraPosition(){
+        std::cout << "Camera Position: <position x=\"" << camX << "\" y=\"" << camY << "\" z=\"" << camZ << "\" />" << std::endl;
 }
 
 // atualiza a posição da câmera
@@ -98,8 +101,7 @@ void applyTransform(const Transform& transform) {
 
     glRotatef(rotate[0], rotate[1], rotate[2], rotate[3]);
     glTranslatef(translate[0], translate[1], translate[2]);
-    glScalef(scale[0], scale[1], scale[2]);
-
+    glScalef(scale[0], scale[1], scale[2]); 
 
 }
 
@@ -154,6 +156,9 @@ void renderScene() {
     glutSwapBuffers();
 }
 
+
+
+
 void keyProc(unsigned char key, int, int) {
     if (key == 'w' || key == 'W') {
         Beta += ANGLE_INCREMENT;
@@ -180,15 +185,18 @@ void keyProc(unsigned char key, int, int) {
     else if (key == 'b' || key == 'B') mode = GL_POINT; // blank 
     else if (key == 'f' || key == 'F') mode = GL_FILL; // filled 
     else if (key == 'x' || key == 'X') showAxes = !showAxes;
+    else if (key == 'c' || key == 'C'){showCameraPosition();}
     else if (key == 'y' || key == 'Y') {
         colorR = 1.0f;
         colorG = 1.0f;
         colorB = 0.0f;
     }
-    
+   
     updateCameraPosition();
     glutPostRedisplay();
 }
+
+
 
 void initializeCameraAndWindow(XMLDataFormat* xmlData) {
     if (xmlData) {
@@ -224,7 +232,7 @@ int main(int argc, char* argv[]) {
 
     xmlData = xmlToXMLDataFormat(argv[1]);
     if (!xmlData) {
-        cerr << "Error parsing XML file." << endl;
+        std::cerr << "Error parsing XML file." << std::endl;
         return -1;
     }
 
@@ -233,7 +241,7 @@ int main(int argc, char* argv[]) {
 
     computeSphericalCoordinates();
 
-    for (const string& model : getModels(xmlData)) {
+    for (const std::string& model : getModels(xmlData)) {
         Primitive prim = from3dFileToPrimitive(model.c_str());
         std::ifstream file(model.c_str());
 
@@ -271,3 +279,11 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
+
+aaa
+
+
+doadoaodaod
+
+aaa
