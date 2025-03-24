@@ -1,0 +1,2 @@
+/usr/bin/ar qc libUtils_n_Build_lib.a CMakeFiles/Utils_n_Build_lib.dir/src/Utils/point.cpp.o CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o CMakeFiles/Utils_n_Build_lib.dir/src/Utils/XMLDataFormat.cpp.o CMakeFiles/Utils_n_Build_lib.dir/src/Generator/buildPrimitives.cpp.o CMakeFiles/Utils_n_Build_lib.dir/src/UI/ui.cpp.o
+/usr/bin/ranlib libUtils_n_Build_lib.a
