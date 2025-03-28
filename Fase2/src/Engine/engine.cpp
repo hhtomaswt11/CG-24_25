@@ -227,7 +227,7 @@ void processKeys(unsigned char key, int, int) {
 
 
 
-void processSpecialKeys(int key, int xx, int yy) {
+void processSpecialKeys(int key, int , int ) {
 
 	switch (key) {
 

@@ -17,7 +17,7 @@ void changeSize(int w, int h) ;
 void drawPrimitives(const std::list<std::string> figs) ;
 void renderScene() ; 
 void processKeys(unsigned char key, int, int) ; 
-void processSpecialKeys(int key, int xx, int yy); 
+void processSpecialKeys(int key, int , int ) ; 
 void updateCameraPosition(void) ;
 void loadXMLFile(const char *filename) ;
 void initializeCameraAndWindow(XMLDataFormat* xmlData);

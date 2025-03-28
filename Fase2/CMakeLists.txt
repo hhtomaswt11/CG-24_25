@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.5)
 # Project Name
 PROJECT(fase2)
 
+# Definir standard C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define os executáveis a serem construídos neste projecto

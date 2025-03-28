@@ -13,7 +13,6 @@ int main(int argc, char* argv[]) {
         helper(); 
      }
  
-
     Primitive primitive;
     const char* path_3d;
 
@@ -81,16 +80,11 @@ int main(int argc, char* argv[]) {
 
      else if(strcmp(argv[1], "ring") == 0){
         path_3d = argv[7];
-        // float innerRadius = atof(argv[2]), 
-        //     outerRadius = atof(argv[3]); 
-        // int    slices = atoi(argv[4]) , 
-        //     stacks = atoi(argv[5]); 
-        
-            float innerRadius = atoi(argv[2]), 
-            outerRadius = atoi(argv[3]), 
-            height = atof(argv[4]); 
-           int    slices = atoi(argv[5]) , 
-            stacks = atoi(argv[6]); 
+        float innerRadius = atof(argv[2]), 
+              outerRadius = atof(argv[3]), 
+              height = atof(argv[4]); 
+        int    slices = atoi(argv[5]) , 
+               stacks = atoi(argv[6]); 
  
         primitive = buildSaturnRing(innerRadius, outerRadius, height , slices , stacks ) ;
 

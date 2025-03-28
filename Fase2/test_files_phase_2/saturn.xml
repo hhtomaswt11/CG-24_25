@@ -6,21 +6,25 @@
         <up x="0" y="1" z="0" />
         <projection fov="60" near="1" far="1000" />
     </camera>
-
+   
     <group>
         <!-- Saturno -->
         <models>
-            <model file="sphere.3d" /> <!-- generator sphere 3 16 16 sphere_3_16_16.3d -->
+            <model file="sphere.3d" /> <!-- generator sphere 3 60 60 sphere.3d -->
         </models>
         
         <!-- Anel -->
         <group>
             <transform>
-                <scale x="1.5" y="0" z="1.5" />
+                <scale x="1.1" y="0" z="1.1" />
+                <rotate angle="25" x="1" y="0" z="0"/>		
             </transform>
-            <models>
-                <model file="ring.3d" /> <!-- generator anel 3 5 30 5 anel_3_5_30_5.3d -->
+
+            <models> 
+                <model file="ring.3d" /> <!-- generator ring 3.2 5.1 0.1 40 40 ring.3d -->
             </models>
+
         </group>
     </group>
+
 </world>
