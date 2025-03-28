@@ -5,22 +5,26 @@
 #define WHITE 1.0f, 1.0f, 1.0f
 
 XMLDataFormat* xmlData = nullptr;
+std::list<Primitive> primitives;
 
+// camera 
 float camX, camY, camZ;
 float lookAtx, lookAty, lookAtz;
 float upx, upy, upz;
 float fov, nearPlane, farPlane;
+
+// window 
 float windowWidth, windowHeight;
+
+// control axes 
 bool showAxes = true;
-int mode = GL_LINE; 
+int mode = GL_LINE;
+
+// white 
 float colorR = 1.0f, colorG = 1.0f, colorB = 1.0f;
 
-
-std::list<Primitive> primitives;
-
 // angulos da cam
-float Alpha, Beta;
-float radius;
+float Alpha, Beta, radius;
 
 // constantes para movimento da cam
 const float ANGLE_INCREMENT = PI / 75;
@@ -36,8 +40,10 @@ void computeSphericalCoordinates() {
     Alpha = atan2(dx, dz);
 }
 
-void showCameraPosition(){
-        std::cout << "Camera Position: <position x=\"" << camX << "\" y=\"" << camY << "\" z=\"" << camZ << "\" />" << std::endl;
+void showCameraPosition() {
+    std::cout << "Camera Position: (" << camX << "," << camY << "," << camZ << ")" << std::endl;
+    std::cout << "<position x=\"" << camX << "\" y=\"" << camY << "\" z=\"" << camZ << "\" />" << std::endl;
+    std::cout << std::endl; // Linha extra para separar chamadas consecutivas
 }
 
 // atualiza a posição da câmera
@@ -158,44 +164,94 @@ void renderScene() {
 
 
 
+void processKeys(unsigned char key, int, int) {
+    switch (tolower(key)) {
+        case 'w':
+            Beta += ANGLE_INCREMENT;
+            if (Beta > PI / 2.0f) Beta = PI / 2.0f;
+            break;
 
-void keyProc(unsigned char key, int, int) {
-    if (key == 'w' || key == 'W') {
-        Beta += ANGLE_INCREMENT;
-        if (Beta > PI / 2.0f) Beta = PI / 2.0f;
+        case 'a':
+            Alpha -= ANGLE_INCREMENT;
+            break;
+
+        case 's':
+            Beta -= ANGLE_INCREMENT;
+            if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
+            break;
+
+        case 'd':
+            Alpha += ANGLE_INCREMENT;
+            break;
+
+        case '+':
+            radius -= ZOOM_INCREMENT;
+            if (radius < 1.0f) radius = 1.0f;
+            break;
+
+        case '-':
+            radius += ZOOM_INCREMENT;
+            break;
+
+        case 'l':
+            mode = GL_LINE;
+            break;
+
+        case 'b':
+            mode = GL_POINT;
+            break;
+
+        case 'f':
+            mode = GL_FILL;
+            break;
+
+        case 'x':
+            showAxes = !showAxes;
+            break;
+
+        case 'c':
+            showCameraPosition();
+            break;
+
+        case 'y':
+            colorR = 1.0f;
+            colorG = 1.0f;
+            colorB = 0.0f;
+            break;
     }
-    else if (key == 'a' || key == 'A') {
-        Alpha -= ANGLE_INCREMENT;
-    }
-    else if (key == 's' || key == 'S') {
-        Beta -= ANGLE_INCREMENT;
-        if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
-    }
-    else if (key == 'd' || key == 'D') {
-        Alpha += ANGLE_INCREMENT;
-    }
-    else if (key == '+'){
-        radius -= ZOOM_INCREMENT;
-        if (radius < 1.0f) radius = 1.0f;
-    }
-    else if (key == '-'){
-        radius += ZOOM_INCREMENT;
-    }
-    else if (key == 'l' || key == 'L') mode = GL_LINE; // line 
-    else if (key == 'b' || key == 'B') mode = GL_POINT; // blank 
-    else if (key == 'f' || key == 'F') mode = GL_FILL; // filled 
-    else if (key == 'x' || key == 'X') showAxes = !showAxes;
-    else if (key == 'c' || key == 'C'){showCameraPosition();}
-    else if (key == 'y' || key == 'Y') {
-        colorR = 1.0f;
-        colorG = 1.0f;
-        colorB = 0.0f;
-    }
-   
+
     updateCameraPosition();
     glutPostRedisplay();
 }
 
+
+
+
+void processSpecialKeys(int key, int xx, int yy) {
+
+	switch (key) {
+
+	case GLUT_KEY_RIGHT:
+		Alpha += ANGLE_INCREMENT; break;
+
+	case GLUT_KEY_LEFT:
+		Alpha -= ANGLE_INCREMENT; break;
+
+	case GLUT_KEY_UP:
+        Beta += ANGLE_INCREMENT;
+        if (Beta > PI / 2.0f) Beta = PI / 2.0f;
+        break;
+
+	case GLUT_KEY_DOWN:
+        Beta -= ANGLE_INCREMENT;
+        if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
+        break;
+	}
+
+
+    updateCameraPosition();
+    glutPostRedisplay();
+}
 
 
 void initializeCameraAndWindow(XMLDataFormat* xmlData) {
@@ -249,9 +305,7 @@ int main(int argc, char* argv[]) {
             std::cout << "Loaded primitive. Results in: " << model << std::endl;
             primitives.push_back(prim);
         } 
-        // else {
-        //     std::cerr << "Error. Could not load file: " << model << std::endl;
-        // }
+ 
     }
 
 
@@ -266,10 +320,11 @@ int main(int argc, char* argv[]) {
     glutInitWindowPosition(posX, posY);
 
     glutInitWindowSize(windowWidth, windowHeight);
-    glutCreateWindow("CG @UMINHO - Fase 1 - Grupo 36");
+    glutCreateWindow("CG @UMINHO - Fase 2 - Grupo 36");
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
-    glutKeyboardFunc(keyProc);
+    glutKeyboardFunc(processKeys);
+    glutSpecialFunc(processSpecialKeys);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
