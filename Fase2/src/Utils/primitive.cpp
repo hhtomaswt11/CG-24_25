@@ -1,10 +1,4 @@
 #include "../../include/Utils/primitive.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <limits>
-#include <vector>
-#include <map>
 
 // struct Color {
 //     float r, g, b;
@@ -17,8 +11,7 @@ struct primitive {
 };
 
 
-
-Primitive newEmptyPrimitive() {
+Primitive buildPrimitive() {
     Primitive p = new struct primitive;  
     if (p) {
         p->points.clear();  
@@ -26,17 +19,6 @@ Primitive newEmptyPrimitive() {
     }
     return p;
 }
-
-
-
-Primitive newPrimitive(const std::vector<Point>& points) {
-    Primitive p = newEmptyPrimitive();
-    if (p) {
-        p->points = points;  
-    }
-    return p;
-}
-
 
 void fromPrimitiveTo3dFile(const Primitive f, const char* path) {
     if (!f || f->points.empty()) {
@@ -67,7 +49,7 @@ void fromPrimitiveTo3dFile(const Primitive f, const char* path) {
 
 
 Primitive from3dFileToPrimitive(const char* path) {
-    Primitive f = newEmptyPrimitive();
+    Primitive f = buildPrimitive();
     std::ifstream file(path);
 
     if (!file) {
@@ -89,7 +71,7 @@ Primitive from3dFileToPrimitive(const char* path) {
         std::getline(file, line);
         float x, y, z;
         sscanf(line.c_str(), "%f,%f,%f", &x, &y, &z);
-        Point ponto = newPoint(x, y, z);
+        Point ponto = buildPoint(x, y, z);
         addPoint(f, ponto);
         // std::cout << "Loaded point: (" << x << ", " << y << ", " << z << ")" << std::endl;
     }
@@ -175,18 +157,10 @@ Point getPoint(const Primitive f, std::vector<Point>::size_type index) {
 
 // DESTROYER 
 
-void deletePrimitiveSimple(Primitive f) {
-    if (f) {
-        f->points.clear();  
-        f->indices.clear(); 
-        delete f; 
-    }
-}
-
 void deletePrimitive(Primitive f) {
     if (f) {
         for (auto& p : f->points) {
-            deletePoint(p); 
+            freePoint(p); 
         }
         f->points.clear();  
         f->indices.clear(); 

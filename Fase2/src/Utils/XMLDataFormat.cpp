@@ -1,8 +1,4 @@
-// #include <tinyxml.h>
-// #include <tinystr.h>
-
 #include "../../include/Utils/XMLDataFormat.h"
-#include <cstdlib>
 #include <iostream>
 
 struct Window {
@@ -24,12 +20,6 @@ struct Up {
 struct Projection {
     float fov, near, far;
 };
-
-// struct Transform {
-//     float translate[3] = {0.0f, 0.0f, 0.0f}; // x, y, z
-//     float rotate[4] = {0.0f, 0.0f, 0.0f, 0.0f}; // angle, x, y, z
-//     float scale[3] = {1.0f, 1.0f, 1.0f}; // x, y, z
-// };
 
 struct Transform {
     float translate[3];
@@ -72,8 +62,7 @@ XMLDataFormat* newXMLDataFormat() {
     return newData;
 }
 
-
-
+// parser 
 XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
     XMLDataFormat* result = newXMLDataFormat();
     if (result) {
@@ -315,13 +304,13 @@ std::list<std::string>& getModels(XMLDataFormat* data) {
 }
 
 
-const std::list<std::string>& getModels(const XMLDataFormat* data) {
-    if (data) {
-        return data->models;
-    }
-    static const std::list<std::string> emptyList;
-    return emptyList;
-}
+// const std::list<std::string>& getModels(const XMLDataFormat* data) {
+//     if (data) {
+//         return data->models;
+//     }
+//     static const std::list<std::string> emptyList;
+//     return emptyList;
+// }
 
 
 
@@ -334,9 +323,9 @@ void deleteXMLDataFormat(XMLDataFormat* data) {
     }
 }
 
-void deleteGroup(Group* group) {
-    for (auto* child : group->children) {
-        deleteGroup(child);
-    }
-    delete group;
-}
+// void deleteGroup(Group* group) {
+//     for (auto* child : group->children) {
+//         deleteGroup(child);
+//     }
+//     delete group;
+// }

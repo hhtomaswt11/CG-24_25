@@ -2,8 +2,8 @@
 #define BUILDPRIMITIVES_H
 
 #include <cstring>
-#include "../Utils/primitive.h"
 
+#include "../Utils/primitive.h"
 
  Primitive buildPlane(int length, int divisions, char axis , float h , bool invertFaces , bool invertDiagonal); ; 
 
@@ -13,8 +13,6 @@
  
  Primitive buildCone(int radius, int height, int slices, int stacks) ;
 
-//  Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int stacks);
-
-Primitive buildSaturnRing(float innerRadius, float outerRadius, float height , int slices, int stacks);
+ Primitive buildSaturnRing(float innerRadius, float outerRadius, float height , int slices, int stacks);
 
 #endif 

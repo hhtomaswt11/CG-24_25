@@ -2,8 +2,6 @@
 
 #define PI M_PI
 
-#define WHITE 1.0f, 1.0f, 1.0f
-
 XMLDataFormat* xmlData = nullptr;
 std::list<Primitive> primitives;
 
@@ -18,6 +16,11 @@ float windowWidth, windowHeight;
 
 // control axes 
 bool showAxes = true;
+
+// diff color 
+bool yellow = false ;  
+
+
 int mode = GL_LINE;
 
 // white 
@@ -29,6 +32,14 @@ float Alpha, Beta, radius;
 // constantes para movimento da cam
 const float ANGLE_INCREMENT = PI / 75;
 const float ZOOM_INCREMENT = 0.5f;
+
+// alternar entre amarelo e branco 
+void alternate_color(float new_colorR, float new_colorG, float new_colorB){
+    colorR  = new_colorR; 
+    colorG = new_colorG; 
+    colorB = new_colorB;  
+
+}
 
 // calcula as coordenadas esféricas da câmera
 void computeSphericalCoordinates() {
@@ -111,8 +122,6 @@ void applyTransform(const Transform& transform) {
 
 }
 
-
-
 void renderGroup(const Group& group) {
     glPushMatrix();
     applyTransform(*getTransform(&group));
@@ -155,6 +164,12 @@ void renderScene() {
         glEnd();
     }
 
+    if(yellow){
+        alternate_color(1.0f, 1.0f, 0.0f);
+    }
+    else{
+        alternate_color(1.0f, 1.0f, 1.0f); 
+    }
 
     glPolygonMode(GL_FRONT, mode); 
     renderGroup(*getRootGroup(xmlData));
@@ -214,9 +229,7 @@ void processKeys(unsigned char key, int, int) {
             break;
 
         case 'y':
-            colorR = 1.0f;
-            colorG = 1.0f;
-            colorB = 0.0f;
+            yellow = !yellow; 
             break;
     }
 

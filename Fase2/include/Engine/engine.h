@@ -1,13 +1,9 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-
-
 #include <list>
 #include <GL/glut.h>
-#include <iostream>
-#include <list>
-#include <cmath>
+
 #include "../Utils/XMLDataFormat.h" 
 #include "../Utils/primitive.h"
 #include "../../tinyXML/tinyxml.h"
@@ -19,11 +15,10 @@ void renderScene() ;
 void processKeys(unsigned char key, int, int) ; 
 void processSpecialKeys(int key, int , int ) ; 
 void updateCameraPosition(void) ;
-void loadXMLFile(const char *filename) ;
+void alternate_color(float, float , float); 
 void initializeCameraAndWindow(XMLDataFormat* xmlData);
 void applyTransform(const Transform& transform);
 void renderGroup(const Group& group);
-extern XMLDataFormat* xmlData;
 void showCameraPosition(); 
 
-#endif //ENGINE_H
+#endif 

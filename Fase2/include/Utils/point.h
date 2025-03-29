@@ -5,15 +5,12 @@
 
 typedef struct point* Point;
 
-Point newEmptyPoint();
-Point newPoint(float x, float y, float z);
-Point newPointSph(float a, float b, float radius);
+Point buildPoint(float x, float y, float z);
 
 float getX(Point p);
 float getY(Point p);
 float getZ(Point p);
 
-Point dupPoint(Point);
-void deletePoint(Point p);
+void freePoint(Point p);
 
 #endif 

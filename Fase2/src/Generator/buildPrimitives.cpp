@@ -7,7 +7,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         std::cerr << "Erro: Parâmetros inválidos para gerar o plano." << std::endl;
         exit(1); 
     }
-    Primitive plano = newEmptyPrimitive();
+    Primitive plano = buildPrimitive();
     if (!plano) return plano;
 
     std::vector<Point> uniquePoints; // armazena os pontos únicos
@@ -25,11 +25,11 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
 
             Point p;
             if (axis == 'X')
-                p = newPoint(h, x, z);
+                p = buildPoint(h, x, z);
             else if (axis == 'Y')
-                p = newPoint(x, h, z);
+                p = buildPoint(x, h, z);
             else if (axis == 'Z')
-                p = newPoint(x, z, h);
+                p = buildPoint(x, z, h);
 
             std::tuple<float, float, float> key = std::make_tuple(getX(p), getY(p), getZ(p));
 
@@ -113,7 +113,7 @@ Primitive buildBox(int length, int divisions) {
         exit(1); 
     }
 
-    Primitive box = newEmptyPrimitive();
+    Primitive box = buildPrimitive();
     if (!box) return box;
 
     float half = (float)length / 2;
@@ -187,7 +187,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         exit(1);
     }
 
-    Primitive sphere = newEmptyPrimitive();
+    Primitive sphere = buildPrimitive();
     if (!sphere) return sphere;
 
     // std::cout << "Gerando esfera: raio = " << radius << ", slices = " << slices << ", stacks = " << stacks << std::endl;
@@ -196,7 +196,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     std::vector<int> indices;
 
     // adicionar polo norte
-    Point poleNorth = newPoint(0, radius, 0);
+    Point poleNorth = buildPoint(0, radius, 0);
     points.push_back(poleNorth);
     int northIndex = 0;
 
@@ -211,14 +211,14 @@ Primitive buildSphere(int radius, int slices, int stacks) {
             float x = xy * cos(theta);
             float z = xy * sin(theta);
 
-            Point p = newPoint(x, y, z);
+            Point p = buildPoint(x, y, z);
             points.push_back(p);
             // std::cout << "Ponto: (" << x << ", " << y << ", " << z << ")" << std::endl;
         }
     }
 
     // adicionar polo sul
-    Point poleSouth = newPoint(0, -radius, 0);
+    Point poleSouth = buildPoint(0, -radius, 0);
     points.push_back(poleSouth);
     int southIndex = points.size() - 1;
 
@@ -282,7 +282,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         exit(1); 
     }
 
-    Primitive cone = newEmptyPrimitive();
+    Primitive cone = buildPrimitive();
     if (!cone) return cone;
 
     std::vector<Point> points;
@@ -301,7 +301,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
 
 
     // base do cone
-    Point center = newPoint(0.0f, 0.0f, 0.0f);
+    Point center = buildPoint(0.0f, 0.0f, 0.0f);
     int centerIndex = addUniquePoint(center);  // adicionar o centro da base -> ponto único
 
     std::vector<int> baseIndices;
@@ -310,7 +310,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         float x = radius * cos(angle);
         float z = radius * sin(angle);
 
-        Point p = newPoint(x, 0.0f, z);
+        Point p = buildPoint(x, 0.0f, z);
         int index = addUniquePoint(p); // adiciona vértice da borda e verifica se é único! 
         baseIndices.push_back(index); // armazena o índice do ponto da borda
     }
@@ -336,7 +336,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
             float x = currRadius * cos(theta);
             float z = currRadius * sin(theta);
 
-            Point p = newPoint(x, currHeight, z);
+            Point p = buildPoint(x, currHeight, z);
             int index = addUniquePoint(p); // adicionar ponto do corpo, verificando se é único
             stackIndices[stack].push_back(index); // para armazenar o índice do ponto da camada
         }
@@ -362,7 +362,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
     }
 
     // criar topo do cone -> um único vértice no topo 
-    Point top = newPoint(0.0f, height, 0.0f);
+    Point top = buildPoint(0.0f, height, 0.0f);
     int topIndex = addUniquePoint(top); // adicionar o topo -> único ponto no topo  (garantir que usamos apenas os pontos minimos necessarios para a construcao)
 
    
@@ -391,7 +391,7 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, float height, in
         exit(1); 
     }
 
-    Primitive ring = newEmptyPrimitive();
+    Primitive ring = buildPrimitive();
     if (!ring) return ring;
 
     std::vector<Point> points;
@@ -421,12 +421,12 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, float height, in
             float z = currRadius * sin(theta);
 
             //  pontos para a face inferior (-height/2)
-            Point pBottom = newPoint(x, -height / 2, z);
+            Point pBottom = buildPoint(x, -height / 2, z);
             int indexBottom = addUniquePoint(pBottom);
             stackIndices[stack].push_back(indexBottom);
 
             //  pontos para a face superior (+height/2)
-            Point pTop = newPoint(x, height / 2, z);
+            Point pTop = buildPoint(x, height / 2, z);
             int indexTop = addUniquePoint(pTop);
             stackIndices[stack].push_back(indexTop);
         }
