@@ -18,8 +18,7 @@ float windowWidth, windowHeight;
 bool showAxes = true;
 
 // diff color 
-bool yellow = false ;  
-
+bool yellow = false;  
 
 int mode = GL_LINE;
 
@@ -38,7 +37,6 @@ void alternate_color(float new_colorR, float new_colorG, float new_colorB){
     colorR  = new_colorR; 
     colorG = new_colorG; 
     colorB = new_colorB;  
-
 }
 
 // calcula as coordenadas esféricas da câmera
@@ -64,7 +62,6 @@ void updateCameraPosition() {
     camZ = lookAtz + radius * cos(Beta) * cos(Alpha);
 }
 
-
 void changeSize(int w, int h) {
     if (h == 0) h = 1;
     float ratio = (float)w / (float)h;
@@ -78,36 +75,36 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
+GLuint createVBO(const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
+    GLuint vbo, vao, ebo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
 
-void drawPrimitives(const std::list<std::string> figs) {
-    for (const auto& model : figs) {
-        Primitive prim = from3dFileToPrimitive(model.c_str());
-        if (prim) {
-            glPushMatrix();
-            glColor3f(colorR, colorG, colorB);
-            glPolygonMode(GL_FRONT_AND_BACK, mode);
+    glBindVertexArray(vao);
 
-            const auto& pontos = getPoints(prim);
-            const auto& indices = getIndices(prim);
+    // VBO para os vértices
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-            std::vector<float> vertices;
-            for (const auto& ponto : pontos) {
-                vertices.push_back(getX(ponto));
-                vertices.push_back(getY(ponto));
-                vertices.push_back(getZ(ponto));
-            }
+    // EBO para os índices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(3, GL_FLOAT, 0, vertices.data());
+    // Definir o formato dos dados dos vértices
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
-            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
+    glBindVertexArray(0);
 
-            glDisableClientState(GL_VERTEX_ARRAY);
-            glPopMatrix();
-        } else {
-            std::cerr << "Error: Could not load model: " << model << std::endl;
-        }
-    }
+    return vao;
+}
+
+void drawPrimitiveVBO(GLuint vao, GLuint ebo, size_t indexCount) {
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 void applyTransform(const Transform& transform) {
@@ -132,12 +129,40 @@ void renderGroup(const Group& group) {
         glPopMatrix();
     }
 
-    drawPrimitives(getModels(&group));
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+
+    
+    for (const auto& model : getModels(&group)) {
+        Primitive prim = from3dFileToPrimitive(model.c_str());
+        if (prim) {
+            const auto& pontos = getPoints(prim);
+            const auto& modelIndices = getIndices(prim);
+
+            // Carregar os pontos
+            for (const auto& ponto : pontos) {
+                vertices.push_back(getX(ponto));
+                vertices.push_back(getY(ponto));
+                vertices.push_back(getZ(ponto));
+            }
+
+            // Carregar os índices
+            for (const auto& index : modelIndices) {
+                indices.push_back(index);
+            }
+        }
+    }
+
+    GLuint vao = createVBO(vertices, indices);
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    drawPrimitiveVBO(vao, ebo, indices.size());
 
     glPopMatrix();
 }
-
-
 
 void renderScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -164,20 +189,13 @@ void renderScene() {
         glEnd();
     }
 
-    if(yellow){
-        alternate_color(1.0f, 1.0f, 0.0f);
-    }
-    else{
-        alternate_color(1.0f, 1.0f, 1.0f); 
-    }
+    glColor3f(1.0f, 1.0f, 1.0f);
 
     glPolygonMode(GL_FRONT, mode); 
-    renderGroup(*getRootGroup(xmlData));
+    renderGroup(*getRootGroup(xmlData));  // Chama renderGroup para renderizar a cena
 
     glutSwapBuffers();
 }
-
-
 
 void processKeys(unsigned char key, int, int) {
     switch (tolower(key)) {
@@ -237,35 +255,25 @@ void processKeys(unsigned char key, int, int) {
     glutPostRedisplay();
 }
 
-
-
-
 void processSpecialKeys(int key, int , int ) {
-
 	switch (key) {
-
 	case GLUT_KEY_RIGHT:
 		Alpha += ANGLE_INCREMENT; break;
-
 	case GLUT_KEY_LEFT:
 		Alpha -= ANGLE_INCREMENT; break;
-
 	case GLUT_KEY_UP:
         Beta += ANGLE_INCREMENT;
         if (Beta > PI / 2.0f) Beta = PI / 2.0f;
         break;
-
 	case GLUT_KEY_DOWN:
         Beta -= ANGLE_INCREMENT;
         if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
         break;
 	}
 
-
     updateCameraPosition();
     glutPostRedisplay();
 }
-
 
 void initializeCameraAndWindow(XMLDataFormat* xmlData) {
     if (xmlData) {
@@ -288,14 +296,11 @@ void initializeCameraAndWindow(XMLDataFormat* xmlData) {
         windowWidth = getWidth(xmlData);
         windowHeight = getHeight(xmlData);
     }
-
 }
-
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         helper_engine();
-       // cerr << "Uso: " << argv[0] << " <XML file>" << endl;
         return -1;
     }
 
@@ -305,35 +310,17 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    // os valores de camera parametros de projecao e tamanho de janela sao definidos com base no xml 
     initializeCameraAndWindow(xmlData);
-
     computeSphericalCoordinates();
-
-    for (const std::string& model : getModels(xmlData)) {
-        Primitive prim = from3dFileToPrimitive(model.c_str());
-        std::ifstream file(model.c_str());
-
-        if (prim && file) {
-            std::cout << "Loaded primitive. Results in: " << model << std::endl;
-            primitives.push_back(prim);
-        } 
- 
-    }
-
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    // monitor 1920x1080
-    int width = 1920,
-        height = 1080,
-        posX = (width - windowWidth) / 2,
-        posY = (height - windowHeight) / 2;
-        
+    int width = 1920, height = 1080;
+    int posX = (width - windowWidth) / 2, posY = (height - windowHeight) / 2;
     glutInitWindowPosition(posX, posY);
-
     glutInitWindowSize(windowWidth, windowHeight);
-    glutCreateWindow("CG @UMINHO - Fase 2 - Grupo 36");
+    glutCreateWindow("CG @UMINHO - Fase 3 - Grupo 36");
+    glewInit();
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
     glutKeyboardFunc(processKeys);
@@ -347,5 +334,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
-
