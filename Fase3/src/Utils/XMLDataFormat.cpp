@@ -22,6 +22,10 @@ struct Projection {
 };
 
 struct Transform {
+    bool hasCurve = false;
+    float time = 0.0f;
+    std::vector<std::array<float, 3>> controlPoints;
+
     float translate[3];
     float rotate[4];
     float scale[3];

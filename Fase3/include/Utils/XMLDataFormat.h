@@ -3,6 +3,8 @@
 
 #include <list>
 #include <string>
+#include <vector>
+#include <array>
 #include "../../tinyXML/tinyxml.h"
 #include "../../tinyXML/tinystr.h"
 

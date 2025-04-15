@@ -75,6 +75,48 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
+void getCatmullRomPoint(float t, float p0[3], float p1[3], float p2[3], float p3[3], float pos[3]) {
+    // Matriz de interpolação Catmull-Rom
+    float m[4][4] = {
+        {-0.5f, 1.5f, -1.5f, 0.5f},
+        {1.0f, -2.5f, 2.0f, -0.5f},
+        {-0.5f, 0.0f, 0.5f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f}
+    };
+
+    for (int i = 0; i < 3; ++i) {
+        float a0 = m[0][0] * p0[i] + m[0][1] * p1[i] + m[0][2] * p2[i] + m[0][3] * p3[i];
+        float a1 = m[1][0] * p0[i] + m[1][1] * p1[i] + m[1][2] * p2[i] + m[1][3] * p3[i];
+        float a2 = m[2][0] * p0[i] + m[2][1] * p1[i] + m[2][2] * p2[i] + m[2][3] * p3[i];
+        float a3 = m[3][0] * p0[i] + m[3][1] * p1[i] + m[3][2] * p2[i] + m[3][3] * p3[i];
+
+        pos[i] = a3 + a2 * t + a1 * t * t + a0 * t * t * t;
+    }
+}
+
+void getGlobalCatmullRomPoint(float gt, const std::vector<std::array<float, 3>>& points, float pos[3]) {
+    int numPoints = points.size();
+    float t = gt * numPoints;  // mapeia o parâmetro global para o intervalo de pontos
+    int index = (int)floor(t);  // Obtém o índice do ponto atual
+    t = t - index;  // Ajusta o parâmetro t para o intervalo [0, 1]
+
+    // Define os índices dos 4 pontos consecutivos
+    int indices[4];
+    indices[0] = (index + numPoints - 1) % numPoints;
+    indices[1] = (index + 0) % numPoints;
+    indices[2] = (index + 1) % numPoints;
+    indices[3] = (index + 2) % numPoints;
+
+    // Pega os pontos correspondentes
+    float p0[3] = { points[indices[0]][0], points[indices[0]][1], points[indices[0]][2] };
+    float p1[3] = { points[indices[1]][0], points[indices[1]][1], points[indices[1]][2] };
+    float p2[3] = { points[indices[2]][0], points[indices[2]][1], points[indices[2]][2] };
+    float p3[3] = { points[indices[3]][0], points[indices[3]][1], points[indices[3]][2] };
+
+    // Chama a função para calcular o ponto na curva
+    getCatmullRomPoint(t, p0, p1, p2, p3, pos);
+}
+
 GLuint createVBO(const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
     GLuint vbo, vao, ebo;
     glGenVertexArrays(1, &vao);
@@ -119,10 +161,36 @@ void applyTransform(const Transform& transform) {
 
 }
 
+void renderCatmullRomCurve(const std::vector<std::array<float, 3>>& controlPoints) {
+    float pos[3];  // Posição de cada ponto na curva
+
+    // Começa a renderizar a curva
+    glBegin(GL_LINE_STRIP);  // Mudado para GL_LINE_STRIP para desenhar a linha
+
+    glColor3f(1.0, 1.0, 1.0); // Cor branca para a curva
+
+    // Divida a curva em segmentos muito menores para suavizar o traçado
+    for (float t = 0; t <= 1.0; t += 0.001) {  // Reduziu o incremento de 0.01 para 0.001
+        getGlobalCatmullRomPoint(t, controlPoints, pos);  // Chamada ajustada (sem a derivada)
+        glVertex3f(pos[0], pos[1], pos[2]);
+    }
+
+    glEnd();
+}
+
+
 void renderGroup(const Group& group) {
     glPushMatrix();
+
+    // Renderiza curva se existir
+    if (group.transform.hasCurve) {
+        renderCatmullRomCurve(group.transform.controlPoints);
+    }
+
+    // Aplica transformações
     applyTransform(*getTransform(&group));
 
+    // Renderiza os grupos filhos
     for (const auto* child : getChildren(&group)) {  
         glPushMatrix();
         renderGroup(*child); 
@@ -132,21 +200,18 @@ void renderGroup(const Group& group) {
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    
     for (const auto& model : getModels(&group)) {
         Primitive prim = from3dFileToPrimitive(model.c_str());
         if (prim) {
             const auto& pontos = getPoints(prim);
             const auto& modelIndices = getIndices(prim);
 
-            // Carregar os pontos
             for (const auto& ponto : pontos) {
                 vertices.push_back(getX(ponto));
                 vertices.push_back(getY(ponto));
                 vertices.push_back(getZ(ponto));
             }
 
-            // Carregar os índices
             for (const auto& index : modelIndices) {
                 indices.push_back(index);
             }
