@@ -21,29 +21,6 @@ struct Projection {
     float fov, near, far;
 };
 
-struct Transform {
-    bool hasCurve = false;
-    float time = 0.0f;
-    std::vector<std::array<float, 3>> controlPoints;
-
-    float translate[3];
-    float rotate[4];
-    float scale[3];
-
-    Transform() {
-        translate[0] = translate[1] = translate[2] = 0.0f;
-        rotate[0] = rotate[1] = rotate[2] = rotate[3] = 0.0f;
-        scale[0] = scale[1] = scale[2] = 1.0f;
-    }
-};
-
-
-struct Group {
-    Transform transform;
-    std::list<std::string> models;
-    std::list<Group*> children;  
-};
-
 struct XMLDataFormat {
     Window window;
     PosCamera poscamera;
@@ -145,30 +122,68 @@ void buildProjectionCamera(TiXmlElement* projectionCamera, Projection& projectio
 }
 
 void buildTransform(TiXmlElement* transformElement, Transform& transform) {
-    if (transformElement) {
-        TiXmlElement* translateElement = transformElement->FirstChildElement("translate");
-        if (translateElement) {
-            transform.translate[0] = atof(translateElement->Attribute("x"));
-            transform.translate[1] = atof(translateElement->Attribute("y"));
-            transform.translate[2] = atof(translateElement->Attribute("z"));
-        }
+    if (!transformElement) return;
 
-        TiXmlElement* rotateElement = transformElement->FirstChildElement("rotate");
-        if (rotateElement) {
-            transform.rotate[0] = atof(rotateElement->Attribute("angle"));
-            transform.rotate[1] = atof(rotateElement->Attribute("x"));
-            transform.rotate[2] = atof(rotateElement->Attribute("y"));
-            transform.rotate[3] = atof(rotateElement->Attribute("z"));
-        }
+    // --- TRANSLATE ---
+    TiXmlElement* translateElement = transformElement->FirstChildElement("translate");
+    if (translateElement) {
+        const char* timeAttr = translateElement->Attribute("time");
 
-        TiXmlElement* scaleElement = transformElement->FirstChildElement("scale");
-        if (scaleElement) {
-            transform.scale[0] = atof(scaleElement->Attribute("x"));
-            transform.scale[1] = atof(scaleElement->Attribute("y"));
-            transform.scale[2] = atof(scaleElement->Attribute("z"));
+        if (timeAttr) {
+            transform.hasCurve = true;
+            transform.time = atof(timeAttr);  // Time for Catmull-Rom animation
+
+            // Read control points for Catmull-Rom path
+            for (TiXmlElement* point = translateElement->FirstChildElement("point");
+                 point != nullptr;
+                 point = point->NextSiblingElement("point")) {
+
+                float x = atof(point->Attribute("x"));
+                float y = atof(point->Attribute("y"));
+                float z = atof(point->Attribute("z"));
+                transform.controlPoints.push_back({x, y, z});
+            }
+
+            // Align attribute (optional)
+            const char* alignAttr = translateElement->Attribute("align");
+            transform.alignToCurve = (alignAttr && strcmp(alignAttr, "true") == 0);
+        } else {
+            // Static translation
+            transform.translate[0] = translateElement->Attribute("x") ? atof(translateElement->Attribute("x")) : 0.0f;
+            transform.translate[1] = translateElement->Attribute("y") ? atof(translateElement->Attribute("y")) : 0.0f;
+            transform.translate[2] = translateElement->Attribute("z") ? atof(translateElement->Attribute("z")) : 0.0f;
         }
     }
+
+    // --- ROTATE ---
+    TiXmlElement* rotateElement = transformElement->FirstChildElement("rotate");
+    if (rotateElement) {
+        const char* timeAttr = rotateElement->Attribute("time");
+
+        if (timeAttr) {
+            // Animated rotation
+            transform.rotationTime = atof(timeAttr);
+            transform.rotationAxis[0] = rotateElement->Attribute("x") ? atof(rotateElement->Attribute("x")) : 0.0f;
+            transform.rotationAxis[1] = rotateElement->Attribute("y") ? atof(rotateElement->Attribute("y")) : 0.0f;
+            transform.rotationAxis[2] = rotateElement->Attribute("z") ? atof(rotateElement->Attribute("z")) : 0.0f;
+        } else {
+            // Static rotation
+            transform.rotate[0] = rotateElement->Attribute("angle") ? atof(rotateElement->Attribute("angle")) : 0.0f;
+            transform.rotate[1] = rotateElement->Attribute("x") ? atof(rotateElement->Attribute("x")) : 0.0f;
+            transform.rotate[2] = rotateElement->Attribute("y") ? atof(rotateElement->Attribute("y")) : 0.0f;
+            transform.rotate[3] = rotateElement->Attribute("z") ? atof(rotateElement->Attribute("z")) : 0.0f;
+        }
+    }
+
+    // --- SCALE ---
+    TiXmlElement* scaleElement = transformElement->FirstChildElement("scale");
+    if (scaleElement) {
+        transform.scale[0] = scaleElement->Attribute("x") ? atof(scaleElement->Attribute("x")) : 1.0f;
+        transform.scale[1] = scaleElement->Attribute("y") ? atof(scaleElement->Attribute("y")) : 1.0f;
+        transform.scale[2] = scaleElement->Attribute("z") ? atof(scaleElement->Attribute("z")) : 1.0f;
+    }
 }
+
 
 void buildGroup(TiXmlElement* groupElement, Group& group) {
     TiXmlElement* transformElement = groupElement->FirstChildElement("transform");
@@ -179,22 +194,27 @@ void buildGroup(TiXmlElement* groupElement, Group& group) {
     TiXmlElement* modelsElement = groupElement->FirstChildElement("models");
     if (modelsElement) {
         for (TiXmlElement* modelElement = modelsElement->FirstChildElement("model");
-             modelElement != nullptr; modelElement = modelElement->NextSiblingElement("model")) {
+             modelElement != nullptr;
+             modelElement = modelElement->NextSiblingElement("model")) {
+
             const char* file = modelElement->Attribute("file");
             if (file) {
-                group.models.push_back(file);  
+                group.models.push_back(file);
             }
         }
     }
 
     for (TiXmlElement* childGroupElement = groupElement->FirstChildElement("group");
-         childGroupElement != nullptr; childGroupElement = childGroupElement->NextSiblingElement("group")) {
+         childGroupElement != nullptr;
+         childGroupElement = childGroupElement->NextSiblingElement("group")) {
+
         Group childGroup;
         buildGroup(childGroupElement, childGroup);
         group.children.push_back(new Group(childGroup));
-
     }
 }
+
+
 
 // SETTERS 
 
