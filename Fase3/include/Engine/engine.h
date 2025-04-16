@@ -5,11 +5,20 @@
 
 #include <list>
 #include <GL/glut.h>
+#include <unordered_map>
+#include <sstream> 
+
 
 #include "../Utils/XMLDataFormat.h" 
 #include "../Utils/primitive.h"
 #include "../../tinyXML/tinyxml.h"
 #include "../UI/ui.h"
+
+struct ModelData {
+    GLuint vao;
+    GLuint ebo;
+    size_t indexCount;
+};
 
 void drawAxes(); 
 void changeSize(int w, int h) ; 

@@ -336,6 +336,26 @@ std::list<std::string>& getModels(XMLDataFormat* data) {
 //     return emptyList;
 // }
 
+std::list<std::string> getAllModels(const Group* group) {
+    std::list<std::string> allModels;
+
+    // Add models from the current group
+    for (const auto& model : group->models) {
+        allModels.push_back(model);
+    }
+
+    // Recursively get models from child groups
+    for (const auto* childGroup : group->children) {
+        auto childModels = getAllModels(childGroup);  // Recursive call for child groups
+        allModels.insert(allModels.end(), childModels.begin(), childModels.end());
+    }
+
+    return allModels;
+}
+
+std::list<std::string> getAllModels(const XMLDataFormat* data) {
+    return getAllModels(&data->rootGroup);  // Start recursion from the root group
+}
 
 
 // DESTROYER 

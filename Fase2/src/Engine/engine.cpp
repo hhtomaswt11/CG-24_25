@@ -5,6 +5,26 @@
 XMLDataFormat* xmlData = nullptr;
 std::list<Primitive> primitives;
 
+int frameCount = 0;
+float lastTime = 0.0f;
+float fps = 0.0f;
+
+void updateFPS() {
+    frameCount++;
+    float currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;  // em segundos
+    float delta = currentTime - lastTime;
+
+    if (delta >= 1.0f) {
+        fps = frameCount / delta;
+        frameCount = 0;
+        lastTime = currentTime;
+
+        char title[64];
+        sprintf(title, "FPS: %.2f", fps);
+        glutSetWindowTitle(title);
+    }
+}
+
 // camera 
 float camX, camY, camZ;
 float lookAtx, lookAty, lookAtz;
@@ -173,7 +193,7 @@ void renderScene() {
 
     glPolygonMode(GL_FRONT, mode); 
     renderGroup(*getRootGroup(xmlData));
-
+    updateFPS();
     glutSwapBuffers();
 }
 

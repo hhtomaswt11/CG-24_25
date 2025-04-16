@@ -91,6 +91,8 @@ void buildProjectionCamera(TiXmlElement* projectionCamera, Projection& projectio
 void buildTransform(TiXmlElement* transformElement, Transform& transform);
 void buildGroup(TiXmlElement* groupElement, Group& group);
 
+std::list<std::string> getAllModels(const Group* group);
+std::list<std::string> getAllModels(const XMLDataFormat* data);
 
 // DESTROYER
 void deleteXMLDataFormat(XMLDataFormat* data);
