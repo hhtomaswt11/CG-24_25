@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
         path_patch = argv[2]; 
         int tessellation = atoi(argv[3]);
 
-        std::string output_file = "bezier.3d";// ./generator patch teapot.patch 10  -> gera bezier.3d 
+        std::string output_file = argv[4];
 
         buildBezierPatchPrimitive(path_patch, tessellation, output_file); 
         printSuccessMessage(argc, argv); 
