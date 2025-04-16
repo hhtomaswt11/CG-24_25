@@ -1,4 +1,5 @@
 #include "../../include/Generator/generator.h"
+
 #include <vector>
 #include <map>
 
@@ -15,6 +16,8 @@ int main(int argc, char* argv[]) {
  
     Primitive primitive;
     const char* path_3d;
+    const char* path_patch; 
+
 
     if (strcmp(argv[1] , "plane") == 0) {
         path_3d = argv[4];
@@ -92,6 +95,20 @@ int main(int argc, char* argv[]) {
         deletePrimitive(primitive);
         printSuccessMessage(argc, argv); 
      }
+
+
+     else if (strcmp(argv[1], "patch") == 0){    // } && argc == 5) {
+        path_patch = argv[2]; 
+        int tessellation = atoi(argv[3]);
+        std::string output_file = argv[4]; 
+
+        // std::string patchFile = argv[2]; // ./generator patch teapot.patch 10 teapot.3d  e colocar o teapot.patch no build
+
+        //int tessellation = atoi(argv[3]);
+        std::string outputFile = argv[4];
+        buildBezierPatchPrimitive(path_patch, tessellation, outputFile);
+    }
+    
 
 }
 

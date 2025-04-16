@@ -13,4 +13,7 @@ float getZ(Point p);
 
 void freePoint(Point p);
 
+
+Point addPoints(Point a, Point b) ; 
+Point multiplyPoint(Point p, float scalar) ; 
 #endif 

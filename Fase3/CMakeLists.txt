@@ -26,6 +26,8 @@ add_library(
     ./include/Generator/buildPrimitives.h
     ./src/UI/ui.cpp 
     ./include/UI/ui.h 
+    ./src/Generator/bezier.cpp
+    ./include/Generator/bezier.h
 )
 
 # Library for XML parsing (tinyXML)

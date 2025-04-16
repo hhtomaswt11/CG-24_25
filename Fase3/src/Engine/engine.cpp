@@ -36,6 +36,24 @@ const float ZOOM_INCREMENT = 0.5f;
 int startTime = 0; // Store the start time for animation
 bool animationStarted = false; // Flag to initialize startTime
 
+void drawAxes(){
+    float axisLength = 500.0f;
+
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 0.0f, 0.0f); // X - red
+    glVertex3f(-axisLength, 0.0f, 0.0f);
+    glVertex3f(axisLength, 0.0f, 0.0f);
+
+    glColor3f(0.0f, 1.0f, 0.0f); // Y - green
+    glVertex3f(0.0f, -axisLength, 0.0f);
+    glVertex3f(0.0f, axisLength, 0.0f);
+
+    glColor3f(0.0f, 0.0f, 1.0f); // Z - blue
+    glVertex3f(0.0f, 0.0f, -axisLength);
+    glVertex3f(0.0f, 0.0f, axisLength);
+    glEnd();
+}
+
 // Alternate between yellow and white
 void alternate_color(float new_colorR, float new_colorG, float new_colorB) {
     colorR = new_colorR;
@@ -317,22 +335,9 @@ void renderScene() {
               lookAtx, lookAty, lookAtz,
               upx, upy, upz);
 
-    float axisLength = 500.0f;
-
+  
     if (showAxes) {
-        glBegin(GL_LINES);
-        glColor3f(1.0f, 0.0f, 0.0f); // X - red
-        glVertex3f(-axisLength, 0.0f, 0.0f);
-        glVertex3f(axisLength, 0.0f, 0.0f);
-
-        glColor3f(0.0f, 1.0f, 0.0f); // Y - green
-        glVertex3f(0.0f, -axisLength, 0.0f);
-        glVertex3f(0.0f, axisLength, 0.0f);
-
-        glColor3f(0.0f, 0.0f, 1.0f); // Z - blue
-        glVertex3f(0.0f, 0.0f, -axisLength);
-        glVertex3f(0.0f, 0.0f, axisLength);
-        glEnd();
+        drawAxes();
     }
 
     glColor3f(1.0f, 1.0f, 1.0f);

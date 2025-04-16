@@ -11,6 +11,7 @@
 #include "../../tinyXML/tinyxml.h"
 #include "../UI/ui.h"
 
+void drawAxes(); 
 void changeSize(int w, int h) ; 
 void drawPrimitives(const std::list<std::string> figs) ;
 void renderScene() ; 

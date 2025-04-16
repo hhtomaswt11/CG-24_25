@@ -1,4 +1,8 @@
 #include "../../include/Utils/point.h"
+#include <cstring> 
+#include <string>
+#include <cstdlib> // para malloc, free
+#include <math.h>
 
 struct point{
     float x, y, z;
@@ -26,6 +30,7 @@ float getY(Point p){
     return 0.0f;
 }
 
+
 float getZ(Point p){
     if(p){
         return p->z;
@@ -35,4 +40,14 @@ float getZ(Point p){
 
 void freePoint(Point p){
     free(p);
+}
+
+
+
+Point addPoints(Point a, Point b) {
+    return buildPoint(getX(a) + getX(b), getY(a) + getY(b), getZ(a) + getZ(b));
+}
+
+Point multiplyPoint(Point p, float scalar) {
+    return buildPoint(getX(p) * scalar, getY(p) * scalar, getZ(p) * scalar);
 }
