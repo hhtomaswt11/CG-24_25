@@ -97,22 +97,18 @@ int main(int argc, char* argv[]) {
      }
 
 
-     else if (strcmp(argv[1], "patch") == 0){    // } && argc == 5) {
+     else if (strcmp(argv[1], "patch") == 0){
         path_patch = argv[2]; 
         int tessellation = atoi(argv[3]);
-        std::string output_file = argv[4]; 
 
-        // std::string patchFile = argv[2]; // ./generator patch teapot.patch 10 teapot.3d  e colocar o teapot.patch no build
+        std::string output_file = "bezier.3d";// ./generator patch teapot.patch 10  -> gera bezier.3d 
 
-        //int tessellation = atoi(argv[3]);
-        std::string outputFile = argv[4];
-        buildBezierPatchPrimitive(path_patch, tessellation, outputFile);
+        buildBezierPatchPrimitive(path_patch, tessellation, output_file); 
+        printSuccessMessage(argc, argv); 
     }
     
 
 }
-
-
 
 
 

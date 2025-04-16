@@ -7,6 +7,7 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Generator/bezier.cpp.o: /home/tomas/LEI/3AN
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
+  /usr/include/c++/11/array \
   /usr/include/c++/11/backward/binders.h \
   /usr/include/c++/11/bits/alloc_traits.h \
   /usr/include/c++/11/bits/allocator.h \
@@ -28,6 +29,7 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Generator/bezier.cpp.o: /home/tomas/LEI/3AN
   /usr/include/c++/11/bits/functexcept.h \
   /usr/include/c++/11/bits/functional_hash.h \
   /usr/include/c++/11/bits/hash_bytes.h \
+  /usr/include/c++/11/bits/invoke.h \
   /usr/include/c++/11/bits/ios_base.h \
   /usr/include/c++/11/bits/istream.tcc \
   /usr/include/c++/11/bits/locale_classes.h \
@@ -55,12 +57,14 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Generator/bezier.cpp.o: /home/tomas/LEI/3AN
   /usr/include/c++/11/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/11/bits/stl_iterator_base_types.h \
   /usr/include/c++/11/bits/stl_pair.h \
+  /usr/include/c++/11/bits/stl_relops.h \
   /usr/include/c++/11/bits/stl_uninitialized.h \
   /usr/include/c++/11/bits/stl_vector.h \
   /usr/include/c++/11/bits/streambuf.tcc \
   /usr/include/c++/11/bits/streambuf_iterator.h \
   /usr/include/c++/11/bits/string_view.tcc \
   /usr/include/c++/11/bits/stringfwd.h \
+  /usr/include/c++/11/bits/uses_allocator.h \
   /usr/include/c++/11/bits/vector.tcc \
   /usr/include/c++/11/cctype \
   /usr/include/c++/11/cerrno \
@@ -111,8 +115,10 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Generator/bezier.cpp.o: /home/tomas/LEI/3AN
   /usr/include/c++/11/tr1/poly_laguerre.tcc \
   /usr/include/c++/11/tr1/riemann_zeta.tcc \
   /usr/include/c++/11/tr1/special_function_util.h \
+  /usr/include/c++/11/tuple \
   /usr/include/c++/11/type_traits \
   /usr/include/c++/11/typeinfo \
+  /usr/include/c++/11/utility \
   /usr/include/c++/11/vector \
   /usr/include/ctype.h \
   /usr/include/endian.h \
@@ -1178,10 +1184,6 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/tinyXML/tinyxml.h:
 
-/usr/include/c++/11/utility:
-
-/usr/include/c++/11/tuple:
-
 /usr/include/c++/11/map:
 
 /usr/include/c++/11/ext/aligned_buffer.h:
@@ -1197,8 +1199,6 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 /usr/include/c++/11/bits/list.tcc:
 
 /usr/include/c++/11/bits/allocated_ptr.h:
-
-/usr/include/c++/11/array:
 
 /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/include/Generator/buildPrimitives.h:
 
@@ -1274,15 +1274,11 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
-/usr/include/c++/11/ext/numeric_traits.h:
+/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
-/usr/include/c++/11/bits/memoryfwd.h:
+/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
-
-/usr/include/c++/11/tr1/beta_function.tcc:
-
-/usr/include/c++/11/ext/atomicity.h:
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/c++/11/cstring:
 
@@ -1300,12 +1296,6 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/bits/localefwd.h:
 
-/usr/include/c++/11/bits/stringfwd.h:
-
-/usr/include/asm-generic/errno.h:
-
-/usr/include/c++/11/bits/string_view.tcc:
-
 /usr/include/c++/11/bits/streambuf_iterator.h:
 
 /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/src/Utils/XMLDataFormat.cpp:
@@ -1313,12 +1303,6 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 /usr/include/c++/11/bits/range_access.h:
 
 /usr/include/c++/11/bits/stl_vector.h:
-
-/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/src/Utils/point.cpp:
-
-/usr/include/c++/11/bits/stl_relops.h:
-
-/usr/include/c++/11/bits/stl_iterator_base_funcs.h:
 
 /usr/include/c++/11/bits/stl_iterator_base_types.h:
 
@@ -1344,6 +1328,8 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/exception:
 
+/usr/include/c++/11/array:
+
 /usr/include/stdlib.h:
 
 /usr/include/c++/11/bits/stl_uninitialized.h:
@@ -1354,12 +1340,6 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/bits/nested_exception.h:
 
-/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/tinyXML/tinystr.h:
-
-/usr/include/c++/11/bits/charconv.h:
-
-/usr/include/c++/11/cwchar:
-
 /usr/include/c++/11/list:
 
 /usr/include/c++/11/clocale:
@@ -1368,15 +1348,21 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/bits/move.h:
 
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/src/Utils/point.cpp:
+
+/usr/include/c++/11/bits/stl_iterator_base_funcs.h:
+
+/usr/include/c++/11/bits/stl_relops.h:
+
+/usr/include/c++/11/bits/memoryfwd.h:
+
+/usr/include/c++/11/ext/numeric_traits.h:
+
 /usr/include/c++/11/bits/stl_pair.h:
 
 /usr/include/c++/11/bits/basic_string.tcc:
 
 /usr/include/c++/11/tr1/bessel_function.tcc:
-
-/usr/include/c++/11/ext/alloc_traits.h:
-
-/usr/include/x86_64-linux-gnu/bits/sched.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/gthr.h:
 
@@ -1394,23 +1380,19 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
-/usr/include/c++/11/bits/exception_defines.h:
-
-/usr/include/alloca.h:
-
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
 /usr/include/c++/11/backward/binders.h:
 
+/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
+
+/usr/include/c++/11/bits/basic_ios.h:
+
 /usr/include/c++/11/bits/allocator.h:
 
-/usr/include/c++/11/bits/invoke.h:
-
-/usr/include/c++/11/bits/std_abs.h:
-
 /usr/include/c++/11/bits/functional_hash.h:
+
+/usr/include/c++/11/cwchar:
 
 /usr/include/strings.h:
 
@@ -1420,13 +1402,19 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/bits/basic_ios.tcc:
 
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/tinyXML/tinystr.h:
+
+/usr/include/c++/11/bits/charconv.h:
+
+/usr/include/c++/11/bits/exception_defines.h:
+
+/usr/include/alloca.h:
+
+/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
+
 /usr/include/c++/11/bits/functexcept.h:
 
 /usr/include/asm-generic/errno-base.h:
-
-/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/include/Utils/point.h:
-
-/usr/include/c++/11/bits/codecvt.h:
 
 /usr/include/c++/11/bits/exception.h:
 
@@ -1438,6 +1426,10 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/bits/ostream.tcc:
 
+/usr/include/asm-generic/errno.h:
+
+/usr/include/c++/11/bits/stringfwd.h:
+
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
@@ -1447,6 +1439,10 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 /usr/include/c++/11/tr1/exp_integral.tcc:
 
 /usr/include/c++/11/bits/locale_classes.h:
+
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/include/Utils/point.h:
+
+/usr/include/c++/11/bits/codecvt.h:
 
 /usr/include/endian.h:
 
@@ -1482,6 +1478,14 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/bits/hash_bytes.h:
 
+/usr/include/c++/11/tuple:
+
+/usr/include/c++/11/bits/string_view.tcc:
+
+/usr/include/c++/11/bits/std_abs.h:
+
+/usr/include/c++/11/bits/invoke.h:
+
 /usr/include/c++/11/bits/locale_facets.tcc:
 
 /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/src/Generator/bezier.cpp:
@@ -1496,9 +1500,29 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
+
 /usr/include/c++/11/cmath:
 
 /usr/include/x86_64-linux-gnu/asm/errno.h:
+
+/usr/include/c++/11/ext/alloc_traits.h:
+
+/usr/include/c++/11/bits/alloc_traits.h:
+
+/usr/include/c++/11/tr1/special_function_util.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
+
+/usr/include/x86_64-linux-gnu/bits/sched.h:
+
+/usr/include/c++/11/ext/atomicity.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
+
+/usr/include/c++/11/tr1/beta_function.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
 
@@ -1521,6 +1545,8 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 /usr/include/c++/11/istream:
 
 /usr/include/c++/11/math.h:
+
+/usr/include/c++/11/utility:
 
 /usr/include/c++/11/ostream:
 
@@ -1552,9 +1578,9 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/c++/11/tr1/ell_integral.tcc:
 
-/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
-
 /usr/include/c++/11/bits/cxxabi_forced.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
 
@@ -1569,12 +1595,6 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 /usr/include/c++/11/tr1/poly_hermite.tcc:
 
 /usr/include/c++/11/tr1/poly_laguerre.tcc:
-
-/usr/include/c++/11/bits/alloc_traits.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
-
-/usr/include/c++/11/tr1/special_function_util.h:
 
 /home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase3/src/UI/ui.cpp:
 
@@ -1636,9 +1656,9 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 
 /usr/include/x86_64-linux-gnu/bits/fp-logb.h:
 
-/usr/include/c++/11/ext/new_allocator.h:
-
 /usr/include/c++/11/cstdint:
+
+/usr/include/c++/11/ext/new_allocator.h:
 
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
 
@@ -1663,17 +1683,3 @@ CMakeFiles/Utils_n_Build_lib.dir/src/Utils/primitive.cpp.o: /home/tomas/LEI/3ANO
 /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/x86_64-linux-gnu/bits/select.h:
-
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
-
-/usr/include/c++/11/bits/basic_ios.h:
-
-/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
-
-/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:

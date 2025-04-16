@@ -14,6 +14,7 @@ typedef struct Patch patch;
     float bezierBlend(const float m[4][4], float t, int row) ;
     Point computeBezierPoint(float u, float v, Point patchPoints[4][4]) ;
     void buildBezierPatchPrimitive(std::string patchFile, int tessellation, std::string outputFile) ;
+    float roundFloat(float val, int precision )  ; 
 
 
 
