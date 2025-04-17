@@ -26,7 +26,7 @@ Desta forma, os executáveis generator e executable são gerados.
 ./engine ../test_files_phase_3/test_3_1.xml
 ```
 
-###### Comando completo (deve ser executado na diretoria Fase2)
+###### Comando completo (deve ser executado na diretoria Fase3)
 ```text
 mkdir build; cd build ; cmake .. ; cmake --build .  ; ./generator box 2 3 box.3d  ; ./engine ../test_files_phase_3/test_3_1.xml ; cd ..
 ```
