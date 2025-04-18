@@ -7,7 +7,26 @@
     std::map<std::string, GLuint> vboCache;
     std::map<std::string, ModelData> modelCache;
 
+    void normalize(float* vec) {
+        float length = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
+        if (length > 0.0001f) { // Evita divisão por zero
+            for (int i = 0; i < 3; ++i) {
+                vec[i] /= length;
+            }
+        }
+    }
+    
+    void cross(const float* a, const float* b, float* result) {
+        result[0] = a[1] * b[2] - a[2] * b[1];
+        result[1] = a[2] * b[0] - a[0] * b[2];
+        result[2] = a[0] * b[1] - a[1] * b[0];
+    }
 
+    std::array<float, 3> yAxis() {
+        return { 0.0f, 1.0f, 0.0f };
+    }
+    
+    
     int frameCount = 0;
     float lastTime = 0.0f;
     float fps = 0.0f;
@@ -26,6 +45,13 @@
             sprintf(title, "FPS: %.2f", fps);
             glutSetWindowTitle(title);
         }
+    }
+
+    void buildRotMatrix(const float *x, const float *y, const float *z, float *m) {
+        m[0]  = x[0]; m[1]  = x[1]; m[2]  = x[2]; m[3]  = 0;
+        m[4]  = y[0]; m[5]  = y[1]; m[6]  = y[2]; m[7]  = 0;
+        m[8]  = z[0]; m[9]  = z[1]; m[10] = z[2]; m[11] = 0;
+        m[12] =    0; m[13] =    0; m[14] =    0; m[15] = 1;
     }
 
     // Camera
@@ -120,6 +146,26 @@
         glMatrixMode(GL_MODELVIEW);
     }
 
+    void getCatmullRomPointWithDeriv(float t, float p0[3], float p1[3], float p2[3], float p3[3], float pos[3], float deriv[3]) {
+        float m[4][4] = {
+            {-0.5f, 1.5f, -1.5f, 0.5f},
+            {1.0f, -2.5f, 2.0f, -0.5f},
+            {-0.5f, 0.0f, 0.5f, 0.0f},
+            {0.0f, 1.0f, 0.0f, 0.0f}
+        };
+    
+        for (int i = 0; i < 3; ++i) {
+            float a0 = m[0][0] * p0[i] + m[0][1] * p1[i] + m[0][2] * p2[i] + m[0][3] * p3[i];
+            float a1 = m[1][0] * p0[i] + m[1][1] * p1[i] + m[1][2] * p2[i] + m[1][3] * p3[i];
+            float a2 = m[2][0] * p0[i] + m[2][1] * p1[i] + m[2][2] * p2[i] + m[2][3] * p3[i];
+            float a3 = m[3][0] * p0[i] + m[3][1] * p1[i] + m[3][2] * p2[i] + m[3][3] * p3[i];
+    
+            pos[i] = a3 + a2 * t + a1 * t * t + a0 * t * t * t;
+            deriv[i] = a2 + 2 * a1 * t + 3 * a0 * t * t;
+        }
+    }
+    
+
     void getCatmullRomPoint(float t, float p0[3], float p1[3], float p2[3], float p3[3], float pos[3]) {
         float m[4][4] = {
             {-0.5f, 1.5f, -1.5f, 0.5f},
@@ -137,6 +183,27 @@
             pos[i] = a3 + a2 * t + a1 * t * t + a0 * t * t * t;
         }
     }
+
+    void getGlobalCatmullRomPointWithDeriv(float gt, const std::vector<std::array<float, 3>>& points, float pos[3], float deriv[3]) {
+        int numPoints = points.size();
+        float t = gt * numPoints;
+        int index = (int)floor(t);
+        t = t - index;
+    
+        int indices[4];
+        indices[0] = (index + numPoints - 1) % numPoints;
+        indices[1] = (index + 0) % numPoints;
+        indices[2] = (index + 1) % numPoints;
+        indices[3] = (index + 2) % numPoints;
+    
+        float p0[3] = { points[indices[0]][0], points[indices[0]][1], points[indices[0]][2] };
+        float p1[3] = { points[indices[1]][0], points[indices[1]][1], points[indices[1]][2] };
+        float p2[3] = { points[indices[2]][0], points[indices[2]][1], points[indices[2]][2] };
+        float p3[3] = { points[indices[3]][0], points[indices[3]][1], points[indices[3]][2] };
+    
+        getCatmullRomPointWithDeriv(t, p0, p1, p2, p3, pos, deriv);
+    }
+    
 
     void getGlobalCatmullRomPoint(float gt, const std::vector<std::array<float, 3>>& points, float pos[3]) {
         int numPoints = points.size();
@@ -255,7 +322,6 @@
         return { vao, ebo, indices.size() };
     }
 
-
     void renderGroup(const Group& group) {
         glPushMatrix();
     
@@ -288,47 +354,40 @@
             float elapsedTime = (glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
             float t = group.transform.time > 0 ? fmod(elapsedTime, group.transform.time) / group.transform.time : 0.0f;
     
-            float pos[3], next[3];
-            getGlobalCatmullRomPoint(t, group.transform.controlPoints, pos);
-            getGlobalCatmullRomPoint(t + 0.001, group.transform.controlPoints, next);
+            float pos[3], deriv[3];
     
-            float tangent[3] = { next[0] - pos[0], next[1] - pos[1], next[2] - pos[2] };
-            float length = sqrt(tangent[0]*tangent[0] + tangent[1]*tangent[1] + tangent[2]*tangent[2]);
-    
-            if (length > 0.0001f) {
-                for (int i = 0; i < 3; ++i) tangent[i] /= length;
-    
-                float up[3] = { 0, 1, 0 };
-                float side[3] = {
-                    up[1]*tangent[2] - up[2]*tangent[1],
-                    up[2]*tangent[0] - up[0]*tangent[2],
-                    up[0]*tangent[1] - up[1]*tangent[0]
-                };
-    
-                float sideLen = sqrt(side[0]*side[0] + side[1]*side[1] + side[2]*side[2]);
-                if (sideLen > 0.0001f) {
-                    for (int i = 0; i < 3; ++i) side[i] /= sideLen;
-    
-                    float newUp[3] = {
-                        tangent[1]*side[2] - tangent[2]*side[1],
-                        tangent[2]*side[0] - tangent[0]*side[2],
-                        tangent[0]*side[1] - tangent[1]*side[0]
-                    };
-    
-                    float matrix[16] = {
-                        side[0], newUp[0], tangent[0], 0,
-                        side[1], newUp[1], tangent[1], 0,
-                        side[2], newUp[2], tangent[2], 0,
-                        0,       0,        0,         1
-                    };
-    
-                    glTranslatef(pos[0], pos[1], pos[2]);
-                    glMultMatrixf(matrix);
-                }
+            std::vector<std::array<float, 3>> controlPoints;
+            for (const auto& point : group.transform.controlPoints) {
+                controlPoints.push_back(std::array<float, 3>{point[0], point[1], point[2]});
             }
-        } else {
-            applyTransform(group.transform);
+    
+            getGlobalCatmullRomPointWithDeriv(t, controlPoints, pos, deriv);
+    
+            glTranslatef(pos[0], pos[1], pos[2]);
+    
+            if (group.transform.alignToCurve) {
+                normalize(deriv);
+    
+                float y[3], z[3];
+    
+                cross(deriv, yAxis().data(), z); // Xi = deriv
+    
+                normalize(z);
+    
+                cross(z, deriv, y); // Xi = deriv
+
+    
+                normalize(y);
+    
+                float rot[16];
+                buildRotMatrix(deriv, y, z, rot);
+    
+                // Aplica a transformação de rotação com glMultMatrixf
+                glMultMatrixf(rot);
+            }
         }
+    
+        applyTransform(group.transform);
     
         // Render child groups
         for (const auto* child : getChildren(&group)) {
@@ -356,6 +415,8 @@
     
         glPopMatrix();
     }
+    
+    
     
 
     void renderScene() {

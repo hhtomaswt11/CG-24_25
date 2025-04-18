@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <math.h>
+#ifndef  M_PI
+#define  M_PI  3.1415926535897932384626433
+#endif
+
+
 
 #define MAX_PATCHES 10000
 #define MAX_POINTS 50000
