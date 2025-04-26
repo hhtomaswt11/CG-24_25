@@ -1,13 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <string.h>
-#include <math.h>
-#ifndef  M_PI
-#define  M_PI  3.1415926535897932384626433
-#endif
-
-
+#include <time.h>  // Incluir a biblioteca time.h para acessar a hora atual
 
 #define MAX_PATCHES 10000
 #define MAX_POINTS 50000
@@ -21,55 +15,56 @@ typedef struct {
     int indices[16];
 } Patch;
 
-int nearly_equal(double a, double b) {
+int is_almost_equal(double a, double b) {
     return fabs(a - b) < EPSILON;
 }
 
-int point_equals(Point a, Point b) {
-    return nearly_equal(a.x, b.x) && nearly_equal(a.y, b.y) && nearly_equal(a.z, b.z);
+int are_points_equal(Point a, Point b) {
+    return is_almost_equal(a.x, b.x) && is_almost_equal(a.y, b.y) && is_almost_equal(a.z, b.z);
 }
 
-Point spherical_point(double alpha, double beta, double r) {
+Point spherical_to_cartesian(double alpha, double beta, double radius) {
     Point p;
-    p.x = r * cos(beta) * sin(alpha);
-    p.y = r * sin(beta);
-    p.z = r * cos(beta) * cos(alpha);
+    p.x = radius * cos(beta) * sin(alpha);
+    p.y = radius * sin(beta);
+    p.z = radius * cos(beta) * cos(alpha);
     return p;
 }
 
-Point add_irregularity(Point p, double base_radius, double max_height) {
-    double norm = sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
-    double dx = p.x / norm;
-    double dy = p.y / norm;
-    double dz = p.z / norm;
-    double r = base_radius + ((double)rand() / RAND_MAX) * 2 * max_height - max_height;
+Point add_random_variation(Point p, double base_radius, double max_deviation) {
+    double length = sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+    double unit_x = p.x / length;
+    double unit_y = p.y / length;
+    double unit_z = p.z / length;
 
-    Point irregular;
-    irregular.x = dx * r;
-    irregular.y = dy * r;
-    irregular.z = dz * r;
-    return irregular;
+    double new_radius = base_radius + (rand() / (double)RAND_MAX) * 2 * max_deviation - max_deviation;
+
+    Point modified_point;
+    modified_point.x = unit_x * new_radius;
+    modified_point.y = unit_y * new_radius;
+    modified_point.z = unit_z * new_radius;
+    return modified_point;
 }
 
 Point rotate_point_y(Point p, double angle) {
-    Point r;
-    r.x = cos(angle) * p.x + sin(angle) * p.z;
-    r.y = p.y;
-    r.z = -sin(angle) * p.x + cos(angle) * p.z;
-    return r;
+    Point rotated;
+    rotated.x = cos(angle) * p.x + sin(angle) * p.z;
+    rotated.y = p.y;
+    rotated.z = -sin(angle) * p.x + cos(angle) * p.z;
+    return rotated;
 }
 
-Point transform_bottom(Point p) {
-    Point t;
-    t.x = p.z;
-    t.y = -p.y;
-    t.z = p.x;
-    return t;
+Point reflect_point(Point p) {
+    Point reflected;
+    reflected.x = p.z;
+    reflected.y = -p.y;
+    reflected.z = p.x;
+    return reflected;
 }
 
-int find_or_add_point(Point p, Point* points, int* num_points) {
+int find_or_insert_point(Point p, Point* points, int* num_points) {
     for (int i = 0; i < *num_points; ++i) {
-        if (point_equals(points[i], p)) {
+        if (are_points_equal(points[i], p)) {
             return i;
         }
     }
@@ -77,76 +72,80 @@ int find_or_add_point(Point p, Point* points, int* num_points) {
     return (*num_points)++;
 }
 
-void generate_patch(double alpha, double beta, double da, double db, double radius, double max_height, Point* points, int* num_points, Patch* patches, int* patch_count) {
-    Point top[16];
+void generate_comet_geometry(double alpha, double beta, double delta_alpha, double delta_beta, double radius, double max_deviation, Point* points, int* num_points, Patch* patches, int* num_patches) {
+    Point vertices[16];
     int idx = 0;
-    for (int i = 0; i < 4; i++) {
-        double a = alpha + i * da;
-        for (int j = 0; j < 4; j++) {
-            double b = beta + j * db;
-            Point p = spherical_point(a, b, radius);
+    
+    // Gerar a parte superior da esfera
+    for (int i = 0; i < 4; ++i) {
+        double a = alpha + i * delta_alpha;
+        for (int j = 0; j < 4; ++j) {
+            double b = beta + j * delta_beta;
+            Point p = spherical_to_cartesian(a, b, radius);
             if ((i == 1 || i == 2) && (j == 1 || j == 2)) {
-                p = add_irregularity(p, radius, max_height);
+                p = add_random_variation(p, radius, max_deviation);
             }
-            top[idx++] = p;
+            vertices[idx++] = p;
         }
     }
 
-    Patch top_patch;
-    for (int i = 0; i < 16; i++) {
-        top_patch.indices[i] = find_or_add_point(top[i], points, num_points);
+    // Adicionar o patch da parte superior
+    Patch upper_patch;
+    for (int i = 0; i < 16; ++i) {
+        upper_patch.indices[i] = find_or_insert_point(vertices[i], points, num_points);
     }
-    patches[(*patch_count)++] = top_patch;
+    patches[(*num_patches)++] = upper_patch;
 
-    // bottom patch (rotated)
-    Patch bottom_patch;
-    for (int i = 0; i < 16; i++) {
-        Point p = transform_bottom(top[i]);
-        p = rotate_point_y(p, da * 1.5);
-        bottom_patch.indices[i] = find_or_add_point(p, points, num_points);
+    // Gerar a parte inferior da esfera
+    idx = 0;
+    for (int i = 0; i < 4; ++i) {
+        double a = alpha + i * delta_alpha;
+        for (int j = 0; j < 4; ++j) {
+            double b = beta + j * delta_beta;
+            Point p = spherical_to_cartesian(a, -b, radius);  // Use -b para gerar a parte inferior da esfera
+            if ((i == 1 || i == 2) && (j == 1 || j == 2)) {
+                p = add_random_variation(p, radius, max_deviation);
+            }
+            vertices[idx++] = p;
+        }
     }
-    patches[(*patch_count)++] = bottom_patch;
+
+    // Adicionar o patch da parte inferior
+    Patch lower_patch;
+    for (int i = 0; i < 16; ++i) {
+        lower_patch.indices[i] = find_or_insert_point(vertices[i], points, num_points);
+    }
+    patches[(*num_patches)++] = lower_patch;
+
+    // Gerar triângulos de conexão entre a parte superior e a inferior
+    // Conectar os vértices da borda superior com a borda inferior
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            int upper_index = i * 4 + j;
+            int lower_index = (i + 4) * 4 + j;
+
+            // Conectar os triângulos da borda superior para a borda inferior
+            // Aqui, você pode definir a forma como essas bordas se conectam
+            // Adicionar índices que conectem a parte superior e inferior
+            if (i < 3 && j < 3) {
+                // Triângulos conectando a parte superior e inferior
+                // (conectando borda superior e inferior)
+                patches[(*num_patches)].indices[i * 4 + j] = upper_index;
+                patches[(*num_patches)].indices[i * 4 + (j + 1)] = lower_index;
+            }
+        }
+    }
 }
 
-int main(int argc, char* argv[]) {
-    if (argc < 7) {
-        printf("Uso: %s <seed> <raio> <altura_max> <slices> <stacks> <ficheiro_saida>\n", argv[0]);
-        return 1;
-    }
-
-    int seed = atoi(argv[1]);
-    double radius = atof(argv[2]);
-    double max_height = atof(argv[3]);
-    int slices = atoi(argv[4]);
-    int stacks = atoi(argv[5]);
-    char* filename = argv[6];
-
-    srand(seed);
-
-    double da = 2 * M_PI / slices / 3.0;
-    double db = (M_PI / 2.0) / stacks / 3.0;
-
-    Point points[MAX_POINTS];
-    Patch patches[MAX_PATCHES];
-    int num_points = 0;
-    int patch_count = 0;
-
-    for (int i = 0; i < slices; ++i) {
-        for (int j = 0; j < stacks; ++j) {
-            double alpha = i * 3 * da;
-            double beta = j * 3 * db;
-            generate_patch(alpha, beta, da, db, radius, max_height, points, &num_points, patches, &patch_count);
-        }
-    }
-
+void write_patch_file(const char* filename, Patch* patches, int num_patches, Point* points, int num_points) {
     FILE* file = fopen(filename, "w");
     if (!file) {
-        perror("Erro ao abrir ficheiro");
-        return 1;
+        perror("Erro ao abrir arquivo");
+        return;
     }
 
-    fprintf(file, "%d\n", patch_count);
-    for (int i = 0; i < patch_count; ++i) {
+    fprintf(file, "%d\n", num_patches);
+    for (int i = 0; i < num_patches; ++i) {
         for (int j = 0; j < 16; ++j) {
             fprintf(file, "%d", patches[i].indices[j]);
             if (j < 15) fprintf(file, ", ");
@@ -160,6 +159,37 @@ int main(int argc, char* argv[]) {
     }
 
     fclose(file);
-    printf("Ficheiro '%s' criado com sucesso!\n", filename);
+    printf("Ficheiro '%s' gerado com sucesso!\n", filename);
+}
+
+int main() {
+    // Usando a hora atual como semente para a geração de números aleatórios
+    int seed = (int)time(NULL); // Usando a hora atual como seed para garantir aleatoriedade
+    double radius = 1.0; 
+    double max_deviation = 0.1;  // irregularidade
+    int slices = 10; 
+    int stacks = 5;  
+    char* filename = "comet_output.patch"; 
+
+    srand(seed);  // Inicializa o gerador de números aleatórios com a seed baseada na hora
+
+    double delta_alpha = 2 * M_PI / slices;
+    double delta_beta = M_PI / 2.0 / stacks;
+
+    Point points[MAX_POINTS];
+    Patch patches[MAX_PATCHES];
+    int num_points = 0;
+    int num_patches = 0;
+
+    for (int i = 0; i < slices; ++i) {
+        for (int j = 0; j < stacks; ++j) {
+            double alpha = i * delta_alpha;
+            double beta = j * delta_beta;
+            generate_comet_geometry(alpha, beta, delta_alpha / 3.0, delta_beta / 3.0, radius, max_deviation, points, &num_points, patches, &num_patches);
+        }
+    }
+
+    write_patch_file(filename, patches, num_patches, points, num_points);
+
     return 0;
 }

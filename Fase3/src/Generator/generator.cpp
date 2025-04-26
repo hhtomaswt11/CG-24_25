@@ -106,19 +106,13 @@ int main(int argc, char* argv[]) {
         buildBezierPatchPrimitive(path_patch, tessellation, output_file); 
         printSuccessMessage(argc, argv); 
     }
-    // ./generator patch ../../teapot.patch 10 bezier.3d
-    // testar my_test_3_2.xml
-    // ./engine ../test_files_phase_3/my_test_3_2.xml
 
+    // gcc cometgen.c -o comet_generator -lm
+    // ./comet_generator 
+    // cd build 
+    // cmake .. ; cmake --build . 
+    // ./generator patch ../f.patch 10 comet.3d
 
-
-    // gcc comet_generator.c -o comet_generator -lm
-    // ./comet_generator 42 1.0 0.2 6 4 comet.patch
-    // ./generator patch comet.patch 10 comet.3d
-    // testar comet.xml
-    // ./engine ../test_files_phase_3/comet.xml 
-
-    
 
 }
 
