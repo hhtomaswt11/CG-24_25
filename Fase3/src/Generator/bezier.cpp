@@ -838,13 +838,13 @@ void buildBezierPatchPrimitive(std::string patchFile, int tessellation, std::str
                 int i3 = offset + i * (tessellation + 1) + (j + 1);
                 int i4 = offset + (i + 1) * (tessellation + 1) + (j + 1);
 
-                indices.push_back(i2);
-                indices.push_back(i3);
                 indices.push_back(i1);
-                
-                indices.push_back(i2);
-                indices.push_back(i4);
                 indices.push_back(i3);
+                indices.push_back(i2);
+                
+                indices.push_back(i3);
+                indices.push_back(i4);
+                indices.push_back(i2);
                 
             }
         }
