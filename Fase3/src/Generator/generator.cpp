@@ -5,15 +5,13 @@
 
 int main(int argc, char* argv[]) {
     if(argc < 2)  {
-        std::cout << "Not enough arguments\n";
+        std::cout << "Falta de argumentos\n";
         helper(); 
         return EXIT_FAILURE;
     }
-
     if (strcmp(argv[1], "--help") == 0 ){
         helper(); 
      }
- 
     Primitive primitive;
     const char* path_3d;
     const char* path_patch; 

@@ -2,7 +2,6 @@
 
 
 Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f, bool invertFaces = false, bool invertDiagonal = false) {
-
     if (length <= 0 || divisions <= 0) {
         std::cerr << "Erro: Parâmetros inválidos para gerar o plano." << std::endl;
         exit(1); 
@@ -166,9 +165,7 @@ Primitive buildBox(int length, int divisions) {
     for (const auto& p : allPoints) {
         addPoint(box, p);
     }
-
     setIndices(box, allIndices);
-    
    
     deletePrimitive2(faceCima);
     deletePrimitive2(faceBaixo);
@@ -190,8 +187,6 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     Primitive sphere = buildPrimitive();
     if (!sphere) return sphere;
 
-    // std::cout << "Gerando esfera: raio = " << radius << ", slices = " << slices << ", stacks = " << stacks << std::endl;
-
     std::vector<Point> points;
     std::vector<int> indices;
 
@@ -207,13 +202,12 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         float xy = radius * sin(phi);
 
         for (int slice = 0; slice < slices; ++slice) {
-            float theta = 2 * M_PI * slice / slices; // Longitude
+            float theta = 2 * M_PI * slice / slices; // longitude
             float x = xy * cos(theta);
             float z = xy * sin(theta);
 
             Point p = buildPoint(x, y, z);
             points.push_back(p);
-            // std::cout << "Ponto: (" << x << ", " << y << ", " << z << ")" << std::endl;
         }
     }
 
@@ -266,11 +260,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     for (const auto& p : points) {   // adicionar todos os pontos à primitiva
         addPoint(sphere, p);
     }
-
     setIndices(sphere, indices);
-
-    //std::cout << "Total de pontos: " << points.size() << std::endl;
-    //std::cout << "Total de índices: " << indices.size() << std::endl;
 
     return sphere;
 }
@@ -299,7 +289,6 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         return points.size() - 1;  // índice do novo ponto
     };
 
-
     // base do cone
     Point center = buildPoint(0.0f, 0.0f, 0.0f);
     int centerIndex = addUniquePoint(center);  // adicionar o centro da base -> ponto único
@@ -315,7 +304,6 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         baseIndices.push_back(index); // armazena o índice do ponto da borda
     }
 
-  
     for (int i = 0; i < slices; i++) {   // adicionar os triângulos para a base
         int next = (i + 1) % slices;
         indices.push_back(centerIndex);
@@ -377,8 +365,6 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
     for (const auto& p : points) {
         addPoint(cone, p);
     }
-
-    // definir os índices 
     setIndices(cone, indices);
 
     return cone;
@@ -485,13 +471,10 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, float height, in
             indices.push_back(i4Bottom);
         }
     }
-
    
     for (const auto& p : points) {
         addPoint(ring, p);
     }
-
-    
     setIndices(ring, indices);
 
     return ring;

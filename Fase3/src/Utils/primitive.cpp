@@ -40,7 +40,6 @@ void fromPrimitiveTo3dFile(const Primitive f, const char* path) {
 
     // escrever índices para triângulos
     file << "Indices: " << f->indices.size() << "\n";
-   // file << "Triangulos: " << f->indices.size() / 3 << "\n";
     for (size_t i = 0; i < f->indices.size(); i += 3) {
         file << f->indices[i] << "," << f->indices[i + 1] << "," << f->indices[i + 2] << "\n";
     }
@@ -54,7 +53,6 @@ Primitive from3dFileToPrimitive(const char* path) {
 
     if (!file) {
         std::cerr << "File does not exist. Error opening file: " << path << "\n";
-         // exit(EXIT_FAILURE);
          return f;
     }
 
@@ -66,14 +64,12 @@ Primitive from3dFileToPrimitive(const char* path) {
     sscanf(line.c_str(), "Vertices: %d", &vertexCount);
 
     // carregar os pontos da primitiva 
-    //std::cout << "Loading points from file: " << path << std::endl;
     for (int i = 0; i < vertexCount; ++i) {
         std::getline(file, line);
         float x, y, z;
         sscanf(line.c_str(), "%f,%f,%f", &x, &y, &z);
         Point ponto = buildPoint(x, y, z);
         addPoint(f, ponto);
-        // std::cout << "Loaded point: (" << x << ", " << y << ", " << z << ")" << std::endl;
     }
 
     // carregar os índices da primitiva 
@@ -81,7 +77,6 @@ Primitive from3dFileToPrimitive(const char* path) {
     std::getline(file, line);
     sscanf(line.c_str(), "Indices: %d", &indexCount);
 
-    //std::cout << "Loading indexes from file: " << path << std::endl;
     for (int i = 0; i < indexCount / 3; ++i) {
         int i1, i2, i3;
         std::getline(file, line);
@@ -89,7 +84,6 @@ Primitive from3dFileToPrimitive(const char* path) {
         f->indices.push_back(i1);
         f->indices.push_back(i2);
         f->indices.push_back(i3);
-        // std::cout << "Triangle connection: " << i1 << ", " << i2 << ", " << i3 << std::endl;
     }
 
     return f;
@@ -111,13 +105,11 @@ void addTriangle(Primitive plano, const Point& p1, const Point& p2, const Point&
     addPoint(plano, p3);
 }
 
-
 void addPoint(Primitive f, const Point& p) {
     if (f) {
         f->points.push_back(p);  
     }
 }
-
 
 
 void addPoints(Primitive f, const Primitive toAdd) {

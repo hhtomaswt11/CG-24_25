@@ -1,7 +1,7 @@
 #include "../../include/Utils/point.h"
 #include <cstring> 
 #include <string>
-#include <cstdlib> // para malloc, free
+#include <cstdlib> 
 #include <math.h>
 
 struct point{

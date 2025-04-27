@@ -327,26 +327,17 @@ std::list<std::string>& getModels(XMLDataFormat* data) {
     return emptyList;
 }
 
-
-// const std::list<std::string>& getModels(const XMLDataFormat* data) {
-//     if (data) {
-//         return data->models;
-//     }
-//     static const std::list<std::string> emptyList;
-//     return emptyList;
-// }
-
 std::list<std::string> getAllModels(const Group* group) {
     std::list<std::string> allModels;
 
-    // Add models from the current group
+    // para adicionar os modelos ao grupo atual
     for (const auto& model : group->models) {
         allModels.push_back(model);
     }
 
-    // Recursively get models from child groups
+    // recusrivamente obter os modelos dos grupos filho
     for (const auto* childGroup : group->children) {
-        auto childModels = getAllModels(childGroup);  // Recursive call for child groups
+        auto childModels = getAllModels(childGroup);  // chamada recursiva para os grupos filho
         allModels.insert(allModels.end(), childModels.begin(), childModels.end());
     }
 
@@ -354,7 +345,7 @@ std::list<std::string> getAllModels(const Group* group) {
 }
 
 std::list<std::string> getAllModels(const XMLDataFormat* data) {
-    return getAllModels(&data->rootGroup);  // Start recursion from the root group
+    return getAllModels(&data->rootGroup);  // recursao desde o root group 
 }
 
 
@@ -363,13 +354,7 @@ std::list<std::string> getAllModels(const XMLDataFormat* data) {
 void deleteXMLDataFormat(XMLDataFormat* data) {
     if (data) {
         data->models.clear(); 
-        delete data;  // apagar a struct em si 
+        delete data;  
     }
 }
 
-// void deleteGroup(Group* group) {
-//     for (auto* child : group->children) {
-//         deleteGroup(child);
-//     }
-//     delete group;
-// }

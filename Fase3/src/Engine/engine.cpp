@@ -82,8 +82,8 @@
     const float ANGLE_INCREMENT = PI / 75;
     const float ZOOM_INCREMENT = 0.5f;
 
-    int startTime = 0; // Store the start time for animation
-    bool animationStarted = false; // Flag to initialize startTime
+    int startTime = 0; // start time for animation
+    bool animationStarted = false; 
 
     void drawAxes(){
         float axisLength = 500.0f;
@@ -103,7 +103,7 @@
         glEnd();
     }
 
-    // Alternate between yellow and white
+    // Alternar a cor da cena entre amarelo e branco 
     void alternate_color(float new_colorR, float new_colorG, float new_colorB) {
         colorR = new_colorR;
         colorG = new_colorG;
@@ -120,6 +120,7 @@
         Alpha = atan2(dx, dz);
     }
 
+    // Funcionalidade para ver a posição da camera no terminal 
     void showCameraPosition() {
         std::cout << "Camera Position: (" << camX << "," << camY << "," << camZ << ")" << std::endl;
         std::cout << "<position x=\"" << camX << "\" y=\"" << camY << "\" z=\"" << camZ << "\" />" << std::endl;
@@ -225,9 +226,8 @@
     }
 
     GLuint createVBO(const std::string& modelName, const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
-        // Check if VBO for this model is already cached
         if (vboCache.find(modelName) != vboCache.end()) {
-            return vboCache[modelName];  // Return the cached VBO
+            return vboCache[modelName];
         }
 
         GLuint vbo, vao, ebo;
@@ -248,7 +248,7 @@
 
         glBindVertexArray(0);
 
-        // Cache the created VBO using the model name
+        // cache the created VBO using the model name
         vboCache[modelName] = vao;
 
         return vao;
@@ -276,7 +276,7 @@
         float pos[3];
 
         glBegin(GL_LINE_STRIP);
-        glColor3f(1.0, 1.0, 1.0); // White curve
+        glColor3f(1.0, 1.0, 1.0); 
 
         for (float t = 0; t <= 1.0; t += 0.001) {
             getGlobalCatmullRomPoint(t, controlPoints, pos);
@@ -325,12 +325,12 @@
         glPushMatrix();
 
     
-        // Render curve for visualization
+        // renderiza a curva
         if (group.transform.hasCurve) {
             renderCatmullRomCurve(group.transform.controlPoints);
         }
     
-        // Handle animation along curve
+        // animação ao longo da curva
         if (group.transform.hasCurve) {
             if (!animationStarted) {
                 startTime = glutGet(GLUT_ELAPSED_TIME);
@@ -373,7 +373,7 @@
             }
         }
 
-        // Handle rotation over time
+        // rotação ao longo do tempo
         if (group.transform.rotationTime > 0.0f) {
             if (!animationStarted) {
                 startTime = glutGet(GLUT_ELAPSED_TIME);
@@ -389,7 +389,7 @@
     
         applyTransform(group.transform);
     
-        // Render child groups
+        // renderiza os grupos filho
         for (const auto* child : getChildren(&group)) {
             glPushMatrix();
             renderGroup(*child);
@@ -415,9 +415,7 @@
     
         glPopMatrix();
     }
-    
-    
-    
+     
 
     void renderScene() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -509,7 +507,7 @@
     }
 
     void idleFunc() {
-        glutPostRedisplay(); // Request redraw for animation
+        glutPostRedisplay();
     }
 
     void initializeCameraAndWindow(XMLDataFormat* xmlData) {
@@ -562,7 +560,7 @@
         glutReshapeFunc(changeSize);
         glutKeyboardFunc(processKeys);
         glutSpecialFunc(processSpecialKeys);
-        glutIdleFunc(idleFunc); // Register idle function for animation
+        glutIdleFunc(idleFunc); 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
 

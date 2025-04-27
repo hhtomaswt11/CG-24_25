@@ -23,8 +23,6 @@ void helper() {
     printf("%s» %sRING     %s[INNER RADIUS] [OUTER RADIUS] [HEIGHT][SLICES] [STACKS]%s → ring.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sPATCH    %s[PATCH FILE] [TESSELLATION]%s → bezier.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s══════════════════════════════════════════════════════════════════════════════%s\n", CYAN, RESET);
-    // printf("%s║               -- END OF MENU --               ║%s\n", CYAN, RESET);
-    // printf("%s╚═══════════════════════════════════════════════╝%s\n", CYAN, RESET);
 }
 
 
@@ -53,7 +51,5 @@ void helper_engine() {
     printf("%s Make sure that the primitives in the XML file have already been generated.\n", RED);
     printf("%s» %s./engine %s[XML FILE]\n", RED, YELLOW, RESET);
     printf("%s═══════════════════════════════════════════════════════════════════════════════════%s\n", CYAN, RESET);
-    // printf("%s║               -- END OF MENU --              ║%s\n", CYAN, RESET);
-    // printf("%s╚══════════════════════════════════════════════╝%s\n", CYAN, RESET);
 }
 
