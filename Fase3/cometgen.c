@@ -79,7 +79,8 @@ void generate_comet_geometry(double alpha, double beta, double delta_alpha, doub
     idx = 0;
     for (int i = 0; i < 4; ++i) { // Manter a ordem das linhas
         for (int j = 0; j < 4; ++j) { // Manter a ordem das colunas
-            patch_upper.indices[idx++] = find_or_insert_point(vertices[i * 4 + j], points, num_points);
+            // Inverter a ordem dos índices (i1, i2, i3 -> i3, i2, i1)
+            patch_upper.indices[idx++] = find_or_insert_point(vertices[i * 4 + (3 - j)], points, num_points); // Inverter a ordem das colunas
         }
     }
 
@@ -105,14 +106,14 @@ void generate_comet_geometry(double alpha, double beta, double delta_alpha, doub
     idx = 0;
     for (int i = 0; i < 4; ++i) { // Manter as linhas na ordem
         for (int j = 0; j < 4; ++j) { // Manter as colunas na ordem
-            // Ajustar a ordem dos índices para garantir a orientação correta
-            patch_lower_corrected.indices[idx++] = find_or_insert_point(vertices[i * 4 + (3 - j)], points, num_points); // Inverter a ordem das colunas
+            // Inverter a ordem dos índices (i1, i2, i3 -> i3, i2, i1)
+            patch_lower_corrected.indices[idx++] = find_or_insert_point(vertices[(3 - i) * 4 + (3 - j)], points, num_points); // Inverter a ordem das linhas e das colunas
         }
     }
+
     patches[(*num_patches)++] = patch_lower_corrected;
-
-
 }
+
 
 
 void write_patch_file(const char* filename, Patch* patches, int num_patches, Point* points, int num_points) {
