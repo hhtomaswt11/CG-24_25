@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
     // ./comet_generator 
     // cd build 
     // cmake .. ; cmake --build . 
-    // ./generator patch ../f.patch 10 comet.3d
+    // ./generator patch ../comet.patch 10 comet.3d
 
 
 }

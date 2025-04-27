@@ -9,7 +9,7 @@
 
     void normalize(float* vec) {
         float length = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
-        if (length > 0.0001f) { // Evita divisão por zero
+        if (length > 0.0001f) { 
             for (int i = 0; i < 3; ++i) {
                 vec[i] /= length;
             }
@@ -35,14 +35,14 @@
         frameCount++;
         float currentTime = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;  // em segundos
         float delta = currentTime - lastTime;
-
+    
         if (delta >= 1.0f) {
             fps = frameCount / delta;
             frameCount = 0;
             lastTime = currentTime;
-
-            char title[64];
-            sprintf(title, "FPS: %.2f", fps);
+    
+            char title[128];  
+            sprintf(title, "CG @UMINHO - Fase 3 - Grupo 36 - FPS: %.2f", fps);
             glutSetWindowTitle(title);
         }
     }
@@ -75,14 +75,13 @@
     // White
     float colorR = 1.0f, colorG = 1.0f, colorB = 1.0f;
 
-    // Camera angles
+    // angulos da camera
     float Alpha, Beta, radius;
 
-    // Constants for camera movement
+    // constantes para o movimento da camera
     const float ANGLE_INCREMENT = PI / 75;
     const float ZOOM_INCREMENT = 0.5f;
 
-    // Animation timing
     int startTime = 0; // Store the start time for animation
     bool animationStarted = false; // Flag to initialize startTime
 
