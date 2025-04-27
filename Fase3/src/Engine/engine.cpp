@@ -324,20 +324,7 @@
 
     void renderGroup(const Group& group) {
         glPushMatrix();
-    
-        // Handle rotation over time
-        if (group.transform.rotationTime > 0.0f) {
-            if (!animationStarted) {
-                startTime = glutGet(GLUT_ELAPSED_TIME);
-                animationStarted = true;
-            }
-    
-            float elapsedTime = (glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
-            float rotationFraction = fmod(elapsedTime, group.transform.rotationTime) / group.transform.rotationTime;
-            float rotationAngle = 360.0f * rotationFraction;
-    
-            glRotatef(rotationAngle, group.transform.rotationAxis[0], group.transform.rotationAxis[1], group.transform.rotationAxis[2]);
-        }
+
     
         // Render curve for visualization
         if (group.transform.hasCurve) {
@@ -385,6 +372,20 @@
                 // Aplica a transformação de rotação com glMultMatrixf
                 glMultMatrixf(rot);
             }
+        }
+
+        // Handle rotation over time
+        if (group.transform.rotationTime > 0.0f) {
+            if (!animationStarted) {
+                startTime = glutGet(GLUT_ELAPSED_TIME);
+                animationStarted = true;
+            }
+            
+            float elapsedTime = (glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
+            float rotationFraction = fmod(elapsedTime, group.transform.rotationTime) / group.transform.rotationTime;
+            float rotationAngle = 360.0f * rotationFraction;
+            
+            glRotatef(rotationAngle, group.transform.rotationAxis[0], group.transform.rotationAxis[1], group.transform.rotationAxis[2]);
         }
     
         applyTransform(group.transform);

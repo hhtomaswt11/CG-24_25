@@ -6,6 +6,7 @@
 #define MAX_PATCHES 10000
 #define MAX_POINTS 50000
 #define EPSILON 1e-6
+#define M_PI 3.14159265358979323846 
 
 typedef struct {
     double x, y, z;
@@ -46,22 +47,6 @@ Point add_random_variation(Point p, double base_radius, double max_deviation) {
     return modified_point;
 }
 
-Point rotate_point_y(Point p, double angle) {
-    Point rotated;
-    rotated.x = cos(angle) * p.x + sin(angle) * p.z;
-    rotated.y = p.y;
-    rotated.z = -sin(angle) * p.x + cos(angle) * p.z;
-    return rotated;
-}
-
-Point reflect_point(Point p) {
-    Point reflected;
-    reflected.x = p.z;
-    reflected.y = -p.y;
-    reflected.z = p.x;
-    return reflected;
-}
-
 int find_or_insert_point(Point p, Point* points, int* num_points) {
     for (int i = 0; i < *num_points; ++i) {
         if (are_points_equal(points[i], p)) {
@@ -75,8 +60,8 @@ int find_or_insert_point(Point p, Point* points, int* num_points) {
 void generate_comet_geometry(double alpha, double beta, double delta_alpha, double delta_beta, double radius, double max_deviation, Point* points, int* num_points, Patch* patches, int* num_patches) {
     Point vertices[16];
     int idx = 0;
-    
-    // Gerar a parte superior da esfera
+
+    // Geração de pontos (sem divisão em hemisférios)
     for (int i = 0; i < 4; ++i) {
         double a = alpha + i * delta_alpha;
         for (int j = 0; j < 4; ++j) {
@@ -89,20 +74,25 @@ void generate_comet_geometry(double alpha, double beta, double delta_alpha, doub
         }
     }
 
-    // Adicionar o patch da parte superior
-    Patch upper_patch;
-    for (int i = 0; i < 16; ++i) {
-        upper_patch.indices[i] = find_or_insert_point(vertices[i], points, num_points);
+    // Criar o patch superior (Hemisfério Norte) com orientação anti-horária
+    Patch patch_upper;
+    idx = 0;
+    for (int i = 0; i < 4; ++i) { // Manter a ordem das linhas
+        for (int j = 0; j < 4; ++j) { // Manter a ordem das colunas
+            patch_upper.indices[idx++] = find_or_insert_point(vertices[i * 4 + j], points, num_points);
+        }
     }
-    patches[(*num_patches)++] = upper_patch;
 
-    // Gerar a parte inferior da esfera
+    patches[(*num_patches)++] = patch_upper;
+
+    // Parte inferior (Hemisfério Sul)
+    Patch patch_lower;
     idx = 0;
     for (int i = 0; i < 4; ++i) {
         double a = alpha + i * delta_alpha;
         for (int j = 0; j < 4; ++j) {
-            double b = beta + j * delta_beta;
-            Point p = spherical_to_cartesian(a, -b, radius);  // Use -b para gerar a parte inferior da esfera
+            double b = -(beta + j * delta_beta); // Para o hemisfério sul, beta é negativo
+            Point p = spherical_to_cartesian(a, b, radius);
             if ((i == 1 || i == 2) && (j == 1 || j == 2)) {
                 p = add_random_variation(p, radius, max_deviation);
             }
@@ -110,32 +100,20 @@ void generate_comet_geometry(double alpha, double beta, double delta_alpha, doub
         }
     }
 
-    // Adicionar o patch da parte inferior
-    Patch lower_patch;
-    for (int i = 0; i < 16; ++i) {
-        lower_patch.indices[i] = find_or_insert_point(vertices[i], points, num_points);
-    }
-    patches[(*num_patches)++] = lower_patch;
-
-    // Gerar triângulos de conexão entre a parte superior e a inferior
-    // Conectar os vértices da borda superior com a borda inferior
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            int upper_index = i * 4 + j;
-            int lower_index = (i + 4) * 4 + j;
-
-            // Conectar os triângulos da borda superior para a borda inferior
-            // Aqui, você pode definir a forma como essas bordas se conectam
-            // Adicionar índices que conectem a parte superior e inferior
-            if (i < 3 && j < 3) {
-                // Triângulos conectando a parte superior e inferior
-                // (conectando borda superior e inferior)
-                patches[(*num_patches)].indices[i * 4 + j] = upper_index;
-                patches[(*num_patches)].indices[i * 4 + (j + 1)] = lower_index;
-            }
+    // Criar o patch inferior (Hemisfério Sul) com orientação ajustada
+    Patch patch_lower_corrected;
+    idx = 0;
+    for (int i = 0; i < 4; ++i) { // Manter as linhas na ordem
+        for (int j = 0; j < 4; ++j) { // Manter as colunas na ordem
+            // Ajustar a ordem dos índices para garantir a orientação correta
+            patch_lower_corrected.indices[idx++] = find_or_insert_point(vertices[i * 4 + (3 - j)], points, num_points); // Inverter a ordem das colunas
         }
     }
+    patches[(*num_patches)++] = patch_lower_corrected;
+
+
 }
+
 
 void write_patch_file(const char* filename, Patch* patches, int num_patches, Point* points, int num_points) {
     FILE* file = fopen(filename, "w");
@@ -166,7 +144,7 @@ int main() {
     // Usando a hora atual como semente para a geração de números aleatórios
     int seed = (int)time(NULL); // Usando a hora atual como seed para garantir aleatoriedade
     double radius = 1.0; 
-    double max_deviation = 0.1;  // irregularidade
+    double max_deviation = 0.2;  // irregularidade
     int slices = 10; 
     int stacks = 5;  
     char* filename = "comet_output.patch"; 

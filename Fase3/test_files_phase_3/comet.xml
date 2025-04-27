@@ -8,10 +8,10 @@
     </camera>
 	<group> 
 		<transform>
-			<rotate angle="-90" x = "1" y="0" z = "0" /> 
+			<rotate angle="0" x = "1" y="0" z = "0" /> 
 		</transform>
   		<models> 
-			<model file="t.3d" /> <!-- generator patch ../comet.patch 10 comet.3d -->
+			<model file="comet.3d" /> <!-- generator patch ../comet.patch 10 comet.3d -->
  		</models>
  	</group>
 </world>
