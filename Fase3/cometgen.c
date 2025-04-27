@@ -148,7 +148,7 @@ int main() {
     double max_deviation = 0.2;  // irregularidade
     int slices = 10; 
     int stacks = 5;  
-    char* filename = "comet_output.patch"; 
+    char* filename = "comet.patch"; 
 
     srand(seed);  // Inicializa o gerador de números aleatórios com a seed baseada na hora
 
