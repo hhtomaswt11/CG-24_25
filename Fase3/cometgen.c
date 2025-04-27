@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>  // Incluir a biblioteca time.h para acessar a hora atual
+#include <time.h>  
 
 #define MAX_PATCHES 10000
 #define MAX_POINTS 50000
@@ -61,7 +61,7 @@ void generate_comet_geometry(double alpha, double beta, double delta_alpha, doub
     Point vertices[16];
     int idx = 0;
 
-    // Geração de pontos (sem divisão em hemisférios)
+    // geração de pontos (sem divisão em hemisférios)
     for (int i = 0; i < 4; ++i) {
         double a = alpha + i * delta_alpha;
         for (int j = 0; j < 4; ++j) {
@@ -74,25 +74,25 @@ void generate_comet_geometry(double alpha, double beta, double delta_alpha, doub
         }
     }
 
-    // Criar o patch superior (Hemisfério Norte) com orientação anti-horária
+    // criar o patch superior (Hemisfério Norte) com orientação anti-horária
     Patch patch_upper;
     idx = 0;
-    for (int i = 0; i < 4; ++i) { // Manter a ordem das linhas
-        for (int j = 0; j < 4; ++j) { // Manter a ordem das colunas
-            // Inverter a ordem dos índices (i1, i2, i3 -> i3, i2, i1)
-            patch_upper.indices[idx++] = find_or_insert_point(vertices[i * 4 + (3 - j)], points, num_points); // Inverter a ordem das colunas
+    for (int i = 0; i < 4; ++i) { 
+        for (int j = 0; j < 4; ++j) {
+            // inverter a ordem dos índices (i1, i2, i3 -> i3, i2, i1)
+            patch_upper.indices[idx++] = find_or_insert_point(vertices[i * 4 + (3 - j)], points, num_points); // inverter a ordem das colunas
         }
     }
 
     patches[(*num_patches)++] = patch_upper;
 
-    // Parte inferior (Hemisfério Sul)
+    
     Patch patch_lower;
     idx = 0;
     for (int i = 0; i < 4; ++i) {
         double a = alpha + i * delta_alpha;
         for (int j = 0; j < 4; ++j) {
-            double b = -(beta + j * delta_beta); // Para o hemisfério sul, beta é negativo
+            double b = -(beta + j * delta_beta); 
             Point p = spherical_to_cartesian(a, b, radius);
             if ((i == 1 || i == 2) && (j == 1 || j == 2)) {
                 p = add_random_variation(p, radius, max_deviation);
@@ -101,13 +101,13 @@ void generate_comet_geometry(double alpha, double beta, double delta_alpha, doub
         }
     }
 
-    // Criar o patch inferior (Hemisfério Sul) com orientação ajustada
+
     Patch patch_lower_corrected;
     idx = 0;
-    for (int i = 0; i < 4; ++i) { // Manter as linhas na ordem
-        for (int j = 0; j < 4; ++j) { // Manter as colunas na ordem
+    for (int i = 0; i < 4; ++i) { 
+        for (int j = 0; j < 4; ++j) { 
             // Inverter a ordem dos índices (i1, i2, i3 -> i3, i2, i1)
-            patch_lower_corrected.indices[idx++] = find_or_insert_point(vertices[(3 - i) * 4 + (3 - j)], points, num_points); // Inverter a ordem das linhas e das colunas
+            patch_lower_corrected.indices[idx++] = find_or_insert_point(vertices[(3 - i) * 4 + (3 - j)], points, num_points); // inverter a ordem das linhas e das colunas
         }
     }
 
@@ -142,15 +142,15 @@ void write_patch_file(const char* filename, Patch* patches, int num_patches, Poi
 }
 
 int main() {
-    // Usando a hora atual como semente para a geração de números aleatórios
-    int seed = (int)time(NULL); // Usando a hora atual como seed para garantir aleatoriedade
+
+    int seed = (int)time(NULL); 
     double radius = 1.0; 
     double max_deviation = 0.2;  // irregularidade
     int slices = 10; 
     int stacks = 5;  
     char* filename = "comet.patch"; 
 
-    srand(seed);  // Inicializa o gerador de números aleatórios com a seed baseada na hora
+    srand(seed);  
 
     double delta_alpha = 2 * M_PI / slices;
     double delta_beta = M_PI / 2.0 / stacks;
