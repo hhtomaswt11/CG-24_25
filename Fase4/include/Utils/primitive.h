@@ -9,6 +9,7 @@
 #include "point.h"
 
 typedef struct primitive* Primitive;
+typedef struct texCoord* TexCoord;
 
 // BUILDERS
 Primitive buildPrimitive();

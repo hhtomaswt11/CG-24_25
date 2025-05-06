@@ -3,11 +3,18 @@
 // struct Color {
 //     float r, g, b;
 // };
-
+struct texCoord {
+    float u, v;
+};
 
 struct primitive {
-  std::vector<Point> points; 
-  std::vector<int> indices;  
+    std::vector<Point> points;
+    std::vector<Point> normals;
+    std::vector<TexCoord> texCoords;
+
+    std::vector<int> indices;
+    std::vector<int> normalIndices;
+    std::vector<int> texCoordIndices;
 };
 
 
