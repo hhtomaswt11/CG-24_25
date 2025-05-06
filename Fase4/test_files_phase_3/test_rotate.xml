@@ -1,0 +1,17 @@
+<world> 
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="4" y="4" z="5" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="60" near="1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+	<group> 
+		<transform>
+			<rotate time="5" x="0" y="1" z="0" />
+		</transform>
+  		<models> 
+			<model file="box_2_3.3d" /> <!-- generator box 2 3 box_2_3.3d -->
+ 		</models>
+ 	</group>
+</world>
