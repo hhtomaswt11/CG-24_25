@@ -80,14 +80,13 @@ int main(int argc, char* argv[]) {
         
 
      else if(strcmp(argv[1], "ring") == 0){
-        path_3d = argv[7];
+        path_3d = argv[6];
         float innerRadius = atof(argv[2]), 
-              outerRadius = atof(argv[3]), 
-              height = atof(argv[4]); 
-        int    slices = atoi(argv[5]) , 
-               stacks = atoi(argv[6]); 
+              outerRadius = atof(argv[3]);
+        int    slices = atoi(argv[4]) , 
+               stacks = atoi(argv[5]); 
  
-        primitive = buildSaturnRing(innerRadius, outerRadius, height , slices , stacks ) ;
+        primitive = buildSaturnRing(innerRadius, outerRadius, slices ,stacks ) ;
 
         fromPrimitiveTo3dFile(primitive, path_3d);
         deletePrimitive(primitive);

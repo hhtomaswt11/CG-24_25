@@ -6,109 +6,95 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         std::cerr << "Erro: Parâmetros inválidos para gerar o plano." << std::endl;
         exit(1); 
     }
+
     Primitive plano = buildPrimitive();
     if (!plano) return plano;
 
-    std::vector<Point> uniquePoints; // armazena os pontos únicos
-    std::map<std::tuple<float, float, float>, int> pointIndexMap; // mapeia coordenadas para índices
-    std::vector<int> indices; // armazena os índices que definem a ordem dos vértices
+    float half = (float)length / 2;
+    float div_side = (float)length / divisions;
 
-    float half = (float)length / 2; 
-    float div_side = (float)length / divisions; // tamanho da subdivisao
+    std::vector<Point> gridPoints;
+    std::vector<Point> gridNormals;
+    std::vector<texCoord> gridTexCoords;
 
-    // gerar os pontos únicos
+    // Define a normal fixa para o plano
+    Point normal;
+    switch (axis) {
+        case 'X': normal = buildPoint(1.0f, 0.0f, 0.0f); break;
+        case 'Y': normal = buildPoint(0.0f, 1.0f, 0.0f); break;
+        case 'Z': normal = buildPoint(0.0f, 0.0f, 1.0f); break;
+        default:  normal = buildPoint(0.0f, 1.0f, 0.0f); break;
+    }
+
+    // Gerar vértices, normais e texCoords
     for (int linha = 0; linha <= divisions; ++linha) {
         for (int coluna = 0; coluna <= divisions; ++coluna) {
             float x = -half + coluna * div_side;
             float z = -half + linha * div_side;
 
             Point p;
-            if (axis == 'X')
-                p = buildPoint(h, x, z);
-            else if (axis == 'Y')
-                p = buildPoint(x, h, z);
-            else if (axis == 'Z')
-                p = buildPoint(x, z, h);
+            if (axis == 'X')      p = buildPoint(h, x, z);
+            else if (axis == 'Y') p = buildPoint(x, h, z);
+            else if (axis == 'Z') p = buildPoint(x, z, h);
 
-            std::tuple<float, float, float> key = std::make_tuple(getX(p), getY(p), getZ(p));
+            texCoord tex = { (float) coluna / divisions, (float) linha / divisions };
 
-            // verifica se o ponto já existe no mapa. se nao existir, adicionamos 
-            if (pointIndexMap.find(key) == pointIndexMap.end()) {
-                pointIndexMap[key] = uniquePoints.size();
-                uniquePoints.push_back(p);
-            }
+            gridPoints.push_back(p);
+            gridNormals.push_back(normal);
+            gridTexCoords.push_back(tex);
         }
     }
 
-    //geracao dos indices 
+    std::vector<int> indices, normalIndices, texCoordIndices;
+
+    // criar triangulos
     for (int linha = 0; linha < divisions; ++linha) {
         for (int coluna = 0; coluna < divisions; ++coluna) {
-            int i1 = linha * (divisions + 1) + coluna;         // Vértice inferior esquerdo
-            int i2 = linha * (divisions + 1) + coluna + 1;     // Vértice inferior direito
-            int i3 = (linha + 1) * (divisions + 1) + coluna;   // Vértice superior esquerdo
-            int i4 = (linha + 1) * (divisions + 1) + coluna + 1; // Vértice superior direito
+            int i1 = linha * (divisions + 1) + coluna;
+            int i2 = i1 + 1;
+            int i3 = i1 + (divisions + 1);
+            int i4 = i3 + 1;
 
             if (invertDiagonal) {
-                // para inverter a diagonal
                 if (invertFaces) {
-                    // inverte a ordem dos vértices (clockwise)
-                    indices.push_back(i1); // Inferior Esquerda
-                    indices.push_back(i4); // Superior Direita
-                    indices.push_back(i2); // Inferior Direita
-
-                    indices.push_back(i1); // Inferior Esquerda
-                    indices.push_back(i3); // Superior Esquerda
-                    indices.push_back(i4); // Superior Direita
+                    indices.insert(indices.end(), {i1, i4, i2, i1, i3, i4});
                 } else {
-                    // Ordem normal (counter-clockwise)
-                    indices.push_back(i1); // Inferior Esquerda
-                    indices.push_back(i2); // Inferior Direita
-                    indices.push_back(i4); // Superior Direita
-
-                    indices.push_back(i1); // Inferior Esquerda
-                    indices.push_back(i4); // Superior Direita
-                    indices.push_back(i3); // Superior Esquerda
+                    indices.insert(indices.end(), {i1, i2, i4, i1, i4, i3});
                 }
             } else {
-                // para manter a diagonal original
                 if (invertFaces) {
-                    // Inverte a ordem dos vértices (clockwise)
-                    indices.push_back(i1); // Inferior Esquerda
-                    indices.push_back(i3); // Superior Esquerda
-                    indices.push_back(i2); // Inferior Direita
-
-                    indices.push_back(i2); // Inferior Direita
-                    indices.push_back(i3); // Superior Esquerda
-                    indices.push_back(i4); // Superior Direita
+                    indices.insert(indices.end(), {i1, i3, i2, i2, i3, i4});
                 } else {
-                    // Ordem normal (counter-clockwise)
-                    indices.push_back(i1); // Inferior Esquerda
-                    indices.push_back(i2); // Inferior Direita
-                    indices.push_back(i3); // Superior Esquerda
-
-                    indices.push_back(i2); // Inferior Direita
-                    indices.push_back(i4); // Superior Direita
-                    indices.push_back(i3); // Superior Esquerda
+                    indices.insert(indices.end(), {i1, i2, i3, i2, i4, i3});
                 }
+            }
+
+            // para cada vértice adicionado acima, adicionar índice da normal e texCoord
+            for (int i = 0; i < 6; ++i) {
+                int vIdx = indices[indices.size() - 6 + i];
+                normalIndices.push_back(vIdx);
+                texCoordIndices.push_back(vIdx);
             }
         }
     }
 
-    // adicionar pontos e índices à primitiva
-    for (const auto& p : uniquePoints) {
-        addPoint(plano, p);
-    }
-    setIndices(plano, indices);
+    // popular a primitiva
+    plano->points = gridPoints;
+    plano->normals = gridNormals;
+    plano->texCoords = gridTexCoords;
+    plano->indices = indices;
+    plano->normalIndices = normalIndices;
+    plano->texCoordIndices = texCoordIndices;
 
     return plano;
 }
 
 
 
+
 Primitive buildBox(int length, int divisions) {
-    if (length <=0 || divisions <= 0) {
+    if (length <= 0 || divisions <= 0) {
         std::cerr << "Erro: Parâmetros inválidos para gerar o cubo." << std::endl;
-      
         exit(1); 
     }
 
@@ -117,65 +103,59 @@ Primitive buildBox(int length, int divisions) {
 
     float half = (float)length / 2;
 
-    // lista temporária para armazenar todos os pontos e índices
-    std::vector<Point> allPoints; // armazena todos os pontos únicos
-    std::vector<int> allIndices;  // define a ordem dos vértices para formar triângulos
-
-
-    // Face Superior (+Y)
-    Primitive faceCima = buildPlane(length, divisions, 'Y', half, true, true);
-
-    // Face Inferior (-Y)
-    Primitive faceBaixo = buildPlane(length, divisions, 'Y', -half, false, false);
-
-    // Face Frente (+Z)
-    Primitive faceFrente = buildPlane(length, divisions, 'Z', -half, true, false);
-
-    // Face Trás (-Z)
-    Primitive faceTras = buildPlane(length, divisions, 'Z', half, false, true);
-
-    // Face Direita (+X)
-    Primitive faceDireita = buildPlane(length, divisions, 'X', -half, true, false);
-
-    // Face Esquerda (-X)
-    Primitive faceEsquerda = buildPlane(length, divisions, 'X', half, false, true);
-
-    auto addFaceToBox = [&](Primitive face) {
-        auto pontos = getPoints(face);
-        auto indices = getIndices(face);
-        int offset = allPoints.size();
-
-        // adicionar pontos ao vetor global
-        allPoints.insert(allPoints.end(), pontos.begin(), pontos.end());
-
-        // adicionar índices
-        for (auto index : indices) {
-            allIndices.push_back(index + offset);
-        }
+    // criar as faces
+    Primitive faces[6] = {
+        buildPlane(length, divisions, 'Y',  half, true,  true),   // Cima
+        buildPlane(length, divisions, 'Y', -half, false, false),  // Baixo
+        buildPlane(length, divisions, 'Z', -half, true,  false),  // Frente
+        buildPlane(length, divisions, 'Z',  half, false, true),   // Trás
+        buildPlane(length, divisions, 'X', -half, true,  false),  // Direita
+        buildPlane(length, divisions, 'X',  half, false, true)    // Esquerda
     };
 
-    // adicionar todas as faces ao cubo
-    addFaceToBox(faceCima);
-    addFaceToBox(faceBaixo);
-    addFaceToBox(faceFrente);
-    addFaceToBox(faceTras);
-    addFaceToBox(faceDireita);
-    addFaceToBox(faceEsquerda);
+    int pointOffset = 0;
+    int normalOffset = 0;
+    int texCoordOffset = 0;
 
-    for (const auto& p : allPoints) {
-        addPoint(box, p);
+    for (int i = 0; i < 6; ++i) {
+        Primitive face = faces[i];
+
+        // Adicionar pontos
+        const auto& pts = getPoints(face);
+        box->points.insert(box->points.end(), pts.begin(), pts.end());
+
+        // Adicionar normais
+        const auto& norms = getNormals(face);
+        box->normals.insert(box->normals.end(), norms.begin(), norms.end());
+
+        // Adicionar texCoords
+        const auto& texs = getTexCoords(face);
+        box->texCoords.insert(box->texCoords.end(), texs.begin(), texs.end());
+
+        // Corrigir e adicionar índices
+        for (int idx : getIndices(face)) {
+            box->indices.push_back(idx + pointOffset);
+        }
+
+        for (int idx : getNormalIndices(face)) {
+            box->normalIndices.push_back(idx + normalOffset);
+        }
+
+        for (int idx : getTexCoordIndices(face)) {
+            box->texCoordIndices.push_back(idx + texCoordOffset);
+        }
+
+        // atualizar offsets
+        pointOffset += pts.size();
+        normalOffset += norms.size();
+        texCoordOffset += texs.size();
+
+        deletePrimitive2(face); // limpar memória da face
     }
-    setIndices(box, allIndices);
-   
-    deletePrimitive2(faceCima);
-    deletePrimitive2(faceBaixo);
-    deletePrimitive2(faceFrente);
-    deletePrimitive2(faceTras);
-    deletePrimitive2(faceDireita);
-    deletePrimitive2(faceEsquerda);
 
     return box;
 }
+
 
 
 Primitive buildSphere(int radius, int slices, int stacks) {
@@ -188,15 +168,20 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     if (!sphere) return sphere;
 
     std::vector<Point> points;
+    std::vector<Point> normals;
+    std::vector<texCoord> texCoords;
     std::vector<int> indices;
 
     // adicionar polo norte
     Point poleNorth = buildPoint(0, radius, 0);
     points.push_back(poleNorth);
+    normals.push_back(buildPoint(0, 1, 0));  // normal no Polo Norte
+    texCoords.push_back({0.5f, 1.0f}); // coordenada de textura para o Polo Norte
+
     int northIndex = 0;
 
-    // geracao dos vertices 
-    for (int stack = 1; stack < stacks; ++stack) {  // de 1 e vai até < stacks
+    // gerar vértices, normais e coordenadas de textura
+    for (int stack = 1; stack < stacks; ++stack) {
         float phi = M_PI * stack / stacks; // Latitude
         float y = radius * cos(phi);
         float xy = radius * sin(phi);
@@ -208,14 +193,23 @@ Primitive buildSphere(int radius, int slices, int stacks) {
 
             Point p = buildPoint(x, y, z);
             points.push_back(p);
+
+            // normal do ponto é o vetor (ponto / raio)
+            normals.push_back(buildPoint(x / radius, y / radius, z / radius));
+
+            float u = (float)slice / slices;
+            float v = (float)stack / stacks;
+            texCoords.push_back({u, v});
         }
     }
 
     // adicionar polo sul
     Point poleSouth = buildPoint(0, -radius, 0);
     points.push_back(poleSouth);
-    int southIndex = points.size() - 1;
+    normals.push_back(buildPoint(0, -1, 0));  // normal no Polo Sul
+    texCoords.push_back({0.5f, 0.0f}); // coordenada de textura para o Polo Sul
 
+    int southIndex = points.size() - 1;
 
     // gerar índices para os triângulos
 
@@ -227,7 +221,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         indices.push_back(1 + slice);
     }
 
-    // conectar as stacks intermediárias! 
+    // conectar as stacks intermediárias
     for (int stack = 0; stack < stacks - 2; ++stack) {
         int currentStackStart = 1 + stack * slices;
         int nextStackStart = currentStackStart + slices;
@@ -235,12 +229,12 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         for (int slice = 0; slice < slices; ++slice) {
             int nextSlice = (slice + 1) % slices;
 
-            // triângulo inferior
+            // Triângulo inferior
             indices.push_back(currentStackStart + slice);
             indices.push_back(currentStackStart + nextSlice);
             indices.push_back(nextStackStart + slice);
 
-            // triângulo superior
+            // Triângulo superior
             indices.push_back(currentStackStart + nextSlice);
             indices.push_back(nextStackStart + nextSlice);
             indices.push_back(nextStackStart + slice);
@@ -256,14 +250,21 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         indices.push_back(lastStackStart + nextSlice);
     }
 
-  
-    for (const auto& p : points) {   // adicionar todos os pontos à primitiva
+    // adicionar pontos, normais, coordenadas de textura e índices à primitiva
+    for (const auto& p : points) {
         addPoint(sphere, p);
+    }
+    for (const auto& normal : normals) {
+        addNormal(sphere, normal);
+    }
+    for (const auto& texCoord : texCoords) {
+        addTexCoord(sphere, texCoord);
     }
     setIndices(sphere, indices);
 
     return sphere;
 }
+
 
 
 Primitive buildCone(int radius, int height, int slices, int stacks) {
@@ -277,21 +278,23 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
 
     std::vector<Point> points;
     std::vector<int> indices;
+    std::vector<Point> normals;  // armazenamento das normais
+    std::vector<texCoord> texCoords;  // armazenamento das coordenadas de textura
 
-   
-    auto addUniquePoint = [&](const Point& p) -> int {  // para verificar se um ponto já existe
+    // função para adicionar pontos únicos ao cone (sem duplicar)
+    auto addUniquePoint = [&](const Point& p) -> int {
         for (size_t i = 0; i < points.size(); ++i) {
             if (getX(points[i]) == getX(p) && getY(points[i]) == getY(p) && getZ(points[i]) == getZ(p)) {
                 return i;  // retorna o índice do ponto existente
             }
         }
-        points.push_back(p);  // se não encontrar, entao adiciona o ponto
-        return points.size() - 1;  // índice do novo ponto
+        points.push_back(p);  // se não encontrado, adiciona o ponto
+        return points.size() - 1;  // retorna o índice do novo ponto
     };
 
-    // base do cone
+    // base do cone (centro da base)
     Point center = buildPoint(0.0f, 0.0f, 0.0f);
-    int centerIndex = addUniquePoint(center);  // adicionar o centro da base -> ponto único
+    int centerIndex = addUniquePoint(center);  // adiciona o centro da base
 
     std::vector<int> baseIndices;
     for (int i = 0; i < slices; i++) {
@@ -300,22 +303,31 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         float z = radius * sin(angle);
 
         Point p = buildPoint(x, 0.0f, z);
-        int index = addUniquePoint(p); // adiciona vértice da borda e verifica se é único! 
-        baseIndices.push_back(index); // armazena o índice do ponto da borda
+        int index = addUniquePoint(p);  // adiciona vértice da borda
+        baseIndices.push_back(index);  // armazena o índice do ponto da borda
     }
 
-    for (int i = 0; i < slices; i++) {   // adicionar os triângulos para a base
+    // adicionando triângulos para a base
+    for (int i = 0; i < slices; i++) {
         int next = (i + 1) % slices;
         indices.push_back(centerIndex);
         indices.push_back(baseIndices[i]);
         indices.push_back(baseIndices[next]);
     }
 
-    // criar corpo do cone -> sem duplicar vértices da base
-    std::vector<std::vector<int>> stackIndices(stacks);
+    // normais e coordenadas de textura para a base
+    for (int i = 0; i < slices; i++) {
+        texCoord texCoord = { (float)i / slices, 0.0f };  // coordenadas de textura
+        texCoords.push_back(texCoord);
 
-     
-    for (int stack = 0; stack < stacks; ++stack) { // gerar vértices para as camadas do corpo
+        // normal para a base
+        Point normal = buildPoint(0.0f, -1.0f, 0.0f);  // normal apontando para baixo
+        normals.push_back(normal);
+    }
+
+    // gerar corpo do cone
+    std::vector<std::vector<int>> stackIndices(stacks);
+    for (int stack = 0; stack < stacks; ++stack) {
         float currHeight = (float)stack / stacks * height;
         float currRadius = radius * (1.0f - (float)stack / stacks);
 
@@ -325,13 +337,13 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
             float z = currRadius * sin(theta);
 
             Point p = buildPoint(x, currHeight, z);
-            int index = addUniquePoint(p); // adicionar ponto do corpo, verificando se é único
-            stackIndices[stack].push_back(index); // para armazenar o índice do ponto da camada
+            int index = addUniquePoint(p);  // adiciona ponto do corpo
+            stackIndices[stack].push_back(index);  // armazena o índice do ponto da camada
         }
     }
 
-   
-    for (int stack = 0; stack < stacks - 1; ++stack) {  // conectar as camadas do corpo
+    // conectar as camadas do corpo com triângulos
+    for (int stack = 0; stack < stacks - 1; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
             int nextSlice = (slice + 1) % slices;
             int i1 = stackIndices[stack][slice];
@@ -346,136 +358,121 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
             indices.push_back(i1);
             indices.push_back(i4);
             indices.push_back(i2);
+
+            // adiciona normais e coordenadas de textura para as faces do corpo
+            Point normal = buildPoint(
+                (getX(points[i3]) - getX(points[i1])) * (getY(points[i4]) - getY(points[i1])),
+                0.0f,  // normal é calculada com base na face
+                (getZ(points[i3]) - getZ(points[i1])) * (getY(points[i4]) - getY(points[i1]))
+            );
+
+            normals.push_back(normal);
+
+            texCoords.push_back({ (float)slice / slices, (float)stack / stacks });
+            texCoords.push_back({ (float)(slice + 1) / slices, (float)stack / stacks });
+            texCoords.push_back({ (float)(slice + 1) / slices, (float)(stack + 1) / stacks });
         }
     }
 
-    // criar topo do cone -> um único vértice no topo 
+    // criar topo do cone (um único vértice no topo)
     Point top = buildPoint(0.0f, height, 0.0f);
-    int topIndex = addUniquePoint(top); // adicionar o topo -> único ponto no topo  (garantir que usamos apenas os pontos minimos necessarios para a construcao)
+    int topIndex = addUniquePoint(top);  // adiciona o topo
 
-   
-    for (int slice = 0; slice < slices; ++slice) {  // conectar topo com a última camada -> sem duplicar vértices
-        int curr = stackIndices[stacks - 1][slice]; // vértice do corpo na última camada
-        int next = stackIndices[stacks - 1][(slice + 1) % slices]; // próximo vértice na última camada
+    // conectar topo com a última camada
+    for (int slice = 0; slice < slices; ++slice) {
+        int curr = stackIndices[stacks - 1][slice];  // vértice do corpo na última camada
+        int next = stackIndices[stacks - 1][(slice + 1) % slices];  // próximo vértice na última camada
         indices.push_back(topIndex);
         indices.push_back(next);
         indices.push_back(curr);
     }
 
+    // adiciona os pontos, normais e coordenadas de textura à primitiva
     for (const auto& p : points) {
         addPoint(cone, p);
     }
+
+    for (const auto& normal : normals) {
+        addNormal(cone, normal);
+    }
+
+    for (const auto& texCoord : texCoords) {
+        addTexCoord(cone, texCoord);
+    }
+
+    // define os índices para as faces
     setIndices(cone, indices);
 
     return cone;
 }
 
 
-Primitive buildSaturnRing(float innerRadius, float outerRadius, float height, int slices, int stacks) {
-    if (innerRadius <= 0 || outerRadius <= innerRadius || slices < 3 || stacks < 1 || height < 0) {
+Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int stacks) {
+    if (innerRadius <= 0 || outerRadius <= innerRadius || slices < 3 || stacks < 1) {
         std::cerr << "Erro: Parâmetros inválidos para gerar o anel." << std::endl;
-        exit(1); 
+        exit(1);
     }
 
     Primitive ring = buildPrimitive();
     if (!ring) return ring;
 
     std::vector<Point> points;
+    std::vector<Point> normals;
+    std::vector<texCoord> texCoords;
     std::vector<int> indices;
 
-    auto addUniquePoint = [&](const Point& p) -> int {
-        for (size_t i = 0; i < points.size(); ++i) {
-            if (getX(points[i]) == getX(p) && getY(points[i]) == getY(p) && getZ(points[i]) == getZ(p)) {
-                return i;
-            }
-        }
-        points.push_back(p);
-        return points.size() - 1;
+    // map de índices (stack * slices + slice)
+    auto getIndex = [&](int stack, int slice) {
+        return stack * slices + slice;
     };
 
-    float radiusStep = (outerRadius - innerRadius) / stacks;
-
-    std::vector<std::vector<int>> stackIndices(stacks + 1);
-
+    // gerar pontos
     for (int stack = 0; stack <= stacks; ++stack) {
-        float currRadius = innerRadius + stack * radiusStep;
+        float radius = innerRadius + (float)stack / stacks * (outerRadius - innerRadius);
 
-        // pontos para as duas faces (acima e abaixo) de cada camada
         for (int slice = 0; slice < slices; ++slice) {
-            float theta = 2.0f * M_PI * slice / slices;
-            float x = currRadius * cos(theta);
-            float z = currRadius * sin(theta);
+            float angle = 2.0f * M_PI * slice / slices;
+            float x = radius * cos(angle);
+            float z = radius * sin(angle);
 
-            //  pontos para a face inferior (-height/2)
-            Point pBottom = buildPoint(x, -height / 2, z);
-            int indexBottom = addUniquePoint(pBottom);
-            stackIndices[stack].push_back(indexBottom);
+            Point p = buildPoint(x, 0.0f, z);
+            points.push_back(p);
 
-            //  pontos para a face superior (+height/2)
-            Point pTop = buildPoint(x, height / 2, z);
-            int indexTop = addUniquePoint(pTop);
-            stackIndices[stack].push_back(indexTop);
+            // normal para cima
+            normals.push_back(buildPoint(0.0f, 1.0f, 0.0f));
+
+            // coordenada de textura
+            texCoords.push_back({ (float)slice / slices, (float)stack / stacks });
         }
     }
 
-    // índices para os triângulos que formam a superfície do anel
+    // gerar índices (dois triângulos por célula da grade)
     for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
-            int nextSlice = (slice + 1) % slices;
+            int curr = getIndex(stack, slice);
+            int next = getIndex(stack, (slice + 1) % slices);
+            int currUp = getIndex(stack + 1, slice);
+            int nextUp = getIndex(stack + 1, (slice + 1) % slices);
 
-            // face superior do anel 
-            int i1Top = stackIndices[stack][2 * slice + 1];
-            int i2Top = stackIndices[stack][2 * nextSlice + 1];
-            int i3Top = stackIndices[stack + 1][2 * slice + 1];
-            int i4Top = stackIndices[stack + 1][2 * nextSlice + 1];
+            // primeiro triângulo
+            indices.push_back(curr);
+            indices.push_back(currUp);
+            indices.push_back(nextUp);
 
-            // triangulos da face superior (top-facing surface)
-            indices.push_back(i1Top);
-            indices.push_back(i2Top);
-            indices.push_back(i3Top);
-
-            indices.push_back(i3Top);
-            indices.push_back(i2Top);
-            indices.push_back(i4Top);
-
-            // indices para a face inferior do anel
-            int i1Bottom = stackIndices[stack][2 * slice];
-            int i2Bottom = stackIndices[stack][2 * nextSlice];
-            int i3Bottom = stackIndices[stack + 1][2 * slice];
-            int i4Bottom = stackIndices[stack + 1][2 * nextSlice];
-
-            // triangulos da face inferior (bottom-facing surface)
-            indices.push_back(i3Bottom);
-            indices.push_back(i2Bottom);
-            indices.push_back(i1Bottom);
-
-            indices.push_back(i4Bottom);
-            indices.push_back(i2Bottom);
-            indices.push_back(i3Bottom);
-
-            // triangulos laterais para as faces do anel (lado externo)
-            indices.push_back(i1Top);
-            indices.push_back(i3Bottom);
-            indices.push_back(i1Bottom);
-
-            indices.push_back(i1Top);
-            indices.push_back(i2Top);
-            indices.push_back(i3Bottom);
-
-            indices.push_back(i3Top);
-            indices.push_back(i4Bottom);
-            indices.push_back(i3Bottom);
-
-            indices.push_back(i3Top);
-            indices.push_back(i2Top);
-            indices.push_back(i4Bottom);
+            // segundo triângulo
+            indices.push_back(curr);
+            indices.push_back(nextUp);
+            indices.push_back(next);
         }
     }
-   
-    for (const auto& p : points) {
-        addPoint(ring, p);
-    }
+
+    // carregar dados na primitiva
+    for (const auto& p : points) addPoint(ring, p);
+    for (const auto& n : normals) addNormal(ring, n);
+    for (const auto& t : texCoords) addTexCoord(ring, t);
     setIndices(ring, indices);
 
     return ring;
 }
+
+

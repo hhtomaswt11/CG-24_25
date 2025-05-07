@@ -3,8 +3,7 @@
 
     XMLDataFormat* xmlData = nullptr;
     std::list<Primitive> primitives;
-
-    std::map<std::string, GLuint> vboCache;
+    
     std::map<std::string, ModelData> modelCache;
 
     void normalize(float* vec) {
@@ -223,35 +222,6 @@
         float p3[3] = { points[indices[3]][0], points[indices[3]][1], points[indices[3]][2] };
 
         getCatmullRomPoint(t, p0, p1, p2, p3, pos);
-    }
-
-    GLuint createVBO(const std::string& modelName, const std::vector<float>& vertices, const std::vector<unsigned int>& indices) {
-        if (vboCache.find(modelName) != vboCache.end()) {
-            return vboCache[modelName];
-        }
-
-        GLuint vbo, vao, ebo;
-        glGenVertexArrays(1, &vao);
-        glGenBuffers(1, &vbo);
-        glGenBuffers(1, &ebo);
-
-        glBindVertexArray(vao);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        glBindVertexArray(0);
-
-        // cache the created VBO using the model name
-        vboCache[modelName] = vao;
-
-        return vao;
     }
 
 

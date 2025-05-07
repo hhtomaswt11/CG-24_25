@@ -20,7 +20,7 @@ void helper() {
     printf("%s» %sBOX      %s[LENGTH] [DIVISIONS PER SIDE]%s → box.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sSPHERE   %s[RADIUS] [SLICES] [STACKS]%s   → sphere.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sCONE     %s[BOTTOM RADIUS] [HEIGHT] [SLICES] [STACKS]%s → cone.3d\n", RED, YELLOW, MAGENTA, RESET);
-    printf("%s» %sRING     %s[INNER RADIUS] [OUTER RADIUS] [HEIGHT][SLICES] [STACKS]%s → ring.3d\n", RED, YELLOW, MAGENTA, RESET);
+    printf("%s» %sRING     %s[INNER RADIUS] [OUTER RADIUS] [SLICES] [STACKS]%s → ring.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sPATCH    %s[PATCH FILE] [TESSELLATION]%s → bezier.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s══════════════════════════════════════════════════════════════════════════════%s\n", CYAN, RESET);
 }
