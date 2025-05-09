@@ -259,37 +259,77 @@
     ModelData loadModel(const std::string& modelName) {
         Primitive prim = from3dFileToPrimitive(modelName.c_str());
         if (!prim) return {};
-
+    
         const auto& pontos = getPoints(prim);
         const auto& indices = getIndices(prim);
-
+        const auto& texCoords = getTexCoords(prim);
+        const auto& normals = getNormals(prim);
+    
         std::vector<float> vertices;
-        for (const auto& p : pontos) {
+        std::vector<float> textureCoords;
+        std::vector<float> normalVectors;
+    
+        for (size_t i = 0; i < pontos.size(); ++i) {
+            const auto& p = pontos[i];
+            const auto& texCoord = texCoords[i];
+            const auto& normal = normals[i];
+    
+            // Adicionando as coordenadas do vértice (X, Y, Z)
             vertices.push_back(getX(p));
             vertices.push_back(getY(p));
             vertices.push_back(getZ(p));
+    
+            // Adicionando as coordenadas de textura (U, V)
+            textureCoords.push_back(texCoord.u);
+            textureCoords.push_back(texCoord.v);
+    
+            // Adicionando as normais (NX, NY, NZ)
+            normalVectors.push_back(getX(normal));
+            normalVectors.push_back(getY(normal));
+            normalVectors.push_back(getZ(normal));
         }
-
-        GLuint vao, vbo, ebo;
+    
+        GLuint vao, ebo;
         glGenVertexArrays(1, &vao);
-        glGenBuffers(1, &vbo);
         glGenBuffers(1, &ebo);
-
+    
         glBindVertexArray(vao);
-
+    
+        // VBO para os vértices
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+        // VBO para coordenadas de textura
+        GLuint texCoordVbo;
+        glGenBuffers(1, &texCoordVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, texCoordVbo);
+        glBufferData(GL_ARRAY_BUFFER, textureCoords.size() * sizeof(float), textureCoords.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+        // VBO para as normais
+        GLuint normalVbo;
+        glGenBuffers(1, &normalVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
+        glBufferData(GL_ARRAY_BUFFER, normalVectors.size() * sizeof(float), normalVectors.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+        // VBO para os índices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+    
         glBindVertexArray(0);
-
-        return { vao, ebo, indices.size() };
+    
+        // Retorno da estrutura ModelData com os valores apropriados
+        return ModelData{(GLuint)vao, (GLuint)ebo, indices.size()};
     }
+    
 
     void renderGroup(const Group& group) {
         glPushMatrix();
