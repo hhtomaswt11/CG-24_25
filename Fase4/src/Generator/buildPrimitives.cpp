@@ -20,11 +20,12 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
     // Define a normal fixa para o plano
     Point normal;
     switch (axis) {
-        case 'X': normal = buildPoint(1.0f, 0.0f, 0.0f); break;
-        case 'Y': normal = buildPoint(0.0f, 1.0f, 0.0f); break;
-        case 'Z': normal = buildPoint(0.0f, 0.0f, 1.0f); break;
+        case 'X': normal = buildPoint(h >= 0 ? 1.0f : -1.0f, 0.0f, 0.0f); break;
+        case 'Y': normal = buildPoint(0.0f, h >= 0 ? 1.0f : -1.0f, 0.0f); break;
+        case 'Z': normal = buildPoint(0.0f, 0.0f, h >= 0 ? 1.0f : -1.0f); break;
         default:  normal = buildPoint(0.0f, 1.0f, 0.0f); break;
     }
+    
 
     // Gerar vértices, normais e texCoords
     for (int linha = 0; linha <= divisions; ++linha) {

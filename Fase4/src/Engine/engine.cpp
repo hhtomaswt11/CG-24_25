@@ -9,36 +9,48 @@
     ////////////////////////////////New Feats
 
     void setupLights() {
-        
-	    float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
+        float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
         
         const auto& lights = getLights(xmlData);
         int lightIdx = GL_LIGHT0;
         
         for (const auto& light : lights) {
             glEnable(lightIdx);
-            
+    
             GLfloat lightColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
             GLfloat lightPos[4] = {
                 light.position[0], 
                 light.position[1], 
                 light.position[2],
-                light.position[3] // w=0 for directional, w=1 for point
+                light.position[3] // 0.0 = directional, 1.0 = point or spot
             };
-            
+    
             glLightfv(lightIdx, GL_POSITION, lightPos);
             glLightfv(lightIdx, GL_DIFFUSE, lightColor);
             glLightfv(lightIdx, GL_SPECULAR, lightColor);
-            
+    
             if (light.type == "directional") {
-                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f);
+                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f); // Not a spotlight
             }
-            
+            else if (light.type == "spot") {
+                GLfloat spotDir[3] = {
+                    light.direction[0],
+                    light.direction[1],
+                    light.direction[2]
+                };
+                glLightfv(lightIdx, GL_SPOT_DIRECTION, spotDir);
+                glLightf(lightIdx, GL_SPOT_CUTOFF, light.cutoff);
+            }
+            else {
+                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f); // Regular point light
+            }
+    
             lightIdx++;
             if (lightIdx > GL_LIGHT7) break;
         }
     }
+    
 
 
     void applyMaterial(const Color& color) {

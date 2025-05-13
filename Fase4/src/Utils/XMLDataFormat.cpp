@@ -95,7 +95,7 @@ Light parseLight(TiXmlElement* lightElement) {
     if (lightElement) {
         const char* type = lightElement->Attribute("type");
         if (type) light.type = type;
-        
+
         if (light.type == "directional") {
             light.position[0] = lightElement->Attribute("dirx") ? atof(lightElement->Attribute("dirx")) : 0.0f;
             light.position[1] = lightElement->Attribute("diry") ? atof(lightElement->Attribute("diry")) : 0.0f;
@@ -105,11 +105,21 @@ Light parseLight(TiXmlElement* lightElement) {
             light.position[0] = lightElement->Attribute("posx") ? atof(lightElement->Attribute("posx")) : 0.0f;
             light.position[1] = lightElement->Attribute("posy") ? atof(lightElement->Attribute("posy")) : 0.0f;
             light.position[2] = lightElement->Attribute("posz") ? atof(lightElement->Attribute("posz")) : 0.0f;
-            light.position[3] = 1.0f; // Point light
+            light.position[3] = 1.0f; // Point or Spot light
+
+            if (light.type == "spot") {
+                // Spotlight-specific attributes
+                light.direction[0] = lightElement->Attribute("dirx") ? atof(lightElement->Attribute("dirx")) : 0.0f;
+                light.direction[1] = lightElement->Attribute("diry") ? atof(lightElement->Attribute("diry")) : -1.0f;
+                light.direction[2] = lightElement->Attribute("dirz") ? atof(lightElement->Attribute("dirz")) : 0.0f;
+
+                light.cutoff = lightElement->Attribute("cutoff") ? atof(lightElement->Attribute("cutoff")) : 30.0f;
+            }
         }
     }
     return light;
 }
+
 /////////////////////////////////////////////////////
 
 // parser  (Alterado)////////////////////////
