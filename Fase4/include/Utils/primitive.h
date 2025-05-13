@@ -20,8 +20,6 @@ struct primitive {
     std::vector<texCoord> texCoords;
 
     std::vector<int> indices;
-    std::vector<int> normalIndices;
-    std::vector<int> texCoordIndices;
 };
 typedef struct texCoord* TexCoord;
 typedef struct primitive* Primitive;
@@ -44,8 +42,6 @@ void addTexCoord(Primitive& f, const texCoord& texCoord);
 
 // SETTERS 
 void setIndices(Primitive f, const std::vector<int>& indices) ; 
-void setNormalIndices(Primitive f, const std::vector<int>& normalIndices);
-void setTexCoordIndices(Primitive f, const std::vector<int>& texCoordIndices);
 
 // GETTERS 
 const std::vector<int>& getIndices(const Primitive f) ; 
@@ -56,8 +52,6 @@ const std::vector<Point>& getPoints(const Primitive f) ;
 
 const std::vector<Point>& getNormals(const Primitive f);
 const std::vector<texCoord>& getTexCoords(const Primitive f);
-const std::vector<int>& getNormalIndices(const Primitive f);
-const std::vector<int>& getTexCoordIndices(const Primitive f);
 
 // DESTROYER 
 void deletePrimitive(Primitive f);

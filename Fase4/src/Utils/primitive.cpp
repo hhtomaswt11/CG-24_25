@@ -49,18 +49,6 @@ void fromPrimitiveTo3dFile(const Primitive f, const char* path) {
     for (size_t i = 0; i < f->indices.size(); i += 3) {
         file << f->indices[i] << "," << f->indices[i + 1] << "," << f->indices[i + 2] << "\n";
     }
-
-    // escrever os índices das normais
-    file << "NormalIndices: " << f->normalIndices.size() << "\n";
-    for (size_t i = 0; i < f->normalIndices.size(); i+=3) {
-        file << f->normalIndices[i] << "," << f->normalIndices[i+1] << "," << f->normalIndices[i+2] << "\n";
-    }
-
-    // escrever os índices das coordenadas de textura
-    file << "TexCoordIndices: " << f->texCoordIndices.size() << "\n";
-    for (size_t i = 0; i < f->texCoordIndices.size(); i+=3) {
-        file << f->texCoordIndices[i] << "," << f->texCoordIndices[i+1] << "," <<  f->texCoordIndices[i+2] << "\n";
-    }
 }
 
 Primitive from3dFileToPrimitive(const char* path) {
@@ -120,28 +108,6 @@ Primitive from3dFileToPrimitive(const char* path) {
         f->indices.push_back(i3);
     }
 
-    // carregar os índices das normais
-    std::getline(file, line);
-    int normalIndexCount;
-    sscanf(line.c_str(), "NormalIndices: %d", &normalIndexCount);
-    for (int i = 0; i < normalIndexCount; ++i) {
-        int normalIndex;
-        std::getline(file, line);
-        sscanf(line.c_str(), "%d", &normalIndex);
-        f->normalIndices.push_back(normalIndex);
-    }
-
-    // carregar os índices das coordenadas de textura
-    std::getline(file, line);
-    int texCoordIndexCount;
-    sscanf(line.c_str(), "TexCoordIndices: %d", &texCoordIndexCount);
-    for (int i = 0; i < texCoordIndexCount; ++i) {
-        int texCoordIndex;
-        std::getline(file, line);
-        sscanf(line.c_str(), "%d", &texCoordIndex);
-        f->texCoordIndices.push_back(texCoordIndex);
-    }
-
     return f;
 }
 
@@ -198,18 +164,6 @@ void setIndices(Primitive f, const std::vector<int>& indices) {
     }
 }
 
-void setNormalIndices(Primitive f, const std::vector<int>& normalIndices) {
-    if (f) {
-        f->normalIndices = normalIndices;
-    }
-}
-
-void setTexCoordIndices(Primitive f, const std::vector<int>& texCoordIndices) {
-    if (f) {
-        f->texCoordIndices = texCoordIndices;
-    }
-}
-
 
 // GETTERS 
 
@@ -235,14 +189,6 @@ const std::vector<Point>& getNormals(const Primitive f) {
 
 const std::vector<texCoord>& getTexCoords(const Primitive f) {
     return f->texCoords;
-}
-
-const std::vector<int>& getNormalIndices(const Primitive f) {
-    return f->normalIndices;
-}
-
-const std::vector<int>& getTexCoordIndices(const Primitive f) {
-    return f->texCoordIndices;
 }
 
 Point getNormal(const Primitive f, std::vector<Point>::size_type index) {

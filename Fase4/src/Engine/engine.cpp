@@ -47,6 +47,7 @@
         GLfloat matDiffuse[] = {color.diffuse[0], color.diffuse[1], color.diffuse[2], 1.0f};
         GLfloat matSpecular[] = {color.specular[0], color.specular[1], color.specular[2], 1.0f};
         GLfloat matEmissive[] = {color.emissive[0], color.emissive[1], color.emissive[2], 1.0f};
+
         
         glMaterialfv(GL_FRONT, GL_AMBIENT, matAmbient);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, matDiffuse);
@@ -333,74 +334,75 @@
     ModelData loadModel(const std::string& modelName) {
         Primitive prim = from3dFileToPrimitive(modelName.c_str());
         if (!prim) return {};
-        
+    
         const auto& pontos = getPoints(prim);
         const auto& indices = getIndices(prim);
         const auto& texCoords = getTexCoords(prim);
         const auto& normals = getNormals(prim);
-        
+    
         std::vector<float> vertices;
         std::vector<float> textureCoords;
         std::vector<float> normalVectors;
-        
+    
         for (size_t i = 0; i < pontos.size(); ++i) {
             const auto& p = pontos[i];
             const auto& texCoord = texCoords[i];
             const auto& normal = normals[i];
-            
+    
             // Add vertex coordinates (X, Y, Z)
             vertices.push_back(getX(p));
             vertices.push_back(getY(p));
             vertices.push_back(getZ(p));
-            
+    
             // Add texture coordinates (U, V)
             textureCoords.push_back(texCoord.u);
             textureCoords.push_back(texCoord.v);
-            
+    
             // Add normals (NX, NY, NZ)
             normalVectors.push_back(getX(normal));
             normalVectors.push_back(getY(normal));
             normalVectors.push_back(getZ(normal));
         }
-        
+    
         GLuint vao, ebo;
         glGenVertexArrays(1, &vao);
         glGenBuffers(1, &ebo);
-        
+    
         glBindVertexArray(vao);
-        
+    
         // VBO for vertices
         GLuint vbo;
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(0);
-        
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+    
         // VBO for texture coordinates
         GLuint texCoordVbo;
         glGenBuffers(1, &texCoordVbo);
         glBindBuffer(GL_ARRAY_BUFFER, texCoordVbo);
         glBufferData(GL_ARRAY_BUFFER, textureCoords.size() * sizeof(float), textureCoords.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(1);
-        
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+    
         // VBO for normals
         GLuint normalVbo;
         glGenBuffers(1, &normalVbo);
         glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
         glBufferData(GL_ARRAY_BUFFER, normalVectors.size() * sizeof(float), normalVectors.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-        glEnableVertexAttribArray(2);
-        
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, 0, 0);
+    
         // EBO for indices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-        
+    
         glBindVertexArray(0);
-        
+    
         return ModelData{vao, ebo, indices.size()};
     }
+    
     
 
     void renderGroup(const Group& group) {
@@ -472,6 +474,7 @@
                         modelCache[model.file] = modelData;
                     }
                 }
+
 
                 // Apply material properties
                 applyMaterial(model.color);

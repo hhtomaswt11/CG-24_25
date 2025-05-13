@@ -204,65 +204,60 @@ void buildProjectionCamera(TiXmlElement* projectionCamera, Projection& projectio
 void buildTransform(TiXmlElement* transformElement, Transform& transform) {
     if (!transformElement) return;
 
-    // --- TRANSLATE ---
-    TiXmlElement* translateElement = transformElement->FirstChildElement("translate");
-    if (translateElement) {
-        const char* timeAttr = translateElement->Attribute("time");
+    for (TiXmlElement* child = transformElement->FirstChildElement();
+         child != nullptr;
+         child = child->NextSiblingElement()) {
 
-        if (timeAttr) {
-            transform.hasCurve = true;
-            transform.time = atof(timeAttr);  // Time for Catmull-Rom animation
+        const char* tag = child->Value();
 
-            // Read control points for Catmull-Rom path
-            for (TiXmlElement* point = translateElement->FirstChildElement("point");
-                 point != nullptr;
-                 point = point->NextSiblingElement("point")) {
+        if (strcmp(tag, "translate") == 0) {
+            const char* timeAttr = child->Attribute("time");
 
-                float x = atof(point->Attribute("x"));
-                float y = atof(point->Attribute("y"));
-                float z = atof(point->Attribute("z"));
-                transform.controlPoints.push_back({x, y, z});
+            if (timeAttr) {
+                transform.hasCurve = true;
+                transform.time = atof(timeAttr);
+
+                for (TiXmlElement* point = child->FirstChildElement("point");
+                     point != nullptr;
+                     point = point->NextSiblingElement("point")) {
+
+                    float x = atof(point->Attribute("x"));
+                    float y = atof(point->Attribute("y"));
+                    float z = atof(point->Attribute("z"));
+                    transform.controlPoints.push_back({x, y, z});
+                }
+
+                const char* alignAttr = child->Attribute("align");
+                transform.alignToCurve = (alignAttr && strcmp(alignAttr, "true") == 0);
+            } else {
+                transform.translate[0] = child->Attribute("x") ? atof(child->Attribute("x")) : 0.0f;
+                transform.translate[1] = child->Attribute("y") ? atof(child->Attribute("y")) : 0.0f;
+                transform.translate[2] = child->Attribute("z") ? atof(child->Attribute("z")) : 0.0f;
             }
 
-            // Align attribute (optional)
-            const char* alignAttr = translateElement->Attribute("align");
-            transform.alignToCurve = (alignAttr && strcmp(alignAttr, "true") == 0);
-        } else {
-            // Static translation
-            transform.translate[0] = translateElement->Attribute("x") ? atof(translateElement->Attribute("x")) : 0.0f;
-            transform.translate[1] = translateElement->Attribute("y") ? atof(translateElement->Attribute("y")) : 0.0f;
-            transform.translate[2] = translateElement->Attribute("z") ? atof(translateElement->Attribute("z")) : 0.0f;
+        } else if (strcmp(tag, "rotate") == 0) {
+            const char* timeAttr = child->Attribute("time");
+
+            if (timeAttr) {
+                transform.rotationTime = atof(timeAttr);
+                transform.rotationAxis[0] = child->Attribute("x") ? atof(child->Attribute("x")) : 0.0f;
+                transform.rotationAxis[1] = child->Attribute("y") ? atof(child->Attribute("y")) : 0.0f;
+                transform.rotationAxis[2] = child->Attribute("z") ? atof(child->Attribute("z")) : 0.0f;
+            } else {
+                transform.rotate[0] = child->Attribute("angle") ? atof(child->Attribute("angle")) : 0.0f;
+                transform.rotate[1] = child->Attribute("x") ? atof(child->Attribute("x")) : 0.0f;
+                transform.rotate[2] = child->Attribute("y") ? atof(child->Attribute("y")) : 0.0f;
+                transform.rotate[3] = child->Attribute("z") ? atof(child->Attribute("z")) : 0.0f;
+            }
+
+        } else if (strcmp(tag, "scale") == 0) {
+            transform.scale[0] = child->Attribute("x") ? atof(child->Attribute("x")) : 1.0f;
+            transform.scale[1] = child->Attribute("y") ? atof(child->Attribute("y")) : 1.0f;
+            transform.scale[2] = child->Attribute("z") ? atof(child->Attribute("z")) : 1.0f;
         }
-    }
-
-    // --- ROTATE ---
-    TiXmlElement* rotateElement = transformElement->FirstChildElement("rotate");
-    if (rotateElement) {
-        const char* timeAttr = rotateElement->Attribute("time");
-
-        if (timeAttr) {
-            // Animated rotation
-            transform.rotationTime = atof(timeAttr);
-            transform.rotationAxis[0] = rotateElement->Attribute("x") ? atof(rotateElement->Attribute("x")) : 0.0f;
-            transform.rotationAxis[1] = rotateElement->Attribute("y") ? atof(rotateElement->Attribute("y")) : 0.0f;
-            transform.rotationAxis[2] = rotateElement->Attribute("z") ? atof(rotateElement->Attribute("z")) : 0.0f;
-        } else {
-            // Static rotation
-            transform.rotate[0] = rotateElement->Attribute("angle") ? atof(rotateElement->Attribute("angle")) : 0.0f;
-            transform.rotate[1] = rotateElement->Attribute("x") ? atof(rotateElement->Attribute("x")) : 0.0f;
-            transform.rotate[2] = rotateElement->Attribute("y") ? atof(rotateElement->Attribute("y")) : 0.0f;
-            transform.rotate[3] = rotateElement->Attribute("z") ? atof(rotateElement->Attribute("z")) : 0.0f;
-        }
-    }
-
-    // --- SCALE ---
-    TiXmlElement* scaleElement = transformElement->FirstChildElement("scale");
-    if (scaleElement) {
-        transform.scale[0] = scaleElement->Attribute("x") ? atof(scaleElement->Attribute("x")) : 1.0f;
-        transform.scale[1] = scaleElement->Attribute("y") ? atof(scaleElement->Attribute("y")) : 1.0f;
-        transform.scale[2] = scaleElement->Attribute("z") ? atof(scaleElement->Attribute("z")) : 1.0f;
     }
 }
+
 
 
 void buildGroup(TiXmlElement* groupElement, Group& group) {

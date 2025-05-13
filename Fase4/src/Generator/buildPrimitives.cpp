@@ -69,12 +69,6 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
                 }
             }
 
-            // para cada vértice adicionado acima, adicionar índice da normal e texCoord
-            for (int i = 0; i < 6; ++i) {
-                int vIdx = indices[indices.size() - 6 + i];
-                normalIndices.push_back(vIdx);
-                texCoordIndices.push_back(vIdx);
-            }
         }
     }
 
@@ -83,8 +77,6 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
     plano->normals = gridNormals;
     plano->texCoords = gridTexCoords;
     plano->indices = indices;
-    plano->normalIndices = normalIndices;
-    plano->texCoordIndices = texCoordIndices;
 
     return plano;
 }
@@ -135,14 +127,6 @@ Primitive buildBox(int length, int divisions) {
         // Corrigir e adicionar índices
         for (int idx : getIndices(face)) {
             box->indices.push_back(idx + pointOffset);
-        }
-
-        for (int idx : getNormalIndices(face)) {
-            box->normalIndices.push_back(idx + normalOffset);
-        }
-
-        for (int idx : getTexCoordIndices(face)) {
-            box->texCoordIndices.push_back(idx + texCoordOffset);
         }
 
         // atualizar offsets
