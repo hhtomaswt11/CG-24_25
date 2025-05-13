@@ -1,5 +1,7 @@
 #include "../../include/Utils/XMLDataFormat.h"
 #include <iostream>
+#include <cstring> // for strcmp
+#include <functional>
 
 struct Window {
     int width, height;
@@ -21,15 +23,17 @@ struct Projection {
     float fov, near, far;
 };
 
+/////////Altered for lights
 struct XMLDataFormat {
     Window window;
     PosCamera poscamera;
     LookAt lookat;
     Up up;
     Projection projection;
-    std::list<std::string> models;
+    std::list<Light> lights;
     Group rootGroup;
 };
+/////////////////////////
 
 XMLDataFormat* newXMLDataFormat() {
     XMLDataFormat* newData = new XMLDataFormat();
@@ -43,7 +47,72 @@ XMLDataFormat* newXMLDataFormat() {
     return newData;
 }
 
-// parser 
+/////////////color parser
+Color parseColor(TiXmlElement* colorElement) {
+    Color color;
+    if (colorElement) {
+        TiXmlElement* diffuse = colorElement->FirstChildElement("diffuse");
+        if (diffuse) {
+            color.diffuse[0] = atof(diffuse->Attribute("R")) / 255.0f;
+            color.diffuse[1] = atof(diffuse->Attribute("G")) / 255.0f;
+            color.diffuse[2] = atof(diffuse->Attribute("B")) / 255.0f;
+        }
+        
+        TiXmlElement* ambient = colorElement->FirstChildElement("ambient");
+        if (ambient) {
+            color.ambient[0] = atof(ambient->Attribute("R")) / 255.0f;
+            color.ambient[1] = atof(ambient->Attribute("G")) / 255.0f;
+            color.ambient[2] = atof(ambient->Attribute("B")) / 255.0f;
+        }
+        
+        TiXmlElement* specular = colorElement->FirstChildElement("specular");
+        if (specular) {
+            color.specular[0] = atof(specular->Attribute("R")) / 255.0f;
+            color.specular[1] = atof(specular->Attribute("G")) / 255.0f;
+            color.specular[2] = atof(specular->Attribute("B")) / 255.0f;
+        }
+        
+        TiXmlElement* emissive = colorElement->FirstChildElement("emissive");
+        if (emissive) {
+            color.emissive[0] = atof(emissive->Attribute("R")) / 255.0f;
+            color.emissive[1] = atof(emissive->Attribute("G")) / 255.0f;
+            color.emissive[2] = atof(emissive->Attribute("B")) / 255.0f;
+        }
+        
+        TiXmlElement* shininess = colorElement->FirstChildElement("shininess");
+        if (shininess) {
+            color.shininess = atof(shininess->Attribute("value"));
+        }
+    }
+    return color;
+}
+
+/////////////////////light parser
+
+
+Light parseLight(TiXmlElement* lightElement) {
+    Light light;
+    if (lightElement) {
+        const char* type = lightElement->Attribute("type");
+        if (type) light.type = type;
+        
+        if (light.type == "directional") {
+            light.position[0] = lightElement->Attribute("dirx") ? atof(lightElement->Attribute("dirx")) : 0.0f;
+            light.position[1] = lightElement->Attribute("diry") ? atof(lightElement->Attribute("diry")) : 0.0f;
+            light.position[2] = lightElement->Attribute("dirz") ? atof(lightElement->Attribute("dirz")) : 0.0f;
+            light.position[3] = 0.0f; // Directional light
+        } else {
+            light.position[0] = lightElement->Attribute("posx") ? atof(lightElement->Attribute("posx")) : 0.0f;
+            light.position[1] = lightElement->Attribute("posy") ? atof(lightElement->Attribute("posy")) : 0.0f;
+            light.position[2] = lightElement->Attribute("posz") ? atof(lightElement->Attribute("posz")) : 0.0f;
+            light.position[3] = 1.0f; // Point light
+        }
+    }
+    return light;
+}
+/////////////////////////////////////////////////////
+
+// parser  (Alterado)////////////////////////
 XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
     XMLDataFormat* result = newXMLDataFormat();
     if (result) {
@@ -79,9 +148,20 @@ XMLDataFormat* xmlToXMLDataFormat(const char* filePath) {
                 else{
                     std::cerr << "Error: Invalid camera parameters "<< std::endl;
                 }
-        }
+            }
 
-            
+            /////////////////////Lights
+            TiXmlElement* lightsElement = root->FirstChildElement("lights");
+            if (lightsElement) {
+                for (TiXmlElement* lightElement = lightsElement->FirstChildElement("light");
+                     lightElement != nullptr;
+                     lightElement = lightElement->NextSiblingElement("light")) {
+                    result->lights.push_back(parseLight(lightElement));
+                }
+            }
+            /////////////////////////
+
+            //Grupos
             TiXmlElement* groupElement = root->FirstChildElement("group");
             if (groupElement) {
                 buildGroup(groupElement, result->rootGroup);
@@ -186,34 +266,81 @@ void buildTransform(TiXmlElement* transformElement, Transform& transform) {
 
 
 void buildGroup(TiXmlElement* groupElement, Group& group) {
+    if (!groupElement) return;
+
+    // Parse transform if exists
     TiXmlElement* transformElement = groupElement->FirstChildElement("transform");
     if (transformElement) {
         buildTransform(transformElement, group.transform);
     }
 
+    // Parse models if exist
     TiXmlElement* modelsElement = groupElement->FirstChildElement("models");
     if (modelsElement) {
         for (TiXmlElement* modelElement = modelsElement->FirstChildElement("model");
              modelElement != nullptr;
              modelElement = modelElement->NextSiblingElement("model")) {
 
+            Model model;
             const char* file = modelElement->Attribute("file");
             if (file) {
-                group.models.push_back(file);
+                model.file = file;
+                
+                
+                // Parse color
+                TiXmlElement* colorElement = modelElement->FirstChildElement("color");
+                if (colorElement) {
+                    model.color = parseColor(colorElement);
+                }
+                
+                // Parse texture (if exists)
+                TiXmlElement* textureElement = modelElement->FirstChildElement("texture");
+                if (textureElement) {
+                    const char* texFile = textureElement->Attribute("file");
+                    if (texFile) {
+                        model.texture = texFile;
+                    }
+                }
+                
+                group.models.push_back(model);
             }
         }
     }
 
+    // Parse child groups recursively
     for (TiXmlElement* childGroupElement = groupElement->FirstChildElement("group");
          childGroupElement != nullptr;
          childGroupElement = childGroupElement->NextSiblingElement("group")) {
 
-        Group childGroup;
-        buildGroup(childGroupElement, childGroup);
-        group.children.push_back(new Group(childGroup));
+        Group* childGroup = new Group();
+        buildGroup(childGroupElement, *childGroup);
+        group.children.push_back(childGroup);
     }
 }
 
+const std::list<Model>& getModels(const Group* group) {
+    static std::list<Model> empty;
+    return group ? group->models : empty;
+}
+
+std::list<std::string> getAllModelFiles(const XMLDataFormat* data) {
+    std::list<std::string> modelFiles;
+    if (!data) return modelFiles;
+
+    // Define the recursive lambda function
+    auto collectModels = [&modelFiles](const Group* group, auto&& self) -> void {
+        for (const auto& model : group->models) {
+            modelFiles.push_back(model.file);
+        }
+        for (const auto* child : group->children) {
+            self(child, self);
+        }
+    };
+
+    // Start the recursion
+    collectModels(&data->rootGroup, collectModels);
+    return modelFiles;
+}
 
 
 // SETTERS 
@@ -288,6 +415,7 @@ float getFar(XMLDataFormat* data) {
     return data ? data->projection.far : 0.0f;
 }
 
+
 const float* getRotate(const Transform* t) {
     return t->rotate;
 }
@@ -309,51 +437,37 @@ const std::list<Group*>& getChildren(const Group* group) {
     return group->children;
 }
 
-const std::list<std::string>& getModels(const Group* group) {
-    return group->models;
-}
-
 const Transform* getTransform(const Group* group) {
     return &group->transform;
 }
 
-// GET MODELS 
 
-std::list<std::string>& getModels(XMLDataFormat* data) {
-    if (data) {
-        return data->models;
-    }
-    static std::list<std::string> emptyList; 
-    return emptyList;
+
+// New Getters
+
+const std::list<Model>& getGroupModels(const Group* group) {
+    static std::list<Model> emptyList; // Return empty list if group is null
+    return group ? group->models : emptyList;
 }
 
-std::list<std::string> getAllModels(const Group* group) {
-    std::list<std::string> allModels;
-
-    // para adicionar os modelos ao grupo atual
-    for (const auto& model : group->models) {
-        allModels.push_back(model);
-    }
-
-    // recusrivamente obter os modelos dos grupos filho
-    for (const auto* childGroup : group->children) {
-        auto childModels = getAllModels(childGroup);  // chamada recursiva para os grupos filho
-        allModels.insert(allModels.end(), childModels.begin(), childModels.end());
-    }
-
-    return allModels;
+const Color* getModelColor(const Model* model) {
+    return model ? &(model->color) : nullptr;
 }
 
-std::list<std::string> getAllModels(const XMLDataFormat* data) {
-    return getAllModels(&data->rootGroup);  // recursao desde o root group 
+const std::string& getModelTexture(const Model* model) {
+    static std::string emptyString; // Return empty string if model is null
+    return model ? model->texture : emptyString;
 }
 
+const std::list<Light>& getLights(const XMLDataFormat* data) {
+    static std::list<Light> emptyList; // Return empty list if data is null
+    return data ? data->lights : emptyList;
+}
 
 // DESTROYER 
 
 void deleteXMLDataFormat(XMLDataFormat* data) {
     if (data) {
-        data->models.clear(); 
         delete data;  
     }
 }

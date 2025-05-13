@@ -6,6 +6,65 @@
     
     std::map<std::string, ModelData> modelCache;
 
+    ////////////////////////////////New Feats
+
+    GLfloat globalAmbient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+
+    void setupLights() {
+        glEnable(GL_LIGHTING);
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+        
+        const auto& lights = getLights(xmlData);
+        int lightIdx = GL_LIGHT0;
+        
+        for (const auto& light : lights) {
+            glEnable(lightIdx);
+            
+            GLfloat lightColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+            GLfloat lightPos[4] = {
+                light.position[0], 
+                light.position[1], 
+                light.position[2],
+                light.position[3] // w=0 for directional, w=1 for point
+            };
+            
+            glLightfv(lightIdx, GL_POSITION, lightPos);
+            glLightfv(lightIdx, GL_DIFFUSE, lightColor);
+            glLightfv(lightIdx, GL_SPECULAR, lightColor);
+            
+            if (light.type == "directional") {
+                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f);
+            }
+            
+            lightIdx++;
+            if (lightIdx > GL_LIGHT7) break;
+        }
+    }
+
+
+    void applyMaterial(const Color& color) {
+        GLfloat matAmbient[] = {color.ambient[0], color.ambient[1], color.ambient[2], 1.0f};
+        GLfloat matDiffuse[] = {color.diffuse[0], color.diffuse[1], color.diffuse[2], 1.0f};
+        GLfloat matSpecular[] = {color.specular[0], color.specular[1], color.specular[2], 1.0f};
+        GLfloat matEmissive[] = {color.emissive[0], color.emissive[1], color.emissive[2], 1.0f};
+        
+        glMaterialfv(GL_FRONT, GL_AMBIENT, matAmbient);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, matDiffuse);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, matSpecular);
+        glMaterialfv(GL_FRONT, GL_EMISSION, matEmissive);
+        glMaterialf(GL_FRONT, GL_SHININESS, color.shininess);
+    }
+
+
+    GLuint loadTexture(const std::string& filename) {
+        // ~ToDO
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+        // ~ToDO
+        return textureID;
+    }
+    //////////////////////////////////////////
+
     void normalize(float* vec) {
         float length = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
         if (length > 0.0001f) { 
@@ -87,19 +146,34 @@
     void drawAxes(){
         float axisLength = 500.0f;
 
+        // Save current lighting state
+        GLboolean lightingEnabled;
+        glGetBooleanv(GL_LIGHTING, &lightingEnabled);
+        
+        // Disable lighting for axes
+        glDisable(GL_LIGHTING);
+
         glBegin(GL_LINES);
-        glColor3f(1.0f, 0.0f, 0.0f); // X - red
+        // X axis - red
+        glColor3f(1.0f, 0.0f, 0.0f);
         glVertex3f(-axisLength, 0.0f, 0.0f);
         glVertex3f(axisLength, 0.0f, 0.0f);
 
-        glColor3f(0.0f, 1.0f, 0.0f); // Y - green
+        // Y axis - green
+        glColor3f(0.0f, 1.0f, 0.0f);
         glVertex3f(0.0f, -axisLength, 0.0f);
         glVertex3f(0.0f, axisLength, 0.0f);
 
-        glColor3f(0.0f, 0.0f, 1.0f); // Z - blue
+        // Z axis - blue
+        glColor3f(0.0f, 0.0f, 1.0f);
         glVertex3f(0.0f, 0.0f, -axisLength);
         glVertex3f(0.0f, 0.0f, axisLength);
         glEnd();
+
+        // Restore lighting state
+        if (lightingEnabled) {
+            glEnable(GL_LIGHTING);
+        }
     }
 
     // Alternar a cor da cena entre amarelo e branco 
@@ -259,131 +333,122 @@
     ModelData loadModel(const std::string& modelName) {
         Primitive prim = from3dFileToPrimitive(modelName.c_str());
         if (!prim) return {};
-    
+        
         const auto& pontos = getPoints(prim);
         const auto& indices = getIndices(prim);
         const auto& texCoords = getTexCoords(prim);
         const auto& normals = getNormals(prim);
-    
+        
         std::vector<float> vertices;
         std::vector<float> textureCoords;
         std::vector<float> normalVectors;
-    
+        
         for (size_t i = 0; i < pontos.size(); ++i) {
             const auto& p = pontos[i];
             const auto& texCoord = texCoords[i];
             const auto& normal = normals[i];
-    
-            // Adicionando as coordenadas do vértice (X, Y, Z)
+            
+            // Add vertex coordinates (X, Y, Z)
             vertices.push_back(getX(p));
             vertices.push_back(getY(p));
             vertices.push_back(getZ(p));
-    
-            // Adicionando as coordenadas de textura (U, V)
+            
+            // Add texture coordinates (U, V)
             textureCoords.push_back(texCoord.u);
             textureCoords.push_back(texCoord.v);
-    
-            // Adicionando as normais (NX, NY, NZ)
+            
+            // Add normals (NX, NY, NZ)
             normalVectors.push_back(getX(normal));
             normalVectors.push_back(getY(normal));
             normalVectors.push_back(getZ(normal));
         }
-    
+        
         GLuint vao, ebo;
         glGenVertexArrays(1, &vao);
         glGenBuffers(1, &ebo);
-    
+        
         glBindVertexArray(vao);
-    
-        // VBO para os vértices
+        
+        // VBO for vertices
         GLuint vbo;
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-        // VBO para coordenadas de textura
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(0);
+        
+        // VBO for texture coordinates
         GLuint texCoordVbo;
         glGenBuffers(1, &texCoordVbo);
         glBindBuffer(GL_ARRAY_BUFFER, texCoordVbo);
         glBufferData(GL_ARRAY_BUFFER, textureCoords.size() * sizeof(float), textureCoords.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-        // VBO para as normais
+        
+        // VBO for normals
         GLuint normalVbo;
         glGenBuffers(1, &normalVbo);
         glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
         glBufferData(GL_ARRAY_BUFFER, normalVectors.size() * sizeof(float), normalVectors.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-        // VBO para os índices
+        
+        // EBO for indices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-    
+        
         glBindVertexArray(0);
-    
-        // Retorno da estrutura ModelData com os valores apropriados
-        return ModelData{(GLuint)vao, (GLuint)ebo, indices.size()};
+        
+        return ModelData{vao, ebo, indices.size()};
     }
     
 
     void renderGroup(const Group& group) {
         glPushMatrix();
 
-    
-        // renderiza a curva
+        // render the curve if it exists
         if (group.transform.hasCurve) {
             renderCatmullRomCurve(group.transform.controlPoints);
         }
-    
-        // animação ao longo da curva
+
+        // animation along the curve
         if (group.transform.hasCurve) {
             if (!animationStarted) {
                 startTime = glutGet(GLUT_ELAPSED_TIME);
                 animationStarted = true;
             }
-    
+
             float elapsedTime = (glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
             float t = group.transform.time > 0 ? fmod(elapsedTime, group.transform.time) / group.transform.time : 0.0f;
-    
+
             float pos[3], deriv[3];
-    
+
             std::vector<std::array<float, 3>> controlPoints;
             for (const auto& point : group.transform.controlPoints) {
                 controlPoints.push_back(std::array<float, 3>{point[0], point[1], point[2]});
             }
-    
+
             getGlobalCatmullRomPointWithDeriv(t, controlPoints, pos, deriv);
-    
+
             glTranslatef(pos[0], pos[1], pos[2]);
-    
+
             if (group.transform.alignToCurve) {
                 normalize(deriv);
-    
-                float y[3], z[3];
-    
-                cross(deriv, yAxis().data(), z); // Xi = deriv
-    
-                normalize(z);
-    
-                cross(z, deriv, y); // Xi = deriv
 
-    
+                float y[3], z[3];
+
+                cross(deriv, yAxis().data(), z);
+                normalize(z);
+                cross(z, deriv, y);
                 normalize(y);
-    
+
                 float rot[16];
                 buildRotMatrix(deriv, y, z, rot);
-    
-                // Aplica a transformação de rotação com glMultMatrixf
                 glMultMatrixf(rot);
             }
         }
 
-        // rotação ao longo do tempo
+        // time-based rotation
         if (group.transform.rotationTime > 0.0f) {
             if (!animationStarted) {
                 startTime = glutGet(GLUT_ELAPSED_TIME);
@@ -396,34 +461,46 @@
             
             glRotatef(rotationAngle, group.transform.rotationAxis[0], group.transform.rotationAxis[1], group.transform.rotationAxis[2]);
         }
-    
+
         applyTransform(group.transform);
-    
-        // renderiza os grupos filho
-        for (const auto* child : getChildren(&group)) {
-            glPushMatrix();
-            renderGroup(*child);
-            glPopMatrix();
-        }
-    
-        // Render models
-        for (const auto& modelName : getModels(&group)) {
-            // Carrega modelo apenas uma vez
-            if (modelCache.find(modelName) == modelCache.end()) {
-                ModelData modelData = loadModel(modelName);
-                if (modelData.vao != 0) {
-                    modelCache[modelName] = modelData;
+
+         // Render models with materials and textures
+            for (const auto& model : getGroupModels(&group)) {
+                if (modelCache.find(model.file) == modelCache.end()) {
+                    ModelData modelData = loadModel(model.file);
+                    if (modelData.vao != 0) {
+                        modelCache[model.file] = modelData;
+                    }
+                }
+
+                // Apply material properties
+                applyMaterial(model.color);
+
+                /*Apply texture if exists
+                if (!model.texture.empty()) {
+                    if (textureCache.find(model.texture) == textureCache.end()) {
+                        textureCache[model.texture] = loadTexture(model.texture);
+                    }
+                    glEnable(GL_TEXTURE_2D);
+                    glBindTexture(GL_TEXTURE_2D, textureCache[model.texture]);
                 } else {
-                    std::cerr << "Erro ao carregar modelo: " << modelName << std::endl;
-                    continue;
+                    glDisable(GL_TEXTURE_2D);
+                }*/
+
+                // Draw the model
+                if (modelCache.count(model.file)) {
+                    drawPrimitiveVBO(modelCache[model.file].vao, 
+                                   modelCache[model.file].ebo,
+                                   modelCache[model.file].indexCount);
                 }
             }
-    
-            const ModelData& modelData = modelCache[modelName];
-            drawPrimitiveVBO(modelData.vao, modelData.ebo, modelData.indexCount);
+
+            // Render child groups
+        for (const auto* child : getChildren(&group)) {
+            renderGroup(*child);
         }
-    
-        glPopMatrix();
+
+            glPopMatrix();
     }
      
 
@@ -434,15 +511,17 @@
                 lookAtx, lookAty, lookAtz,
                 upx, upy, upz);
 
-    
-        if (showAxes) {
-            drawAxes();
-        }
+        setupLights();
 
-        glColor3f(1.0f, 1.0f, 1.0f);
+        if (showAxes) {
+            glDisable(GL_LIGHTING);
+            drawAxes();
+            glEnable(GL_LIGHTING);
+        }
 
         glPolygonMode(GL_FRONT, mode);
         renderGroup(*getRootGroup(xmlData));
+
         updateFPS();
         glutSwapBuffers();
     }
@@ -564,15 +643,22 @@
         int posX = (width - windowWidth) / 2, posY = (height - windowHeight) / 2;
         glutInitWindowPosition(posX, posY);
         glutInitWindowSize(windowWidth, windowHeight);
-        glutCreateWindow("CG @UMINHO - Fase 3 - Grupo 36");
+        glutCreateWindow("CG @UMINHO - Fase 4 - Grupo 36");
+
         glewInit();
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_NORMALIZE);
+        glEnable(GL_LIGHTING);
+
+        glEnable(GL_TEXTURE_2D);
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
         glutDisplayFunc(renderScene);
         glutReshapeFunc(changeSize);
         glutKeyboardFunc(processKeys);
         glutSpecialFunc(processSpecialKeys);
         glutIdleFunc(idleFunc); 
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
 
         glutMainLoop();
 
