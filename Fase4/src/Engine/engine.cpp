@@ -5,6 +5,7 @@
     std::list<Primitive> primitives;
     
     std::map<std::string, ModelData> modelCache;
+    std::map<std::string, GLuint> textureCache;
 
     ////////////////////////////////New Feats
 
@@ -69,10 +70,59 @@
 
 
     GLuint loadTexture(const std::string& filename) {
-        // ~ToDO
+        static bool ilInitialized = false;
+        if (!ilInitialized) {
+            ilInit();
+            iluInit();
+            ilEnable(IL_ORIGIN_SET);
+            ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+            ilInitialized = true;
+        }
+
+        // Generate the image name
+        ILuint imageID;
+        ilGenImages(1, &imageID);
+        ilBindImage(imageID);
+
+        // Try to load the image
+        std::string fullPath = "../test_files_phase_4/" + filename; // Assuming textures are in a textures subdirectory
+        if (!ilLoadImage(fullPath.c_str())) {
+            std::cerr << "Error loading texture: " << fullPath
+                      << " - " << iluErrorString(ilGetError()) << std::endl;
+            ilDeleteImages(1, &imageID);
+            return 0;
+        }
+
+        // Convert the image to RGBA
+        if (!ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
+            std::cerr << "Error converting texture: " << fullPath 
+                      << " - " << iluErrorString(ilGetError()) << std::endl;
+            ilDeleteImages(1, &imageID);
+            return 0;
+        }
+
+        // Generate the OpenGL texture
         GLuint textureID;
         glGenTextures(1, &textureID);
-        // ~ToDO
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        // Set texture parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+        // Upload the texture data
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
+                    ilGetInteger(IL_IMAGE_WIDTH),
+                    ilGetInteger(IL_IMAGE_HEIGHT),
+                    0, GL_RGBA, GL_UNSIGNED_BYTE,
+                    ilGetData());
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Clean up
+        ilDeleteImages(1, &imageID);
+
         return textureID;
     }
     //////////////////////////////////////////
@@ -497,7 +547,7 @@
                 // Apply material properties
                 applyMaterial(model.color);
 
-                /*Apply texture if exists
+                //Apply texture if exists
                 if (!model.texture.empty()) {
                     if (textureCache.find(model.texture) == textureCache.end()) {
                         textureCache[model.texture] = loadTexture(model.texture);
@@ -506,7 +556,7 @@
                     glBindTexture(GL_TEXTURE_2D, textureCache[model.texture]);
                 } else {
                     glDisable(GL_TEXTURE_2D);
-                }*/
+                }
 
                 // Draw the model
                 if (modelCache.count(model.file)) {

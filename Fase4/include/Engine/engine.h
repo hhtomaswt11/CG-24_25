@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <sstream> 
 #include <string>
+#include <IL/il.h>
+#include <IL/ilu.h>
 
 
 #include "../Utils/XMLDataFormat.h" 

@@ -75,6 +75,20 @@ target_include_directories(generator PRIVATE ${GLEW_INCLUDE_DIRS} ${GLUT_INCLUDE
 target_link_libraries(generator ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${GLEW_LIBRARIES})
 target_link_libraries(engine ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${GLEW_LIBRARIES})
 
+# Find DevIL
+find_package(DevIL REQUIRED)
+if (NOT DevIL_FOUND)
+    message(FATAL_ERROR "DevIL not found!")
+endif()
+
+# Include DevIL headers
+target_include_directories(engine PRIVATE ${IL_INCLUDE_DIR})
+target_include_directories(generator PRIVATE ${IL_INCLUDE_DIR})
+
+# Link DevIL libraries
+target_link_libraries(engine ${IL_LIBRARIES} ILU)
+target_link_libraries(generator ${IL_LIBRARIES})
+
 # Handle platform-specific settings
 if(WIN32)
     message(STATUS "Configuring for Windows")
