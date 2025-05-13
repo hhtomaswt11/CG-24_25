@@ -17,7 +17,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
     std::vector<Point> gridNormals;
     std::vector<texCoord> gridTexCoords;
 
-    // Define a normal fixa para o plano
+    // Define normal
     Point normal;
     switch (axis) {
         case 'X': normal = buildPoint(h >= 0 ? 1.0f : -1.0f, 0.0f, 0.0f); break;
@@ -25,20 +25,39 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         case 'Z': normal = buildPoint(0.0f, 0.0f, h >= 0 ? 1.0f : -1.0f); break;
         default:  normal = buildPoint(0.0f, 1.0f, 0.0f); break;
     }
-    
 
-    // Gerar vértices, normais e texCoords
     for (int linha = 0; linha <= divisions; ++linha) {
         for (int coluna = 0; coluna <= divisions; ++coluna) {
+            float u = (float)coluna / divisions;
+            float v = (float)linha / divisions;
+
             float x = -half + coluna * div_side;
             float z = -half + linha * div_side;
 
             Point p;
-            if (axis == 'X')      p = buildPoint(h, x, z);
-            else if (axis == 'Y') p = buildPoint(x, h, z);
-            else if (axis == 'Z') p = buildPoint(x, z, h);
+            texCoord tex;
 
-            texCoord tex = { (float) coluna / divisions, (float) linha / divisions };
+            switch (axis) {
+                case 'X':
+                    p = buildPoint(h, x, z);
+                    tex = { v, u }; // mapeamento: u = X, v = Z
+                    break;
+
+                case 'Y':
+                    p = buildPoint(x, h, z);
+                    tex = { u, 1.0f - v }; // mapeamento: u = X, v = Z (invertido)
+                    break;
+
+                case 'Z':
+                    p = buildPoint(x, z, h);
+                    tex = { u, 1.0f - v }; // mapeamento: u = X, v = Y (invertido)
+                    break;
+
+                default:
+                    p = buildPoint(x, h, z);
+                    tex = { u, 1.0f - v };
+                    break;
+            }
 
             gridPoints.push_back(p);
             gridNormals.push_back(normal);
@@ -46,9 +65,8 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         }
     }
 
-    std::vector<int> indices, normalIndices, texCoordIndices;
+    std::vector<int> indices;
 
-    // criar triangulos
     for (int linha = 0; linha < divisions; ++linha) {
         for (int coluna = 0; coluna < divisions; ++coluna) {
             int i1 = linha * (divisions + 1) + coluna;
@@ -69,11 +87,10 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
                     indices.insert(indices.end(), {i1, i2, i3, i2, i4, i3});
                 }
             }
-
         }
     }
 
-    // popular a primitiva
+    // Popular primitiva
     plano->points = gridPoints;
     plano->normals = gridNormals;
     plano->texCoords = gridTexCoords;
@@ -144,7 +161,7 @@ Primitive buildBox(int length, int divisions) {
 
 
 Primitive buildSphere(int radius, int slices, int stacks) {
-    if (radius <= 0 || slices < 3 || stacks < 1) {
+    if (radius <= 0 || slices < 3 || stacks < 2) {
         std::cerr << "Erro: Parâmetros inválidos para gerar a esfera." << std::endl;
         exit(1);
     }
@@ -157,98 +174,57 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     std::vector<texCoord> texCoords;
     std::vector<int> indices;
 
-    // adicionar polo norte
-    Point poleNorth = buildPoint(0, radius, 0);
-    points.push_back(poleNorth);
-    normals.push_back(buildPoint(0, 1, 0));  // normal no Polo Norte
-    texCoords.push_back({0.5f, 1.0f}); // coordenada de textura para o Polo Norte
-
-    int northIndex = 0;
-
-    // gerar vértices, normais e coordenadas de textura
-    for (int stack = 1; stack < stacks; ++stack) {
-        float phi = M_PI * stack / stacks; // Latitude
+    // Geração dos vértices
+    for (int stack = 0; stack <= stacks; ++stack) {
+        float phi = M_PI * (float)stack / stacks; // de 0 a pi
         float y = radius * cos(phi);
-        float xy = radius * sin(phi);
+        float r = radius * sin(phi);
 
-        for (int slice = 0; slice < slices; ++slice) {
-            float theta = 2 * M_PI * slice / slices; // longitude
-            float x = xy * cos(theta);
-            float z = xy * sin(theta);
+        float v = 1.0f - (float)stack / stacks;
+
+        for (int slice = 0; slice <= slices; ++slice) {
+            float theta = 2.0f * M_PI * (float)slice / slices; // de 0 a 2pi
+            float x = r * sin(theta);
+            float z = r * cos(theta);
 
             Point p = buildPoint(x, y, z);
             points.push_back(p);
 
-            // normal do ponto é o vetor (ponto / raio)
             normals.push_back(buildPoint(x / radius, y / radius, z / radius));
 
             float u = (float)slice / slices;
-            float v = (float)stack / stacks;
             texCoords.push_back({u, v});
         }
     }
 
-    // adicionar polo sul
-    Point poleSouth = buildPoint(0, -radius, 0);
-    points.push_back(poleSouth);
-    normals.push_back(buildPoint(0, -1, 0));  // normal no Polo Sul
-    texCoords.push_back({0.5f, 0.0f}); // coordenada de textura para o Polo Sul
-
-    int southIndex = points.size() - 1;
-
-    // gerar índices para os triângulos
-
-    // conectar ao Polo Norte
-    for (int slice = 0; slice < slices; ++slice) {
-        int nextSlice = (slice + 1) % slices;
-        indices.push_back(northIndex);
-        indices.push_back(1 + nextSlice);
-        indices.push_back(1 + slice);
-    }
-
-    // conectar as stacks intermediárias
-    for (int stack = 0; stack < stacks - 2; ++stack) {
-        int currentStackStart = 1 + stack * slices;
-        int nextStackStart = currentStackStart + slices;
-
+    // Geração dos índices
+    for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
-            int nextSlice = (slice + 1) % slices;
+            int first = stack * (slices + 1) + slice;
+            int second = first + slices + 1;
 
-            // Triângulo inferior
-            indices.push_back(currentStackStart + slice);
-            indices.push_back(currentStackStart + nextSlice);
-            indices.push_back(nextStackStart + slice);
+            // Triângulo 1
+            indices.push_back(first);
+            indices.push_back(second);
+            indices.push_back(first + 1);
 
-            // Triângulo superior
-            indices.push_back(currentStackStart + nextSlice);
-            indices.push_back(nextStackStart + nextSlice);
-            indices.push_back(nextStackStart + slice);
+            // Triângulo 2
+            indices.push_back(first + 1);
+            indices.push_back(second);
+            indices.push_back(second + 1);
         }
     }
 
-    // conectar à base (Polo Sul)
-    int lastStackStart = 1 + (stacks - 2) * slices;
-    for (int slice = 0; slice < slices; ++slice) {
-        int nextSlice = (slice + 1) % slices;
-        indices.push_back(southIndex);
-        indices.push_back(lastStackStart + slice);
-        indices.push_back(lastStackStart + nextSlice);
-    }
-
-    // adicionar pontos, normais, coordenadas de textura e índices à primitiva
-    for (const auto& p : points) {
-        addPoint(sphere, p);
-    }
-    for (const auto& normal : normals) {
-        addNormal(sphere, normal);
-    }
-    for (const auto& texCoord : texCoords) {
-        addTexCoord(sphere, texCoord);
-    }
+    // Finalização
+    for (const auto& p : points) addPoint(sphere, p);
+    for (const auto& n : normals) addNormal(sphere, n);
+    for (const auto& t : texCoords) addTexCoord(sphere, t);
     setIndices(sphere, indices);
 
     return sphere;
 }
+
+
 
 
 
