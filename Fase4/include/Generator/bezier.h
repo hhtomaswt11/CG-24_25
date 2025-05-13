@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "../Utils/point.h"
+#include "../Utils/primitive.h"
 
 typedef struct Patch patch; 
 

@@ -204,59 +204,69 @@ void buildProjectionCamera(TiXmlElement* projectionCamera, Projection& projectio
 void buildTransform(TiXmlElement* transformElement, Transform& transform) {
     if (!transformElement) return;
 
-    for (TiXmlElement* child = transformElement->FirstChildElement();
-         child != nullptr;
-         child = child->NextSiblingElement()) {
+    for (TiXmlElement* elem = transformElement->FirstChildElement(); elem != nullptr; elem = elem->NextSiblingElement()) {
+        std::string elemName = elem->Value();
 
-        const char* tag = child->Value();
-
-        if (strcmp(tag, "translate") == 0) {
-            const char* timeAttr = child->Attribute("time");
+        if (elemName == "translate") {
+            const char* timeAttr = elem->Attribute("time");
 
             if (timeAttr) {
                 transform.hasCurve = true;
                 transform.time = atof(timeAttr);
 
-                for (TiXmlElement* point = child->FirstChildElement("point");
+                for (TiXmlElement* point = elem->FirstChildElement("point");
                      point != nullptr;
                      point = point->NextSiblingElement("point")) {
-
                     float x = atof(point->Attribute("x"));
                     float y = atof(point->Attribute("y"));
                     float z = atof(point->Attribute("z"));
                     transform.controlPoints.push_back({x, y, z});
                 }
 
-                const char* alignAttr = child->Attribute("align");
+                const char* alignAttr = elem->Attribute("align");
                 transform.alignToCurve = (alignAttr && strcmp(alignAttr, "true") == 0);
             } else {
-                transform.translate[0] = child->Attribute("x") ? atof(child->Attribute("x")) : 0.0f;
-                transform.translate[1] = child->Attribute("y") ? atof(child->Attribute("y")) : 0.0f;
-                transform.translate[2] = child->Attribute("z") ? atof(child->Attribute("z")) : 0.0f;
+                // Static translate
+                TransformStep step;
+                step.type = TransformType::TRANSLATE;
+                step.translate[0] = elem->Attribute("x") ? atof(elem->Attribute("x")) : 0.0f;
+                step.translate[1] = elem->Attribute("y") ? atof(elem->Attribute("y")) : 0.0f;
+                step.translate[2] = elem->Attribute("z") ? atof(elem->Attribute("z")) : 0.0f;
+                transform.orderedSteps.push_back(step);
             }
+        }
 
-        } else if (strcmp(tag, "rotate") == 0) {
-            const char* timeAttr = child->Attribute("time");
+        else if (elemName == "rotate") {
+            const char* timeAttr = elem->Attribute("time");
 
             if (timeAttr) {
                 transform.rotationTime = atof(timeAttr);
-                transform.rotationAxis[0] = child->Attribute("x") ? atof(child->Attribute("x")) : 0.0f;
-                transform.rotationAxis[1] = child->Attribute("y") ? atof(child->Attribute("y")) : 0.0f;
-                transform.rotationAxis[2] = child->Attribute("z") ? atof(child->Attribute("z")) : 0.0f;
+                transform.rotationAxis[0] = elem->Attribute("x") ? atof(elem->Attribute("x")) : 0.0f;
+                transform.rotationAxis[1] = elem->Attribute("y") ? atof(elem->Attribute("y")) : 0.0f;
+                transform.rotationAxis[2] = elem->Attribute("z") ? atof(elem->Attribute("z")) : 0.0f;
             } else {
-                transform.rotate[0] = child->Attribute("angle") ? atof(child->Attribute("angle")) : 0.0f;
-                transform.rotate[1] = child->Attribute("x") ? atof(child->Attribute("x")) : 0.0f;
-                transform.rotate[2] = child->Attribute("y") ? atof(child->Attribute("y")) : 0.0f;
-                transform.rotate[3] = child->Attribute("z") ? atof(child->Attribute("z")) : 0.0f;
+                // Static rotation
+                TransformStep step;
+                step.type = TransformType::ROTATE;
+                step.rotate[0] = elem->Attribute("angle") ? atof(elem->Attribute("angle")) : 0.0f;
+                step.rotate[1] = elem->Attribute("x") ? atof(elem->Attribute("x")) : 0.0f;
+                step.rotate[2] = elem->Attribute("y") ? atof(elem->Attribute("y")) : 0.0f;
+                step.rotate[3] = elem->Attribute("z") ? atof(elem->Attribute("z")) : 0.0f;
+                transform.orderedSteps.push_back(step);
             }
+        }
 
-        } else if (strcmp(tag, "scale") == 0) {
-            transform.scale[0] = child->Attribute("x") ? atof(child->Attribute("x")) : 1.0f;
-            transform.scale[1] = child->Attribute("y") ? atof(child->Attribute("y")) : 1.0f;
-            transform.scale[2] = child->Attribute("z") ? atof(child->Attribute("z")) : 1.0f;
+        else if (elemName == "scale") {
+            TransformStep step;
+            step.type = TransformType::SCALE;
+            step.scale[0] = elem->Attribute("x") ? atof(elem->Attribute("x")) : 1.0f;
+            step.scale[1] = elem->Attribute("y") ? atof(elem->Attribute("y")) : 1.0f;
+            step.scale[2] = elem->Attribute("z") ? atof(elem->Attribute("z")) : 1.0f;
+            transform.orderedSteps.push_back(step);
         }
     }
 }
+
 
 
 
@@ -409,20 +419,6 @@ float getNear(XMLDataFormat* data) {
 float getFar(XMLDataFormat* data) {
     return data ? data->projection.far : 0.0f;
 }
-
-
-const float* getRotate(const Transform* t) {
-    return t->rotate;
-}
-
-const float* getTranslate(const Transform* t) {
-    return t->translate;
-}
-
-const float* getScale(const Transform* t) {
-    return t->scale;
-}
-
 
 const Group* getRootGroup(const XMLDataFormat* data) {
     return &data->rootGroup;

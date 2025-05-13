@@ -8,11 +8,10 @@
 
     ////////////////////////////////New Feats
 
-    GLfloat globalAmbient[] = {0.2f, 0.2f, 0.2f, 1.0f};
-
     void setupLights() {
-        glEnable(GL_LIGHTING);
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+        
+	    float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
         
         const auto& lights = getLights(xmlData);
         int lightIdx = GL_LIGHT0;
@@ -129,7 +128,7 @@
     bool yellow = false;
 
     // Rendering mode
-    int mode = GL_LINE;
+    int mode = GL_FILL;
 
     // White
     float colorR = 1.0f, colorG = 1.0f, colorB = 1.0f;
@@ -308,13 +307,20 @@
     }
 
     void applyTransform(const Transform& transform) {
-        const float* rotate = getRotate(&transform);
-        const float* translate = getTranslate(&transform);
-        const float* scale = getScale(&transform);
-
-        glRotatef(rotate[0], rotate[1], rotate[2], rotate[3]);
-        glTranslatef(translate[0], translate[1], translate[2]);
-        glScalef(scale[0], scale[1], scale[2]);
+        // Aplica transformações estáticas em ordem
+        for (const TransformStep& step : transform.orderedSteps) {
+            switch (step.type) {
+                case TransformType::TRANSLATE:
+                    glTranslatef(step.translate[0], step.translate[1], step.translate[2]);
+                    break;
+                case TransformType::ROTATE:
+                    glRotatef(step.rotate[0], step.rotate[1], step.rotate[2], step.rotate[3]);
+                    break;
+                case TransformType::SCALE:
+                    glScalef(step.scale[0], step.scale[1], step.scale[2]);
+                    break;
+            }
+        }
     }
 
     void renderCatmullRomCurve(const std::vector<std::array<float, 3>>& controlPoints) {
@@ -653,6 +659,7 @@
         glEnable(GL_CULL_FACE);
         glEnable(GL_NORMALIZE);
         glEnable(GL_LIGHTING);
+        glEnable(GL_RESCALE_NORMAL);
 
         glEnable(GL_TEXTURE_2D);
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);

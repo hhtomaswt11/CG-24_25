@@ -262,23 +262,17 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
 
     std::vector<Point> points;
     std::vector<int> indices;
-    std::vector<Point> normals;  // armazenamento das normais
-    std::vector<texCoord> texCoords;  // armazenamento das coordenadas de textura
+    std::vector<Point> normals;
+    std::vector<texCoord> texCoords;
 
-    // função para adicionar pontos únicos ao cone (sem duplicar)
-    auto addUniquePoint = [&](const Point& p) -> int {
-        for (size_t i = 0; i < points.size(); ++i) {
-            if (getX(points[i]) == getX(p) && getY(points[i]) == getY(p) && getZ(points[i]) == getZ(p)) {
-                return i;  // retorna o índice do ponto existente
-            }
-        }
-        points.push_back(p);  // se não encontrado, adiciona o ponto
-        return points.size() - 1;  // retorna o índice do novo ponto
-    };
-
-    // base do cone (centro da base)
-    Point center = buildPoint(0.0f, 0.0f, 0.0f);
-    int centerIndex = addUniquePoint(center);  // adiciona o centro da base
+    // -------------------------
+    // BASE DO CONE
+    // -------------------------
+    Point baseCenter = buildPoint(0.0f, 0.0f, 0.0f);
+    int baseCenterIndex = points.size();
+    points.push_back(baseCenter);
+    normals.push_back(buildPoint(0.0f, -1.0f, 0.0f));
+    texCoords.push_back({0.5f, 0.5f});
 
     std::vector<int> baseIndices;
     for (int i = 0; i < slices; i++) {
@@ -286,109 +280,107 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         float x = radius * cos(angle);
         float z = radius * sin(angle);
 
-        Point p = buildPoint(x, 0.0f, z);
-        int index = addUniquePoint(p);  // adiciona vértice da borda
-        baseIndices.push_back(index);  // armazena o índice do ponto da borda
+        points.push_back(buildPoint(x, 0.0f, z));
+        normals.push_back(buildPoint(0.0f, -1.0f, 0.0f));
+        texCoords.push_back({0.5f + 0.5f * cos(angle), 0.5f + 0.5f * sin(angle)});
+        baseIndices.push_back(points.size() - 1);
     }
 
-    // adicionando triângulos para a base
     for (int i = 0; i < slices; i++) {
         int next = (i + 1) % slices;
-        indices.push_back(centerIndex);
-        indices.push_back(baseIndices[i]);
+        indices.push_back(baseCenterIndex);
         indices.push_back(baseIndices[next]);
+        indices.push_back(baseIndices[i]);
     }
 
-    // normais e coordenadas de textura para a base
-    for (int i = 0; i < slices; i++) {
-        texCoord texCoord = { (float)i / slices, 0.0f };  // coordenadas de textura
-        texCoords.push_back(texCoord);
+    // -------------------------
+    // CORPO DO CONE
+    // -------------------------
+    std::vector<std::vector<int>> bodyIndices(stacks + 1);
 
-        // normal para a base
-        Point normal = buildPoint(0.0f, -1.0f, 0.0f);  // normal apontando para baixo
-        normals.push_back(normal);
-    }
+    for (int stack = 0; stack <= stacks; stack++) {
+        float h = (float)stack / stacks * height;
+        float r = radius * (1.0f - (float)stack / stacks);
 
-    // gerar corpo do cone
-    std::vector<std::vector<int>> stackIndices(stacks);
-    for (int stack = 0; stack < stacks; ++stack) {
-        float currHeight = (float)stack / stacks * height;
-        float currRadius = radius * (1.0f - (float)stack / stacks);
+        for (int slice = 0; slice < slices; slice++) {
+            float angle = 2.0f * M_PI * slice / slices;
+            float x = r * cos(angle);
+            float z = r * sin(angle);
+            float u = (float)slice / slices;
+            float v = (float)stack / stacks;
 
-        for (int slice = 0; slice < slices; ++slice) {
-            float theta = 2.0f * M_PI * slice / slices;
-            float x = currRadius * cos(theta);
-            float z = currRadius * sin(theta);
+            Point pos = buildPoint(x, h, z);
+            points.push_back(pos);
+            texCoords.push_back({u, v});
 
-            Point p = buildPoint(x, currHeight, z);
-            int index = addUniquePoint(p);  // adiciona ponto do corpo
-            stackIndices[stack].push_back(index);  // armazena o índice do ponto da camada
+            // normal da lateral (em direção ao lado da superfície)
+            float nx = cos(angle);
+            float ny = radius / sqrt(radius * radius + height * height);
+            float nz = sin(angle);
+            float len = sqrt(nx * nx + ny * ny + nz * nz);
+            normals.push_back(buildPoint(nx / len, ny / len, nz / len));
+
+            bodyIndices[stack].push_back(points.size() - 1);
         }
     }
 
-    // conectar as camadas do corpo com triângulos
-    for (int stack = 0; stack < stacks - 1; ++stack) {
-        for (int slice = 0; slice < slices; ++slice) {
-            int nextSlice = (slice + 1) % slices;
-            int i1 = stackIndices[stack][slice];
-            int i2 = stackIndices[stack][nextSlice];
-            int i3 = stackIndices[stack + 1][slice];
-            int i4 = stackIndices[stack + 1][nextSlice];
+    for (int stack = 0; stack < stacks; stack++) {
+        for (int slice = 0; slice < slices; slice++) {
+            int next = (slice + 1) % slices;
+
+            int i1 = bodyIndices[stack][slice];
+            int i2 = bodyIndices[stack + 1][slice];
+            int i3 = bodyIndices[stack + 1][next];
+            int i4 = bodyIndices[stack][next];
+
+            indices.push_back(i1);
+            indices.push_back(i2);
+            indices.push_back(i3);
 
             indices.push_back(i1);
             indices.push_back(i3);
             indices.push_back(i4);
-
-            indices.push_back(i1);
-            indices.push_back(i4);
-            indices.push_back(i2);
-
-            // adiciona normais e coordenadas de textura para as faces do corpo
-            Point normal = buildPoint(
-                (getX(points[i3]) - getX(points[i1])) * (getY(points[i4]) - getY(points[i1])),
-                0.0f,  // normal é calculada com base na face
-                (getZ(points[i3]) - getZ(points[i1])) * (getY(points[i4]) - getY(points[i1]))
-            );
-
-            normals.push_back(normal);
-
-            texCoords.push_back({ (float)slice / slices, (float)stack / stacks });
-            texCoords.push_back({ (float)(slice + 1) / slices, (float)stack / stacks });
-            texCoords.push_back({ (float)(slice + 1) / slices, (float)(stack + 1) / stacks });
         }
     }
 
-    // criar topo do cone (um único vértice no topo)
-    Point top = buildPoint(0.0f, height, 0.0f);
-    int topIndex = addUniquePoint(top);  // adiciona o topo
+    // -------------------------
+    // TOPO DO CONE
+    // -------------------------
+    int topIndex = points.size();
+    points.push_back(buildPoint(0.0f, height, 0.0f));
+    normals.push_back(buildPoint(0.0f, 1.0f, 0.0f));
+    texCoords.push_back({0.5f, 1.0f});
 
-    // conectar topo com a última camada
-    for (int slice = 0; slice < slices; ++slice) {
-        int curr = stackIndices[stacks - 1][slice];  // vértice do corpo na última camada
-        int next = stackIndices[stacks - 1][(slice + 1) % slices];  // próximo vértice na última camada
+    for (int slice = 0; slice < slices; slice++) {
+        int next = (slice + 1) % slices;
+        int curr = bodyIndices[stacks][slice];
+        int nxt = bodyIndices[stacks][next];
+
         indices.push_back(topIndex);
-        indices.push_back(next);
         indices.push_back(curr);
+        indices.push_back(nxt);
     }
 
-    // adiciona os pontos, normais e coordenadas de textura à primitiva
+    // -------------------------
+    // FINALIZAÇÃO DA PRIMITIVA
+    // -------------------------
     for (const auto& p : points) {
         addPoint(cone, p);
     }
 
-    for (const auto& normal : normals) {
-        addNormal(cone, normal);
+    for (const auto& n : normals) {
+        addNormal(cone, n);
     }
 
-    for (const auto& texCoord : texCoords) {
-        addTexCoord(cone, texCoord);
+    for (const auto& t : texCoords) {
+        addTexCoord(cone, t);
     }
 
-    // define os índices para as faces
     setIndices(cone, indices);
 
     return cone;
 }
+
 
 
 Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int stacks) {

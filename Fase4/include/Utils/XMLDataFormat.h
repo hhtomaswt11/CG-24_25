@@ -29,24 +29,31 @@ struct Model {
     std::string texture; // Add texture support
 };
 
+enum class TransformType { TRANSLATE, ROTATE, SCALE };
+
+struct TransformStep {
+    TransformType type;
+
+    // Dados possíveis para cada tipo
+    float translate[3] = {0.0f, 0.0f, 0.0f};
+    float rotate[4] = {0.0f, 0.0f, 0.0f, 0.0f};  // angle, x, y, z
+    float scale[3] = {1.0f, 1.0f, 1.0f};
+};
+
 struct Transform {
+    // Curvas e rotação animada
     bool hasCurve = false;
     bool alignToCurve = false;
-    float time = 0.0f; // for translate animation only
+    float time = 0.0f; // para animação de translate
     std::vector<std::array<float, 3>> controlPoints;
 
-    float translate[3];
-    float rotate[4]; // static rotation: angle, x, y, z
-    float scale[3];
+    float rotationTime = 0.0f;                   // para animação de rotate
+    float rotationAxis[3] = {0.0f, 0.0f, 0.0f};  // eixo de rotação animada
 
-    float rotationTime = 0.0f;
-    float rotationAxis[3] = {0.0f, 0.0f, 0.0f};
+    // Transformações ordenadas
+    std::vector<TransformStep> orderedSteps;
 
-    Transform() {
-        translate[0] = translate[1] = translate[2] = 0.0f;
-        rotate[0] = rotate[1] = rotate[2] = rotate[3] = 0.0f;
-        scale[0] = scale[1] = scale[2] = 1.0f;
-    }
+    Transform() = default;
 };
 
 //////////////////New Feat: Lights
