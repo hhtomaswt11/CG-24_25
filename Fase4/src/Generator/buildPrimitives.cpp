@@ -374,52 +374,78 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
     std::vector<texCoord> texCoords;
     std::vector<int> indices;
 
-    // map de índices (stack * slices + slice)
-    auto getIndex = [&](int stack, int slice) {
-        return stack * slices + slice;
+    float yOffset = 0.0001f;  // Deslocamento pequeno para evitar flickering
+
+    // Map de índices (stack * slices + slice)
+    auto getIndex = [&](int stack, int slice, bool isBottom) {
+        return (stack * slices + slice) + (isBottom ? (stacks + 1) * slices : 0);
     };
 
-    // gerar pontos
+    // Gerar pontos e normais para a face de cima (normal para cima)
     for (int stack = 0; stack <= stacks; ++stack) {
         float radius = innerRadius + (float)stack / stacks * (outerRadius - innerRadius);
-
         for (int slice = 0; slice < slices; ++slice) {
             float angle = 2.0f * M_PI * slice / slices;
             float x = radius * cos(angle);
             float z = radius * sin(angle);
 
-            Point p = buildPoint(x, 0.0f, z);
-            points.push_back(p);
-
-            // normal para cima
+            points.push_back(buildPoint(x, yOffset, z));
             normals.push_back(buildPoint(0.0f, 1.0f, 0.0f));
-
-            // coordenada de textura
             texCoords.push_back({ (float)slice / slices, (float)stack / stacks });
         }
     }
 
-    // gerar índices (dois triângulos por célula da grade)
+    // Gerar pontos e normais para a face de baixo (normal para baixo)
+    for (int stack = 0; stack <= stacks; ++stack) {
+        float radius = innerRadius + (float)stack / stacks * (outerRadius - innerRadius);
+        for (int slice = 0; slice < slices; ++slice) {
+            float angle = 2.0f * M_PI * slice / slices;
+            float x = radius * cos(angle);
+            float z = radius * sin(angle);
+
+            points.push_back(buildPoint(x, -yOffset, z));
+            normals.push_back(buildPoint(0.0f, -1.0f, 0.0f));
+            texCoords.push_back({ (float)slice / slices, (float)stack / stacks });
+        }
+    }
+
+    // Gerar índices para a face de cima
     for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
-            int curr = getIndex(stack, slice);
-            int next = getIndex(stack, (slice + 1) % slices);
-            int currUp = getIndex(stack + 1, slice);
-            int nextUp = getIndex(stack + 1, (slice + 1) % slices);
+            int curr = getIndex(stack, slice, false);
+            int next = getIndex(stack, (slice + 1) % slices, false);
+            int currUp = getIndex(stack + 1, slice, false);
+            int nextUp = getIndex(stack + 1, (slice + 1) % slices, false);
 
-            // primeiro triângulo
             indices.push_back(curr);
             indices.push_back(currUp);
             indices.push_back(nextUp);
 
-            // segundo triângulo
             indices.push_back(curr);
             indices.push_back(nextUp);
             indices.push_back(next);
         }
     }
 
-    // carregar dados na primitiva
+    // Gerar índices para a face de baixo
+    for (int stack = 0; stack < stacks; ++stack) {
+        for (int slice = 0; slice < slices; ++slice) {
+            int curr = getIndex(stack, slice, true);
+            int next = getIndex(stack, (slice + 1) % slices, true);
+            int currUp = getIndex(stack + 1, slice, true);
+            int nextUp = getIndex(stack + 1, (slice + 1) % slices, true);
+
+            indices.push_back(curr);
+            indices.push_back(nextUp);
+            indices.push_back(currUp);
+
+            indices.push_back(curr);
+            indices.push_back(next);
+            indices.push_back(nextUp);
+        }
+    }
+
+    // Carregar dados na primitiva
     for (const auto& p : points) addPoint(ring, p);
     for (const auto& n : normals) addNormal(ring, n);
     for (const auto& t : texCoords) addTexCoord(ring, t);
@@ -427,5 +453,6 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
 
     return ring;
 }
+
 
 
