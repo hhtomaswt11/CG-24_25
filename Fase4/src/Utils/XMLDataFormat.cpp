@@ -290,37 +290,52 @@ void buildGroup(TiXmlElement* groupElement, Group& group) {
     }
 
     // Parse models if exist
-    TiXmlElement* modelsElement = groupElement->FirstChildElement("models");
-    if (modelsElement) {
-        for (TiXmlElement* modelElement = modelsElement->FirstChildElement("model");
-             modelElement != nullptr;
-             modelElement = modelElement->NextSiblingElement("model")) {
+// Nova versão (mais robusta)
+TiXmlElement* modelsElement = groupElement->FirstChildElement("models");
+if (modelsElement) {
+    for (TiXmlElement* modelElement = modelsElement->FirstChildElement(); 
+         modelElement != nullptr; 
+         modelElement = modelElement->NextSiblingElement()) {
 
+        std::string tag = modelElement->Value();
+
+        if (tag == "model") {
             Model model;
             const char* file = modelElement->Attribute("file");
-            if (file) {
-                model.file = file;
-                
-                
-                // Parse color
-                TiXmlElement* colorElement = modelElement->FirstChildElement("color");
-                if (colorElement) {
-                    model.color = parseColor(colorElement);
-                }
-                
-                // Parse texture (if exists)
-                TiXmlElement* textureElement = modelElement->FirstChildElement("texture");
-                if (textureElement) {
-                    const char* texFile = textureElement->Attribute("file");
-                    if (texFile) {
-                        model.texture = texFile;
-                    }
-                }
-                
-                group.models.push_back(model);
+            if (file) model.file = file;
+
+            // tenta ver se dentro de <model> há <color> e <texture>
+            TiXmlElement* colorElement = modelElement->FirstChildElement("color");
+            if (colorElement) {
+                model.color = parseColor(colorElement);
+            }
+            TiXmlElement* textureElement = modelElement->FirstChildElement("texture");
+            if (textureElement) {
+                const char* texFile = textureElement->Attribute("file");
+                if (texFile) model.texture = texFile;
+            }
+
+            group.models.push_back(model);
+        }
+
+        else if (tag == "texture") {
+            const char* texFile = modelElement->Attribute("file");
+            if (!group.models.empty() && texFile) {
+                group.models.back().texture = texFile;
+            }
+        }
+
+        else if (tag == "color") {
+            if (!group.models.empty()) {
+                group.models.back().color = parseColor(modelElement);
             }
         }
     }
+}
+
+    
+    
+    
 
     // Parse child groups recursively
     for (TiXmlElement* childGroupElement = groupElement->FirstChildElement("group");

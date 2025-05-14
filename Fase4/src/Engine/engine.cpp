@@ -162,7 +162,7 @@
             lastTime = currentTime;
     
             char title[128];  
-            sprintf(title, "CG @UMINHO - Fase 3 - Grupo 36 - FPS: %.2f", fps);
+            sprintf(title, "CG @UMINHO - Fase 4 - Grupo 36 - FPS: %.2f", fps);
             glutSetWindowTitle(title);
         }
     }
