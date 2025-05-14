@@ -8,6 +8,30 @@
     std::map<std::string, GLuint> textureCache;
 
     ////////////////////////////////New Feats
+    // Câmera FPS
+    float camX = 0.0f, camY = 1.75f, camZ = 5.0f;
+    float yaw = -90.0f;   // Rotação em torno do eixo Y
+    float pitch = 0.0f;   // Rotação em torno do eixo X
+
+    float dirX, dirY, dirZ;
+    float speed = 0.2f;
+
+    int lastMouseX = -1, lastMouseY = -1;
+    bool firstMouse = true;
+
+    // Atualiza a direção da câmera com base em yaw/pitch
+    void updateCameraDirection() {
+        float yawRad = yaw * (M_PI / 180.0f);
+        float pitchRad = pitch * (M_PI / 180.0f);
+
+        dirX = cos(pitchRad) * cos(yawRad);
+        dirY = sin(pitchRad);
+        dirZ = cos(pitchRad) * sin(yawRad);
+
+        // Normaliza
+        float len = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+        dirX /= len; dirY /= len; dirZ /= len;
+    }
 
     void setupLights() {
         float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -175,7 +199,6 @@
     }
 
     // Camera
-    float camX, camY, camZ;
     float lookAtx, lookAty, lookAtz;
     float upx, upy, upz;
     float fov, nearPlane, farPlane;
@@ -244,29 +267,11 @@
         colorG = new_colorG;
         colorB = new_colorB;
     }
-
-    // Calculate spherical coordinates for the camera
-    void computeSphericalCoordinates() {
-        float dx = camX - lookAtx;
-        float dy = camY - lookAty;
-        float dz = camZ - lookAtz;
-        radius = sqrt(dx * dx + dy * dy + dz * dz);
-        Beta = asin(dy / radius);
-        Alpha = atan2(dx, dz);
-    }
-
     // Funcionalidade para ver a posição da camera no terminal 
     void showCameraPosition() {
         std::cout << "Camera Position: (" << camX << "," << camY << "," << camZ << ")" << std::endl;
         std::cout << "<position x=\"" << camX << "\" y=\"" << camY << "\" z=\"" << camZ << "\" />" << std::endl;
         std::cout << std::endl;
-    }
-
-    // Update camera position based on spherical coordinates
-    void updateCameraPosition() {
-        camX = lookAtx + radius * cos(Beta) * sin(Alpha);
-        camY = lookAty + radius * sin(Beta);
-        camZ = lookAtz + radius * cos(Beta) * cos(Alpha);
     }
 
     void changeSize(int w, int h) {
@@ -578,9 +583,12 @@
     void renderScene() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
-        gluLookAt(camX, camY, camZ,
-                lookAtx, lookAty, lookAtz,
-                upx, upy, upz);
+        gluLookAt(
+            camX, camY, camZ,
+            camX + dirX, camY + dirY, camZ + dirZ,
+            0.0f, 1.0f, 0.0f
+        );
+        
 
         setupLights();
 
@@ -597,28 +605,54 @@
         glutSwapBuffers();
     }
 
+    void normalize2(float& x, float& y, float& z) {
+        float len = sqrt(x * x + y * y + z * z);
+        if (len != 0.0f) {
+            x /= len;
+            y /= len;
+            z /= len;
+        }
+    }
+    
+    void crossProduct(float ax, float ay, float az,
+                      float bx, float by, float bz,
+                      float& rx, float& ry, float& rz) {
+        rx = ay * bz - az * by;
+        ry = az * bx - ax * bz;
+        rz = ax * by - ay * bx;
+    }
+    
+
     void processKeys(unsigned char key, int, int) {
+        float rightX, rightY, rightZ;
+        crossProduct(dirX, dirY, dirZ, 0.0f, 1.0f, 0.0f, rightX, rightY, rightZ);
+        normalize2(rightX, rightY, rightZ);
+
+    
         switch (tolower(key)) {
-            case 'w':
-                Beta += ANGLE_INCREMENT;
-                if (Beta > PI / 2.0f) Beta = PI / 2.0f;
+                case 'w': 
+                camX += dirX * speed;
+                camY += dirY * speed;
+                camZ += dirZ * speed;
                 break;
-            case 'a':
-                Alpha -= ANGLE_INCREMENT;
+            case 's':  
+                camX -= dirX * speed;
+                camY -= dirY * speed;
+                camZ -= dirZ * speed;
                 break;
-            case 's':
-                Beta -= ANGLE_INCREMENT;
-                if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
+            case 'a': 
+                camX -= rightX * speed;
+                camZ -= rightZ * speed;
                 break;
             case 'd':
-                Alpha += ANGLE_INCREMENT;
+                camX += rightX * speed;
+                camZ += rightZ * speed;
                 break;
-            case '+':
-                radius -= ZOOM_INCREMENT;
-                if (radius < 1.0f) radius = 1.0f;
+            case 'c':
+                showCameraPosition(); // se ainda quiser isso
                 break;
-            case '-':
-                radius += ZOOM_INCREMENT;
+            case 'x':
+                showAxes = !showAxes;
                 break;
             case 'l':
                 mode = GL_LINE;
@@ -629,43 +663,93 @@
             case 'f':
                 mode = GL_FILL;
                 break;
-            case 'x':
-                showAxes = !showAxes;
-                break;
-            case 'c':
-                showCameraPosition();
-                break;
             case 'y':
                 yellow = !yellow;
                 break;
         }
-
-        updateCameraPosition();
+    
         glutPostRedisplay();
     }
+    
 
     void processSpecialKeys(int key, int, int) {
+        // calcula o vetor lateral com base na direção atual
+        float rightX, rightY, rightZ;
+        crossProduct(dirX, dirY, dirZ, 0.0f, 1.0f, 0.0f, rightX, rightY, rightZ);
+        normalize2(rightX, rightY, rightZ);
+    
         switch (key) {
-            case GLUT_KEY_RIGHT:
-                Alpha += ANGLE_INCREMENT;
-                break;
-            case GLUT_KEY_LEFT:
-                Alpha -= ANGLE_INCREMENT;
-                break;
             case GLUT_KEY_UP:
-                Beta += ANGLE_INCREMENT;
-                if (Beta > PI / 2.0f) Beta = PI / 2.0f;
+                camX += dirX * speed;
+                camY += dirY * speed;
+                camZ += dirZ * speed;
                 break;
             case GLUT_KEY_DOWN:
-                Beta -= ANGLE_INCREMENT;
-                if (Beta < -PI / 2.0f) Beta = -PI / 2.0f;
+                camX -= dirX * speed;
+                camY -= dirY * speed;
+                camZ -= dirZ * speed;
+                break;
+            case GLUT_KEY_LEFT:
+                camX -= rightX * speed;
+                camY -= rightY * speed;
+                camZ -= rightZ * speed;
+                break;
+            case GLUT_KEY_RIGHT:
+                camX += rightX * speed;
+                camY += rightY * speed;
+                camZ += rightZ * speed;
                 break;
         }
+    
+        glutPostRedisplay();
+    }
+    
 
-        updateCameraPosition();
+    bool mousePressed = false;
+    void mouseMotion(int x, int y) {
+        if (!mousePressed) return; // só move se o botão estiver pressionado
+    
+        if (firstMouse) {
+            lastMouseX = x;
+            lastMouseY = y;
+            firstMouse = false;
+            return;
+        }
+    
+        int deltaX = x - lastMouseX;
+        int deltaY = lastMouseY - y; // cima é positivo
+    
+        lastMouseX = x;
+        lastMouseY = y;
+    
+        float sensitivity = 0.1f;
+        yaw += deltaX * sensitivity;
+        pitch += deltaY * sensitivity;
+    
+        // limites para o pitch (para evitar virar de cabeça pra baixo)
+        if (pitch > 89.0f) pitch = 89.0f;
+        if (pitch < -89.0f) pitch = -89.0f;
+    
+        updateCameraDirection();
         glutPostRedisplay();
     }
 
+    void mouseButton(int button, int state, int x, int y) {
+        if (button == GLUT_LEFT_BUTTON) {
+            if (state == GLUT_DOWN) {
+                mousePressed = true;
+                lastMouseX = x;
+                lastMouseY = y;
+                firstMouse = true;
+            } else if (state == GLUT_UP) {
+                mousePressed = false;
+            }
+        }
+    }
+    
+    
+    
+    
     void idleFunc() {
         glutPostRedisplay();
     }
@@ -690,6 +774,24 @@
 
             windowWidth = getWidth(xmlData);
             windowHeight = getHeight(xmlData);
+            // calcula a direção (vetor entre lookAt e posição da câmera)
+            float dirVecX = lookAtx - camX;
+            float dirVecY = lookAty - camY;
+            float dirVecZ = lookAtz - camZ;
+
+            // normaliza
+            float length = sqrt(dirVecX * dirVecX + dirVecY * dirVecY + dirVecZ * dirVecZ);
+            dirVecX /= length;
+            dirVecY /= length;
+            dirVecZ /= length;
+
+            // calcula pitch e yaw a partir do vetor direção
+            pitch = asin(dirVecY) * 180.0f / M_PI;
+            yaw   = atan2(dirVecZ, dirVecX) * 180.0f / M_PI;
+
+            // atualiza a direção usada na câmera FPS
+            updateCameraDirection();
+
         }
     }
 
@@ -706,7 +808,6 @@
         }
 
         initializeCameraAndWindow(xmlData);
-        computeSphericalCoordinates();
 
         glutInit(&argc, argv);
         glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -730,6 +831,10 @@
         glutReshapeFunc(changeSize);
         glutKeyboardFunc(processKeys);
         glutSpecialFunc(processSpecialKeys);
+        glutMouseFunc(mouseButton);
+        glutMotionFunc(mouseMotion);
+
+
         glutIdleFunc(idleFunc); 
 
         glutMainLoop();
