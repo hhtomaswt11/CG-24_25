@@ -1,0 +1,27 @@
+<world> 
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="3" y="3" z="3" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" />
+        <projection fov="60" near="1" far="100" /> 
+    </camera>
+	<group> 
+  		<models> 
+			<model file="box.3d" /> 	
+            
+              <texture file="others_tex/wood.jpeg" />
+            <color> 
+
+                 <diffuse R="255" G="180" B="50" />
+                  
+               
+                <emissive R="95" G="120" B="120" />
+                <shininess value="20" />
+                 
+            </color>
+
+
+ 		</models>
+ 	</group>
+</world>

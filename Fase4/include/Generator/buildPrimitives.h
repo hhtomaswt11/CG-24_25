@@ -15,4 +15,6 @@
 
  Primitive buildSaturnRing(float innerRadius, float outerRadius , int slices, int stacks);
 
+ Primitive buildCylinder(int radius, int height, int slices, int stacks); 
+
 #endif 

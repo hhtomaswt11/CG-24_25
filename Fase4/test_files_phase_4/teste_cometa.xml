@@ -1,0 +1,38 @@
+<world>
+
+    <window width="1900" height="900" />
+    <camera>
+        <position x="-39" y="13" z="-12" />
+        <lookAt x="0" y="0" z="0" />
+        <up x="0" y="1" z="0" />
+        <projection fov="45" near="1" far="500" />
+    </camera>
+    
+    <lights>
+    <light type="point" posX="0" posY="0" posZ="0" />
+    </lights>
+
+    <group>
+     
+<group>
+    <transform>
+        <rotate time="300" x="0" y="1" z="0" />
+        <scale x="1.4" y="1.4" z="1.4" />
+    </transform>
+    <models>
+        <model file="sphere.3d">
+            <texture file="others_tex/comet.jpg" />
+            <color> 
+ 
+    <diffuse R="180" G="180" B="180" />
+
+
+<shininess value="80" />
+
+            </color>
+        </model>
+    </models>
+</group>
+</group>
+
+</world>

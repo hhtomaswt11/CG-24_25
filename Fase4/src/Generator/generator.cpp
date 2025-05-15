@@ -61,6 +61,24 @@ int main(int argc, char* argv[]) {
 
     }
 
+    else if (strcmp(argv[1], "cylinder") == 0) {
+    path_3d = argv[6];
+    int radius = atoi(argv[2]);
+    int height = atoi(argv[3]);
+    int slices = atoi(argv[4]);
+    int stacks = atoi(argv[5]);
+
+    primitive = buildCylinder(radius, height, slices, stacks);
+
+    fromPrimitiveTo3dFile(primitive, path_3d);
+    deletePrimitive(primitive);
+    if (argc == 7)
+        printSuccessMessage(argc, argv);
+    else
+        helper();
+}
+
+
      else if(strcmp(argv[1], "cone") == 0){
         path_3d = argv[6];
         int radius = atoi(argv[2]), 

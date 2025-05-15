@@ -1,0 +1,6 @@
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase4/build/CMakeFiles/engine.dir
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase4/build/CMakeFiles/generator.dir
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase4/build/CMakeFiles/Utils_n_Build_lib.dir
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase4/build/CMakeFiles/tinyXML.dir
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase4/build/CMakeFiles/edit_cache.dir
+/home/tomas/LEI/3ANO/2SEM/CG/CG-24_25/Fase4/build/CMakeFiles/rebuild_cache.dir

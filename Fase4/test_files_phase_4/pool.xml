@@ -1,0 +1,148 @@
+<world>
+    <window width="1920" height="1080" />
+
+    <camera>
+        <position x="0" y="10" z="20" />
+        <lookAt x="0" y="0" z="0" />
+        <up x="0" y="1" z="0" />
+        <projection fov="45" near="1" far="100" />
+    </camera>
+
+    <lights>
+        <light type="point" posX="0" posY="15" posZ="10" />
+        <light type="point" posX="15" posY="10" posZ="-10" />
+        <light type="directional" dirX="-1" dirY="-1" dirZ="-1" />
+    </lights>
+    
+   <!-- ./generator plane 12 3 plane.3d
+    ./generator sphere 1 30 30 sphere.3d -->
+
+    <group>
+        <!-- Mesa -->
+        <group>
+            <models>
+                <model file="plane.3d">
+                    <texture file="pool_tex/mesaor2.png" />
+                    <color>
+                        <diffuse R="80" G="120" B="60" />
+                        <ambient R="80" G="100" B="80" />
+                        <specular R="20" G="20" B="20" />
+                        <emissive R="0" G="0" B="0" />
+                        <shininess value="10" />
+                    </color>
+                </model>
+            </models>
+        </group>
+
+        <!-- Bola branca -->
+        <group>
+            <transform>
+                <translate x="-4.0" y="0.2" z="0.0" />
+                <scale x="0.2" y="0.2" z="0.2" />
+            </transform>
+            <models>
+                <model file="sphere.3d">
+                    <texture file="pool_tex/BallCue.jpg" />
+                </model>
+            </models>
+        </group>
+
+
+
+        <!-- Taco -->
+<group>
+    <transform>
+        <translate x="-4.5" y="0.3" z="0.0" />
+        <rotate angle="10" x="0" y="0" z="1" />
+        <rotate angle="5" x="0" y="1" z="0" />
+        <rotate angle="90" x="0" y="0" z="1" />
+        <scale x="0.05" y="0.05" z="3.5" />
+    </transform>
+    <models>
+        <model file="cylinder.3d">
+            
+            <color>
+                <diffuse R="139" G="69" B="19" />
+                <ambient R="60" G="30" B="10" />
+                <specular R="200" G="200" B="200" />
+                <emissive R="0" G="0" B="0" />
+                <shininess value="30" />
+            </color>
+        </model>
+    </models>
+</group>
+
+
+
+        <!-- Fila 1 -->
+        <group>
+            <transform> <translate x="2.8" y="0.2" z="0.0" /> <scale x="0.2" y="0.2" z="0.2" />
+             </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball1.jpg" /> </model> </models>
+        </group>
+
+        <!-- Fila 2 -->
+        <group>
+            <transform> <translate x="3.25" y="0.2" z="-0.225" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball2.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="3.25" y="0.2" z="0.225" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball3.jpg" /> </model> </models>
+        </group>
+
+        <!-- Fila 3 -->
+        <group>
+            <transform> <translate x="3.7" y="0.2" z="-0.45" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball4.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="3.7" y="0.2" z="0.0" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball8.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="3.7" y="0.2" z="0.45" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball5.jpg" /> </model> </models>
+        </group>
+
+        <!-- Fila 4 -->
+        <group>
+            <transform> <translate x="4.15" y="0.2" z="-0.675" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball6.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="4.15" y="0.2" z="-0.225" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball7.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="4.15" y="0.2" z="0.225" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball9.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="4.15" y="0.2" z="0.675" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball10.jpg" /> </model> </models>
+        </group>
+
+        <!-- Fila 5 -->
+        <group>
+            <transform> <translate x="4.6" y="0.2" z="-0.9" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball11.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="4.6" y="0.2" z="-0.45" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball12.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="4.6" y="0.2" z="0.0" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball13.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="4.6" y="0.2" z="0.45" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball14.jpg" /> </model> </models>
+        </group>
+        <group>
+            <transform> <translate x="4.6" y="0.2" z="0.9" /> <scale x="0.2" y="0.2" z="0.2" /> </transform>
+            <models> <model file="sphere.3d"> <texture file="pool_tex/Ball15.jpg" /> </model> </models>
+        </group>
+    </group>
+</world>
