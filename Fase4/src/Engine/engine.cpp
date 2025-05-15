@@ -1,5 +1,12 @@
     #include "../../include/Engine/engine.h"
+
+    #include <nlohmann/json.hpp>
+#include <fstream>
+
+
     #define PI M_PI
+
+
 
     XMLDataFormat* xmlData = nullptr;
     std::list<Primitive> primitives;
@@ -18,6 +25,225 @@
 
     int lastMouseX = -1, lastMouseY = -1;
     bool firstMouse = true;
+
+
+    // Adicione essas linhas com as outras variáveis globais
+bool animationStarted = false;
+int startTime = 0;
+
+// Se yAxis() não estiver declarada, adicione esta declaração
+std::array<float, 3> yAxis();
+
+
+
+
+
+
+    // Add these near the top with other global variables
+std::map<unsigned int, std::string> objectIDMap; // Maps IDs to model names
+std::map<std::string, nlohmann::json> objectData; // Stores JSON data for objects
+unsigned int currentID = 1; // Starting ID for objects
+
+// Add this function to load JSON data
+void loadObjectData(const std::string& jsonFile) {
+    std::ifstream f(jsonFile);
+    if (f.is_open()) {
+        nlohmann::json data = nlohmann::json::parse(f);
+        for (auto& [key, value] : data.items()) {
+            objectData[key] = value;
+        }
+    } else {
+        std::cerr << "Failed to load JSON data file: " << jsonFile << std::endl;
+    }
+}
+
+// Modified renderScene for picking pass
+void renderScenePicking() {
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // fundo a preto
+
+    currentID = 1; // Reset ID counter
+    objectIDMap.clear();
+    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    gluLookAt(camX, camY, camZ, camX + dirX, camY + dirY, camZ + dirZ, 0.0f, 1.0f, 0.0f);
+
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    
+    renderGroupForPicking(*getRootGroup(xmlData));
+    
+    // Não faça swap buffers aqui! Isso é importante
+
+    glFlush(); // <- Adiciona isto aqui
+}
+
+// Modified group rendering for picking
+void renderGroupForPicking(const Group& group) {
+    glPushMatrix();
+
+    // Same animation logic as in renderGroup
+    if (group.transform.hasCurve) {
+        if (!animationStarted) {
+            startTime = glutGet(GLUT_ELAPSED_TIME);
+            animationStarted = true;
+        }
+
+        float elapsedTime = (glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
+        float t = group.transform.time > 0 ? fmod(elapsedTime, group.transform.time) / group.transform.time : 0.0f;
+
+        float pos[3], deriv[3];
+        std::vector<std::array<float, 3>> controlPoints;
+        for (const auto& point : group.transform.controlPoints) {
+            controlPoints.push_back(std::array<float, 3>{point[0], point[1], point[2]});
+        }
+
+        getGlobalCatmullRomPointWithDeriv(t, controlPoints, pos, deriv);
+        glTranslatef(pos[0], pos[1], pos[2]);
+
+        if (group.transform.alignToCurve) {
+            normalize(deriv);
+            float y[3], z[3];
+            cross(deriv, yAxis().data(), z);
+            normalize(z);
+            cross(z, deriv, y);
+            normalize(y);
+            float rot[16];
+            buildRotMatrix(deriv, y, z, rot);
+            glMultMatrixf(rot);
+        }
+    }
+
+    // Time-based rotation
+    if (group.transform.rotationTime > 0.0f) {
+        if (!animationStarted) {
+            startTime = glutGet(GLUT_ELAPSED_TIME);
+            animationStarted = true;
+        }
+        float elapsedTime = (glutGet(GLUT_ELAPSED_TIME) - startTime) / 1000.0f;
+        float rotationFraction = fmod(elapsedTime, group.transform.rotationTime) / group.transform.rotationTime;
+        float rotationAngle = 360.0f * rotationFraction;
+        glRotatef(rotationAngle, group.transform.rotationAxis[0], group.transform.rotationAxis[1], group.transform.rotationAxis[2]);
+    }
+
+    applyTransform(group.transform);
+
+    // Render models with ID colors
+    for (const auto& model : getGroupModels(&group)) {
+     if (modelCache.find(model.file) == modelCache.end()) {
+    ModelData modelData = loadModel(model.file);
+
+    if (modelData.vao == 0) {
+    std::cerr << "Failed to load model for picking: " << model.file << std::endl;
+}
+
+
+
+    if (modelData.vao != 0) {
+        modelCache[model.file] = modelData;
+    }
+}
+
+if (modelCache.find(model.file) != modelCache.end()) {
+    unsigned int id = currentID++;
+    objectIDMap[id] = model.file;
+
+    float r = ((id >> 16) & 0xFF) / 255.0f;
+    float g = ((id >> 8) & 0xFF) / 255.0f;
+    float b = (id & 0xFF) / 255.0f;
+
+    glColor3f(r, g, b);
+    drawPrimitiveVBO(modelCache[model.file].vao, 
+                     modelCache[model.file].ebo,
+                     modelCache[model.file].indexCount);
+}
+
+    }
+
+    // Render child groups
+    for (const auto* child : getChildren(&group)) {
+        renderGroupForPicking(*child);
+    }
+
+    glPopMatrix();
+}
+
+
+// Picking function
+unsigned int performPicking(int x, int y) {
+    // Primeiro renderize a cena de picking
+    renderScenePicking();
+
+
+    glFlush();
+    
+    // Depois leia o pixel
+    GLint viewport[4];
+    unsigned char pixel[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    
+    // Ajuste a coordenada Y (o sistema de coordenadas do OpenGL é invertido)
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);
+    
+    // Converta a cor de volta para ID
+    unsigned int id = pixel[0] + (pixel[1] << 8) + (pixel[2] << 16);
+    
+    // Reative os recursos gráficos
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+    
+    return id;
+}
+// Mouse click handler
+void handleObjectClick(int x, int y) {
+
+    
+    unsigned int pickedID = performPicking(x, y);
+    if (pickedID > 0 && objectIDMap.find(pickedID) != objectIDMap.end()) {
+        std::string modelFile = objectIDMap[pickedID];
+
+
+
+        std::cout << "Model clicked: " << modelFile << "\n";
+for (auto& [key, val] : objectData) {
+    std::cout << "Available key: " << key << "\n";
+}
+
+
+
+        if (objectData.find(modelFile) != objectData.end()) {
+            nlohmann::json data = objectData[modelFile];
+            std::cout << "Selected: " << modelFile << "\n";
+
+               std::cout << "Found JSON data for: " << modelFile << "\n";
+            std::cout << "Data: " << data.dump(4) << "\n";
+            
+            // You could display this in a GUI instead of console
+        } else {
+            std::cout << "No data available for: " << modelFile << "\n";
+        }
+    } else {
+        std::cout << "Nothing selected\n";
+    }
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Atualiza a direção da câmera com base em yaw/pitch
     void updateCameraDirection() {
@@ -225,8 +451,6 @@
     const float ANGLE_INCREMENT = PI / 75;
     const float ZOOM_INCREMENT = 0.5f;
 
-    int startTime = 0; // start time for animation
-    bool animationStarted = false; 
 
     void drawAxes(){
         float axisLength = 500.0f;
@@ -734,20 +958,21 @@
         glutPostRedisplay();
     }
 
-    void mouseButton(int button, int state, int x, int y) {
-        if (button == GLUT_LEFT_BUTTON) {
-            if (state == GLUT_DOWN) {
-                mousePressed = true;
-                lastMouseX = x;
-                lastMouseY = y;
-                firstMouse = true;
-            } else if (state == GLUT_UP) {
-                mousePressed = false;
-            }
+void mouseButton(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON) {
+        if (state == GLUT_DOWN) {
+            mousePressed = true;
+            lastMouseX = x;
+            lastMouseY = y;
+            firstMouse = true;
+        } else if (state == GLUT_UP) {
+            mousePressed = false;
+            handleObjectClick(x, y); // Esta linha deve estar presente
         }
     }
-    
-    
+    // Mantenha esta linha para atualizar a cena
+    glutPostRedisplay();
+}
     
     
     void idleFunc() {
@@ -800,6 +1025,9 @@
             helper_engine();
             return -1;
         }
+
+         loadObjectData("info.json"); // Add this line
+
 
         xmlData = xmlToXMLDataFormat(argv[1]);
         if (!xmlData) {

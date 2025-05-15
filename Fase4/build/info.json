@@ -1,0 +1,23 @@
+{
+    "sphere.3d": {
+        "name": "Sun",
+        "type": "Star",
+        "diameter": "1.3927 million km",
+        "temperature": "5500°C (surface)",
+        "description": "The Sun is the star at the center of our solar system."
+    },
+    "mercury.jpg": {
+        "name": "Mercury",
+        "type": "Planet",
+        "diameter": "4,880 km",
+        "temperature": "-173°C to 427°C",
+        "description": "The smallest planet in our solar system."
+    },
+    "venus.jpg": {
+        "name": "Venus",
+        "type": "Planet",
+        "diameter": "12,104 km",
+        "temperature": "462°C",
+        "description": "The hottest planet in our solar system."
+    }
+}

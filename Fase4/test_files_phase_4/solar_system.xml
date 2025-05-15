@@ -375,22 +375,6 @@
 </group>
 
 
-        <!-- Cometa - Catmull-Rom -->
-        <group>
-            <transform>
-                <translate time="20" align="true">
-                    <point x="-60" y="10" z="-60" />
-                    <point x="0" y="5" z="0" />
-                    <point x="60" y="10" z="60" />
-                    <point x="100" y="2" z="-30" />
-                </translate>
-                <scale x="0.1" y="0.1" z="0.1" />
-            </transform>
-            <models>
-                <model file="comet.3d" />
-            </models>
-        </group>
-
 
 
 

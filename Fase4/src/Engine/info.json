@@ -1,0 +1,153 @@
+{
+    "sphere.3d": {
+        "name": "Modelo Genérico de Esfera",
+        "description": "Modelo 3D básico de esfera usado para representação"
+    },
+    "ring.3d": {
+        "name": "Modelo Genérico de Anel",
+        "description": "Modelo 3D básico de anel usado para representação"
+    },
+    "solar_system_tex/sun2.jpg": {
+        "name": "Sol",
+        "type": "Estrela",
+        "diameter": "1.392.700 km",
+        "temperature": "5.500°C (superfície)",
+        "mass": "1.989 × 10³⁰ kg",
+        "composition": ["Hidrogênio (74%)", "Hélio (24%)", "Elementos pesados (2%)"],
+        "fun_fact": "Contém 99,86% da massa de todo o Sistema Solar"
+    },
+    "solar_system_tex/mercury.jpg": {
+        "name": "Mercúrio",
+        "type": "Planeta",
+        "diameter": "4.880 km",
+        "temperature": "-173°C a 427°C",
+        "orbital_period": "88 dias terrestres",
+        "moons": 0,
+        "fun_fact": "O planeta mais rápido do Sistema Solar"
+    },
+    "solar_system_tex/venus.jpg": {
+        "name": "Vênus",
+        "type": "Planeta",
+        "diameter": "12.104 km",
+        "temperature": "462°C",
+        "orbital_period": "225 dias terrestres",
+        "moons": 0,
+        "fun_fact": "Rotação retrógrada (gira no sentido oposto à maioria dos planetas)"
+    },
+    "solar_system_tex/mars.jpg": {
+        "name": "Marte",
+        "type": "Planeta",
+        "diameter": "6.779 km",
+        "temperature": "-140°C a 20°C",
+        "orbital_period": "687 dias terrestres",
+        "moons": 2,
+        "fun_fact": "Possui o maior vulcão do Sistema Solar (Olympus Mons)"
+    },
+    "solar_system_tex/phobos_mars.jpg": {
+        "name": "Fobos",
+        "type": "Lua de Marte",
+        "diameter": "22,2 km",
+        "orbital_period": "0,3 dias terrestres",
+        "discovery": "1877 por Asaph Hall",
+        "fun_fact": "Está se aproximando de Marte e eventualmente será destruído"
+    },
+    "solar_system_tex/deimos_mars.jpg": {
+        "name": "Deimos",
+        "type": "Lua de Marte",
+        "diameter": "12,4 km",
+        "orbital_period": "1,26 dias terrestres",
+        "discovery": "1877 por Asaph Hall",
+        "fun_fact": "A menor lua conhecida do Sistema Solar"
+    },
+    "solar_system_tex/jupiter.jpg": {
+        "name": "Júpiter",
+        "type": "Planeta Gasoso",
+        "diameter": "139.820 km",
+        "temperature": "-108°C",
+        "orbital_period": "4.331 dias terrestres",
+        "moons": 79,
+        "fun_fact": "Tem uma tempestade maior que a Terra (Grande Mancha Vermelha)"
+    },
+    "solar_system_tex/io.jpg": {
+        "name": "Io",
+        "type": "Lua de Júpiter",
+        "diameter": "3.642 km",
+        "orbital_period": "1,77 dias terrestres",
+        "volcanic_activity": "O corpo mais vulcanicamente ativo do Sistema Solar",
+        "fun_fact": "Tem vulcões que expelem enxofre a 500 km de altura"
+    },
+    "solar_system_tex/europa.jpg": {
+        "name": "Europa",
+        "type": "Lua de Júpiter",
+        "diameter": "3.122 km",
+        "orbital_period": "3,55 dias terrestres",
+        "surface": "Crosta de gelo sobre possível oceano subsuperficial",
+        "fun_fact": "Principal candidato para vida extraterrestre no Sistema Solar"
+    },
+    "solar_system_tex/ganimedes.jpg": {
+        "name": "Ganimedes",
+        "type": "Lua de Júpiter",
+        "diameter": "5.262 km",
+        "orbital_period": "7,15 dias terrestres",
+        "distinction": "Maior lua do Sistema Solar",
+        "fun_fact": "Possui seu próprio campo magnético"
+    },
+    "solar_system_tex/calisto.jpg": {
+        "name": "Calisto",
+        "type": "Lua de Júpiter",
+        "diameter": "4.821 km",
+        "orbital_period": "16,7 dias terrestres",
+        "surface": "Muito craterizada",
+        "fun_fact": "Possui a superfície mais antiga e craterizada do Sistema Solar"
+    },
+    "solar_system_tex/saturn.jpg": {
+        "name": "Saturno",
+        "type": "Planeta Gasoso",
+        "diameter": "116.460 km",
+        "temperature": "-139°C",
+        "orbital_period": "10.759 dias terrestres",
+        "moons": 82,
+        "fun_fact": "Tão denso que flutuaria se colocasse em água"
+    },
+    "solar_system_tex/saturn_ring.jpg": {
+        "name": "Anéis de Saturno",
+        "type": "Sistema de Anéis",
+        "composition": "Gelo, poeira e rochas",
+        "thickness": "Aproximadamente 10 metros",
+        "width": "282.000 km",
+        "fun_fact": "Os anéis são 90-95% água gelada"
+    },
+    "solar_system_tex/uranus.jpg": {
+        "name": "Urano",
+        "type": "Gigante de Gelo",
+        "diameter": "50.724 km",
+        "temperature": "-197°C",
+        "orbital_period": "30.687 dias terrestres",
+        "moons": 27,
+        "fun_fact": "Gira de lado (eixo de rotação inclinado em 98 graus)"
+    },
+    "solar_system_tex/neptune.jpg": {
+        "name": "Netuno",
+        "type": "Gigante de Gelo",
+        "diameter": "49.244 km",
+        "temperature": "-201°C",
+        "orbital_period": "60.190 dias terrestres",
+        "moons": 14,
+        "fun_fact": "Possui os ventos mais fortes do Sistema Solar (2.100 km/h)"
+    },
+    "solar_system_tex/moon.jpg": {
+        "name": "Lua",
+        "type": "Satélite Natural",
+        "diameter": "3.474 km",
+        "orbital_period": "27 dias terrestres",
+        "distance": "384.400 km da Terra",
+        "fun_fact": "O único corpo celeste além da Terra visitado por humanos"
+    },
+    "comet.3d": {
+        "name": "Cometa",
+        "type": "Corpo Menor",
+        "composition": "Gelo, poeira e rochas",
+        "orbit": "Altamente elíptica",
+        "fun_fact": "Desenvolve uma cauda quando próximo ao Sol"
+    }
+}

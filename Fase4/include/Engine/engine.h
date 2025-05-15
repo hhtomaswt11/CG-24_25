@@ -24,7 +24,9 @@ struct ModelData {
     GLuint textureID = 0; // Add texture support
 };
 
-
+void loadObjectData(const std::string& jsonFile) ;
+    void renderScenePicking() ;
+        void renderGroupForPicking(const Group& group) ;
 void computeSphericalCoordinates();
 void drawAxes(); 
 void changeSize(int w, int h);
