@@ -501,8 +501,8 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
     for (int i = 0; i < slices; ++i) {
         int next = (i + 1) % slices;
         indices.push_back(baseCenterIndex);
-        indices.push_back(baseIndices[next]);
         indices.push_back(baseIndices[i]);
+        indices.push_back(baseIndices[next]);        
     }
 
     // -------------------------
@@ -528,10 +528,10 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
         int curr = firstTopVertexIndex + i;
         int next = firstTopVertexIndex + (i + 1) % slices;
 
-        // Ordem anti-horária para normal apontar para cima
         indices.push_back(topCenterIndex);
-        indices.push_back(curr);
         indices.push_back(next);
+        indices.push_back(curr);
+        
     }
 
     // -------------------------
