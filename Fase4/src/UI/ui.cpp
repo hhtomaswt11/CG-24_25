@@ -21,6 +21,7 @@ void helper() {
     printf("%s» %sSPHERE   %s[RADIUS] [SLICES] [STACKS]%s   → sphere.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sCONE     %s[BOTTOM RADIUS] [HEIGHT] [SLICES] [STACKS]%s → cone.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sRING     %s[INNER RADIUS] [OUTER RADIUS] [SLICES] [STACKS]%s → ring.3d\n", RED, YELLOW, MAGENTA, RESET);
+    printf("%s» %sCYLINDER %s[RADIUS] [HEIGHT] [SLICES] [STACKS]%s → cylinder.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s» %sPATCH    %s[PATCH FILE] [TESSELLATION]%s → bezier.3d\n", RED, YELLOW, MAGENTA, RESET);
     printf("%s══════════════════════════════════════════════════════════════════════════════%s\n", CYAN, RESET);
 }

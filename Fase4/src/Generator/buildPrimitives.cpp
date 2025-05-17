@@ -460,6 +460,7 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
 
 
 
+
 Primitive buildCylinder(int radius, int height, int slices, int stacks) {
     if (radius <= 0 || height <= 0 || slices < 3 || stacks < 1) {
         std::cerr << "Erro: Parâmetros inválidos para gerar o cilindro." << std::endl;
@@ -475,64 +476,71 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
     std::vector<int> indices;
 
     float halfHeight = height / 2.0f;
+    float stackHeight = (float)height / stacks;
 
     // -------------------------
     // BASE INFERIOR
     // -------------------------
+    Point baseCenter = buildPoint(0.0f, -halfHeight, 0.0f);
     int baseCenterIndex = points.size();
-    points.push_back(buildPoint(0.0f, -halfHeight, 0.0f));
+    points.push_back(baseCenter);
     normals.push_back(buildPoint(0.0f, -1.0f, 0.0f));
     texCoords.push_back({0.5f, 0.5f});
 
-    for (int i = 0; i < slices; i++) {
+    std::vector<int> baseIndices;
+    for (int i = 0; i < slices; ++i) {
         float angle = 2.0f * M_PI * i / slices;
         float x = radius * cos(angle);
         float z = radius * sin(angle);
-
         points.push_back(buildPoint(x, -halfHeight, z));
         normals.push_back(buildPoint(0.0f, -1.0f, 0.0f));
         texCoords.push_back({0.5f + 0.5f * cos(angle), 0.5f + 0.5f * sin(angle)});
+        baseIndices.push_back(points.size() - 1);
     }
 
-    for (int i = 0; i < slices; i++) {
+    for (int i = 0; i < slices; ++i) {
         int next = (i + 1) % slices;
         indices.push_back(baseCenterIndex);
-        indices.push_back(baseCenterIndex + next + 1);
-        indices.push_back(baseCenterIndex + i + 1);
+        indices.push_back(baseIndices[next]);
+        indices.push_back(baseIndices[i]);
     }
 
     // -------------------------
-    // BASE SUPERIOR
+    // BASE SUPERIOR (TOPO)
     // -------------------------
+    Point topCenter = buildPoint(0.0f, halfHeight, 0.0f);
     int topCenterIndex = points.size();
-    points.push_back(buildPoint(0.0f, halfHeight, 0.0f));
+    points.push_back(topCenter);
     normals.push_back(buildPoint(0.0f, 1.0f, 0.0f));
     texCoords.push_back({0.5f, 0.5f});
 
-    for (int i = 0; i < slices; i++) {
+    int firstTopVertexIndex = points.size();
+    for (int i = 0; i < slices; ++i) {
         float angle = 2.0f * M_PI * i / slices;
         float x = radius * cos(angle);
         float z = radius * sin(angle);
-
         points.push_back(buildPoint(x, halfHeight, z));
         normals.push_back(buildPoint(0.0f, 1.0f, 0.0f));
         texCoords.push_back({0.5f + 0.5f * cos(angle), 0.5f + 0.5f * sin(angle)});
     }
 
-    for (int i = 0; i < slices; i++) {
-        int next = (i + 1) % slices;
+    for (int i = 0; i < slices; ++i) {
+        int curr = firstTopVertexIndex + i;
+        int next = firstTopVertexIndex + (i + 1) % slices;
+
+        // Ordem anti-horária para normal apontar para cima
         indices.push_back(topCenterIndex);
-        indices.push_back(topCenterIndex + i + 1);
-        indices.push_back(topCenterIndex + next + 1);
+        indices.push_back(curr);
+        indices.push_back(next);
     }
 
     // -------------------------
-    // CORPO DO CILINDRO
+    // LATERAL DO CILINDRO
     // -------------------------
-    int lateralStart = points.size();
+    std::vector<std::vector<int>> lateralIndices(stacks + 1);
 
     for (int stack = 0; stack <= stacks; ++stack) {
-        float y = -halfHeight + (float)stack / stacks * height;
+        float y = -halfHeight + stack * stackHeight;
         float v = (float)stack / stacks;
 
         for (int slice = 0; slice <= slices; ++slice) {
@@ -541,19 +549,23 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
             float z = radius * sin(angle);
             float u = (float)slice / slices;
 
-            points.push_back(buildPoint(x, y, z));
-            normals.push_back(buildPoint(x / radius, 0.0f, z / radius));
+            Point pos = buildPoint(x, y, z);
+            points.push_back(pos);
+
+            // Normais laterais apontam para fora no plano XZ
+            normals.push_back(buildPoint(cos(angle), 0.0f, sin(angle)));
             texCoords.push_back({u, v});
+
+            lateralIndices[stack].push_back(points.size() - 1);
         }
     }
 
-    int cols = slices + 1;
     for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
-            int i1 = lateralStart + stack * cols + slice;
-            int i2 = i1 + cols;
-            int i3 = i2 + 1;
-            int i4 = i1 + 1;
+            int i1 = lateralIndices[stack][slice];
+            int i2 = lateralIndices[stack + 1][slice];
+            int i3 = lateralIndices[stack + 1][slice + 1];
+            int i4 = lateralIndices[stack][slice + 1];
 
             indices.push_back(i1);
             indices.push_back(i2);
@@ -566,7 +578,7 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
     }
 
     // -------------------------
-    // FINALIZAÇÃO
+    // FINALIZAÇÃO DA PRIMITIVA
     // -------------------------
     for (const auto& p : points) addPoint(cylinder, p);
     for (const auto& n : normals) addNormal(cylinder, n);

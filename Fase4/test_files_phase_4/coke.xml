@@ -1,0 +1,39 @@
+<world>
+    <window width="1920" height="1080" />
+
+    <camera>
+        <position x="0" y="10" z="20" />
+        <lookAt x="0" y="0" z="0" />
+        <up x="0" y="1" z="0" />
+        <projection fov="45" near="1" far="100" />
+    </camera>
+
+    <lights>
+        <light type="point" posX="0" posY="15" posZ="10" />
+        <light type="point" posX="15" posY="10" posZ="-10" />
+        <light type="directional" dirX="-1" dirY="-1" dirZ="-1" />
+    </lights>
+    
+
+    <group>
+        <!-- Mesa -->
+        <group>
+            <models>
+                <model file="cylinder.3d">
+                    <texture file="teste11.jpg" />
+                    <color>
+    <diffuse R="160" G="240" B="120" />
+    <ambient R="160" G="200" B="160" />
+    <specular R="60" G="60" B="60" />
+    <emissive R="10" G="10" B="10" />
+    <shininess value="30" />
+</color>
+
+                </model>
+            </models>
+        </group>
+
+       
+
+    </group>
+</world>
