@@ -1,10 +1,5 @@
 #include "../../include/Utils/primitive.h"
 
-// struct Color {
-//     float r, g, b;
-// };
-
-
 Primitive buildPrimitive() {
     Primitive p = new struct primitive;  
     if (p) {

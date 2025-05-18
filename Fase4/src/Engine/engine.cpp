@@ -7,11 +7,10 @@
     std::map<std::string, ModelData> modelCache;
     std::map<std::string, GLuint> textureCache;
 
-    ////////////////////////////////New Feats
-    // Câmera FPS
+    // definicoes da camera FPS
     float camX = 0.0f, camY = 1.75f, camZ = 5.0f;
-    float yaw = -90.0f;   // Rotação em torno do eixo Y
-    float pitch = 0.0f;   // Rotação em torno do eixo X
+    float yaw = -90.0f;   // rotação em torno do eixo Y
+    float pitch = 0.0f;   // rotação em torno do eixo X
 
     float dirX, dirY, dirZ;
     float speed = 0.2f;
@@ -19,7 +18,7 @@
     int lastMouseX = -1, lastMouseY = -1;
     bool firstMouse = true;
 
-    // Atualiza a direção da câmera com base em yaw/pitch
+    // atualiza a direção da câmera com base em yaw/pitch
     void updateCameraDirection() {
         float yawRad = yaw * (M_PI / 180.0f);
         float pitchRad = pitch * (M_PI / 180.0f);
@@ -28,7 +27,7 @@
         dirY = sin(pitchRad);
         dirZ = cos(pitchRad) * sin(yawRad);
 
-        // Normaliza
+        // normalizacao 
         float len = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
         dirX /= len; dirY /= len; dirZ /= len;
     }
@@ -56,7 +55,7 @@
             glLightfv(lightIdx, GL_SPECULAR, lightColor);
     
             if (light.type == "directional") {
-                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f); // Not a spotlight
+                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f); 
             }
             else if (light.type == "spot") {
                 GLfloat spotDir[3] = {
@@ -68,7 +67,7 @@
                 glLightf(lightIdx, GL_SPOT_CUTOFF, light.cutoff);
             }
             else {
-                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f); // Regular point light
+                glLightf(lightIdx, GL_SPOT_CUTOFF, 180.0f); 
             }
     
             lightIdx++;
@@ -103,13 +102,12 @@
             ilInitialized = true;
         }
 
-        // Generate the image name
         ILuint imageID;
         ilGenImages(1, &imageID);
         ilBindImage(imageID);
 
-        // Try to load the image
-        std::string fullPath = "../test_files_phase_4/" + filename; // Assuming textures are in a textures subdirectory
+        // load da imagem
+        std::string fullPath = "../test_files_phase_4/" + filename; 
         if (!ilLoadImage(fullPath.c_str())) {
             std::cerr << "Error loading texture: " << fullPath
                       << " - " << iluErrorString(ilGetError()) << std::endl;
@@ -117,7 +115,7 @@
             return 0;
         }
 
-        // Convert the image to RGBA
+        // converter a imaagem para rgba 
         if (!ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE)) {
             std::cerr << "Error converting texture: " << fullPath 
                       << " - " << iluErrorString(ilGetError()) << std::endl;
@@ -125,18 +123,16 @@
             return 0;
         }
 
-        // Generate the OpenGL texture
         GLuint textureID;
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
-        // Set texture parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // quando minifica
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // quando amplia
 
-        // Upload the texture data
+        // upload the texture data
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
                     ilGetInteger(IL_IMAGE_WIDTH),
                     ilGetInteger(IL_IMAGE_HEIGHT),
@@ -144,12 +140,10 @@
                     ilGetData());
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        // Clean up
         ilDeleteImages(1, &imageID);
 
         return textureID;
     }
-    //////////////////////////////////////////
 
     void normalize(float* vec) {
         float length = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
@@ -206,11 +200,8 @@
     // Window
     float windowWidth, windowHeight;
 
-    // Control axes
+    // Eixos x, y, z
     bool showAxes = true;
-
-    // Diff color
-    bool yellow = false;
 
     // Rendering mode
     int mode = GL_FILL;
@@ -225,48 +216,45 @@
     const float ANGLE_INCREMENT = PI / 75;
     const float ZOOM_INCREMENT = 0.5f;
 
-    int startTime = 0; // start time for animation
+    int startTime = 0; // tempo de inicio da animacao
     bool animationStarted = false; 
+
+
+
 
     void drawAxes(){
         float axisLength = 500.0f;
 
-        // Save current lighting state
+        // estado de luz atual 
         GLboolean lightingEnabled;
         glGetBooleanv(GL_LIGHTING, &lightingEnabled);
         
-        // Disable lighting for axes
         glDisable(GL_LIGHTING);
 
         glBegin(GL_LINES);
-        // X axis - red
+
+        // x vermelho 
         glColor3f(1.0f, 0.0f, 0.0f);
         glVertex3f(-axisLength, 0.0f, 0.0f);
         glVertex3f(axisLength, 0.0f, 0.0f);
 
-        // Y axis - green
+        // y verde 
         glColor3f(0.0f, 1.0f, 0.0f);
         glVertex3f(0.0f, -axisLength, 0.0f);
         glVertex3f(0.0f, axisLength, 0.0f);
 
-        // Z axis - blue
+        // z azul 
         glColor3f(0.0f, 0.0f, 1.0f);
         glVertex3f(0.0f, 0.0f, -axisLength);
         glVertex3f(0.0f, 0.0f, axisLength);
         glEnd();
 
-        // Restore lighting state
+        // restore do estado da luz 
         if (lightingEnabled) {
             glEnable(GL_LIGHTING);
         }
     }
 
-    // Alternar a cor da cena entre amarelo e branco 
-    void alternate_color(float new_colorR, float new_colorG, float new_colorB) {
-        colorR = new_colorR;
-        colorG = new_colorG;
-        colorB = new_colorB;
-    }
     // Funcionalidade para ver a posição da camera no terminal 
     void showCameraPosition() {
         std::cout << "Camera Position: (" << camX << "," << camY << "," << camZ << ")" << std::endl;
@@ -374,7 +362,7 @@
     }
 
     void applyTransform(const Transform& transform) {
-        // Aplica transformações estáticas em ordem
+        // transformações estáticas em ordem
         for (const TransformStep& step : transform.orderedSteps) {
             switch (step.type) {
                 case TransformType::TRANSLATE:
@@ -422,16 +410,16 @@
             const auto& texCoord = texCoords[i];
             const auto& normal = normals[i];
     
-            // Add vertex coordinates (X, Y, Z)
+            // add vertex coordinates (X, Y, Z)
             vertices.push_back(getX(p));
             vertices.push_back(getY(p));
             vertices.push_back(getZ(p));
     
-            // Add texture coordinates (U, V)
+            // add texture coordinates (U, V)
             textureCoords.push_back(texCoord.u);
             textureCoords.push_back(texCoord.v);
     
-            // Add normals (NX, NY, NZ)
+            // add normals (NX, NY, NZ)
             normalVectors.push_back(getX(normal));
             normalVectors.push_back(getY(normal));
             normalVectors.push_back(getZ(normal));
@@ -443,7 +431,7 @@
     
         glBindVertexArray(vao);
     
-        // VBO for vertices
+        // VBO para os vertices 
         GLuint vbo;
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -451,7 +439,7 @@
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, 0);
     
-        // VBO for texture coordinates
+        // VBO para texture coordinates
         GLuint texCoordVbo;
         glGenBuffers(1, &texCoordVbo);
         glBindBuffer(GL_ARRAY_BUFFER, texCoordVbo);
@@ -459,7 +447,7 @@
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_FLOAT, 0, 0);
     
-        // VBO for normals
+        // VBO para normais
         GLuint normalVbo;
         glGenBuffers(1, &normalVbo);
         glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
@@ -467,7 +455,7 @@
         glEnableClientState(GL_NORMAL_ARRAY);
         glNormalPointer(GL_FLOAT, 0, 0);
     
-        // EBO for indices
+        // EBO para indices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
     
@@ -481,12 +469,11 @@
     void renderGroup(const Group& group) {
         glPushMatrix();
 
-        // render the curve if it exists
         if (group.transform.hasCurve) {
             renderCatmullRomCurve(group.transform.controlPoints);
         }
 
-        // animation along the curve
+        // animacao ao longo da curva 
         if (group.transform.hasCurve) {
             if (!animationStarted) {
                 startTime = glutGet(GLUT_ELAPSED_TIME);
@@ -523,7 +510,7 @@
             }
         }
 
-        // time-based rotation
+        // rotacao time based 
         if (group.transform.rotationTime > 0.0f) {
             if (!animationStarted) {
                 startTime = glutGet(GLUT_ELAPSED_TIME);
@@ -539,7 +526,6 @@
 
         applyTransform(group.transform);
 
-         // Render models with materials and textures
             for (const auto& model : getGroupModels(&group)) {
                 if (modelCache.find(model.file) == modelCache.end()) {
                     ModelData modelData = loadModel(model.file);
@@ -548,11 +534,8 @@
                     }
                 }
 
-
-                // Apply material properties
                 applyMaterial(model.color);
 
-                //Apply texture if exists
                 if (!model.texture.empty()) {
                     if (textureCache.find(model.texture) == textureCache.end()) {
                         textureCache[model.texture] = loadTexture(model.texture);
@@ -563,7 +546,6 @@
                     glDisable(GL_TEXTURE_2D);
                 }
 
-                // Draw the model
                 if (modelCache.count(model.file)) {
                     drawPrimitiveVBO(modelCache[model.file].vao, 
                                    modelCache[model.file].ebo,
@@ -571,7 +553,6 @@
                 }
             }
 
-            // Render child groups
         for (const auto* child : getChildren(&group)) {
             renderGroup(*child);
         }
@@ -589,7 +570,6 @@
             0.0f, 1.0f, 0.0f
         );
         
-
         setupLights();
 
         if (showAxes) {
@@ -617,9 +597,9 @@
     void crossProduct(float ax, float ay, float az,
                       float bx, float by, float bz,
                       float& rx, float& ry, float& rz) {
-        rx = ay * bz - az * by;
-        ry = az * bx - ax * bz;
-        rz = ax * by - ay * bx;
+                rx = ay * bz - az * by;
+                ry = az * bx - ax * bz;
+                rz = ax * by - ay * bx;
     }
     
 
@@ -627,7 +607,6 @@
         float rightX, rightY, rightZ;
         crossProduct(dirX, dirY, dirZ, 0.0f, 1.0f, 0.0f, rightX, rightY, rightZ);
         normalize2(rightX, rightY, rightZ);
-
     
         switch (tolower(key)) {
                 case 'w': 
@@ -649,7 +628,7 @@
                 camZ += rightZ * speed;
                 break;
             case 'c':
-                showCameraPosition(); // se ainda quiser isso
+                showCameraPosition(); 
                 break;
             case 'x':
                 showAxes = !showAxes;
@@ -663,11 +642,7 @@
             case 'f':
                 mode = GL_FILL;
                 break;
-            case 'y':
-                yellow = !yellow;
-                break;
         }
-    
         glutPostRedisplay();
     }
     
@@ -747,9 +722,6 @@
         }
     }
     
-    
-    
-    
     void idleFunc() {
         glutPostRedisplay();
     }
@@ -803,7 +775,7 @@
 
         xmlData = xmlToXMLDataFormat(argv[1]);
         if (!xmlData) {
-            std::cerr << "Error parsing XML file." << std::endl;
+            std::cerr << "Erro no parsing do ficheiro XML." << std::endl;
             return -1;
         }
 
@@ -833,9 +805,8 @@
         glutSpecialFunc(processSpecialKeys);
         glutMouseFunc(mouseButton);
         glutMotionFunc(mouseMotion);
-
-
         glutIdleFunc(idleFunc); 
+
 
         glutMainLoop();
 

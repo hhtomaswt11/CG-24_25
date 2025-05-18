@@ -17,7 +17,7 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
     std::vector<Point> gridNormals;
     std::vector<texCoord> gridTexCoords;
 
-    // Define normal
+    // normal
     Point normal;
     switch (axis) {
         case 'X': normal = buildPoint(h >= 0 ? 1.0f : -1.0f, 0.0f, 0.0f); break;
@@ -90,7 +90,6 @@ Primitive buildPlane(int length, int divisions, char axis = 'Y', float h = 0.0f,
         }
     }
 
-    // Popular primitiva
     plano->points = gridPoints;
     plano->normals = gridNormals;
     plano->texCoords = gridTexCoords;
@@ -130,19 +129,19 @@ Primitive buildBox(int length, int divisions) {
     for (int i = 0; i < 6; ++i) {
         Primitive face = faces[i];
 
-        // Adicionar pontos
+        // pontos
         const auto& pts = getPoints(face);
         box->points.insert(box->points.end(), pts.begin(), pts.end());
 
-        // Adicionar normais
+        // normais
         const auto& norms = getNormals(face);
         box->normals.insert(box->normals.end(), norms.begin(), norms.end());
 
-        // Adicionar texCoords
+        // texCoords
         const auto& texs = getTexCoords(face);
         box->texCoords.insert(box->texCoords.end(), texs.begin(), texs.end());
 
-        // Corrigir e adicionar índices
+
         for (int idx : getIndices(face)) {
             box->indices.push_back(idx + pointOffset);
         }
@@ -174,7 +173,7 @@ Primitive buildSphere(int radius, int slices, int stacks) {
     std::vector<texCoord> texCoords;
     std::vector<int> indices;
 
-    // Geração dos vértices
+    // geração dos vértices
     for (int stack = 0; stack <= stacks; ++stack) {
         float phi = M_PI * (float)stack / stacks; // de 0 a pi
         float y = radius * cos(phi);
@@ -197,25 +196,24 @@ Primitive buildSphere(int radius, int slices, int stacks) {
         }
     }
 
-    // Geração dos índices
+    // geração dos índices
     for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
             int first = stack * (slices + 1) + slice;
             int second = first + slices + 1;
 
-            // Triângulo 1
+            // triângulo 1
             indices.push_back(first);
             indices.push_back(second);
             indices.push_back(first + 1);
 
-            // Triângulo 2
+            // triângulo 2
             indices.push_back(first + 1);
             indices.push_back(second);
             indices.push_back(second + 1);
         }
     }
 
-    // Finalização
     for (const auto& p : points) addPoint(sphere, p);
     for (const auto& n : normals) addNormal(sphere, n);
     for (const auto& t : texCoords) addTexCoord(sphere, t);
@@ -242,9 +240,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
     std::vector<Point> normals;
     std::vector<texCoord> texCoords;
 
-    // -------------------------
-    // BASE DO CONE
-    // -------------------------
+    // base 
     Point baseCenter = buildPoint(0.0f, 0.0f, 0.0f);
     int baseCenterIndex = points.size();
     points.push_back(baseCenter);
@@ -270,9 +266,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         indices.push_back(baseIndices[i]);
     }
 
-    // -------------------------
-    // CORPO DO CONE
-    // -------------------------
+    // body 
     std::vector<std::vector<int>> bodyIndices(stacks + 1);
 
     for (int stack = 0; stack <= stacks; stack++) {
@@ -320,9 +314,7 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         }
     }
 
-    // -------------------------
-    // TOPO DO CONE
-    // -------------------------
+    // topo
     int topIndex = points.size();
     points.push_back(buildPoint(0.0f, height, 0.0f));
     normals.push_back(buildPoint(0.0f, 1.0f, 0.0f));
@@ -338,9 +330,6 @@ Primitive buildCone(int radius, int height, int slices, int stacks) {
         indices.push_back(nxt);
     }
 
-    // -------------------------
-    // FINALIZAÇÃO DA PRIMITIVA
-    // -------------------------
     for (const auto& p : points) {
         addPoint(cone, p);
     }
@@ -374,14 +363,14 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
     std::vector<texCoord> texCoords;
     std::vector<int> indices;
 
-    float yOffset = 0.0001f;  // Deslocamento pequeno para evitar flickering
+    float yOffset = 0.0001f;  
 
-    // Map de índices (stack * slices + slice)
+    // mapa de índices (stack * slices + slice)
     auto getIndex = [&](int stack, int slice, bool isBottom) {
         return (stack * slices + slice) + (isBottom ? (stacks + 1) * slices : 0);
     };
 
-    // Gerar pontos e normais para a face de cima (normal para cima)
+    // pontos e normais para a face de cima (normal para cima)
     for (int stack = 0; stack <= stacks; ++stack) {
         float radius = innerRadius + (float)stack / stacks * (outerRadius - innerRadius);
         for (int slice = 0; slice < slices; ++slice) {
@@ -395,7 +384,7 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
         }
     }
 
-    // Gerar pontos e normais para a face de baixo (normal para baixo)
+    // pontos e normais para a face de baixo (normal para baixo)
     for (int stack = 0; stack <= stacks; ++stack) {
         float radius = innerRadius + (float)stack / stacks * (outerRadius - innerRadius);
         for (int slice = 0; slice < slices; ++slice) {
@@ -409,7 +398,7 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
         }
     }
 
-    // Gerar índices para a face de cima
+    // índices para a face de cima
     for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
             int curr = getIndex(stack, slice, false);
@@ -427,7 +416,7 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
         }
     }
 
-    // Gerar índices para a face de baixo
+    // índices para a face de baixo
     for (int stack = 0; stack < stacks; ++stack) {
         for (int slice = 0; slice < slices; ++slice) {
             int curr = getIndex(stack, slice, true);
@@ -445,7 +434,6 @@ Primitive buildSaturnRing(float innerRadius, float outerRadius, int slices, int 
         }
     }
 
-    // Carregar dados na primitiva
     for (const auto& p : points) addPoint(ring, p);
     for (const auto& n : normals) addNormal(ring, n);
     for (const auto& t : texCoords) addTexCoord(ring, t);
@@ -505,9 +493,7 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
         indices.push_back(baseIndices[next]);        
     }
 
-    // -------------------------
-    // BASE SUPERIOR (TOPO)
-    // -------------------------
+    // topo
     Point topCenter = buildPoint(0.0f, halfHeight, 0.0f);
     int topCenterIndex = points.size();
     points.push_back(topCenter);
@@ -534,9 +520,7 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
         
     }
 
-    // -------------------------
-    // LATERAL DO CILINDRO
-    // -------------------------
+    // lateral 
     std::vector<std::vector<int>> lateralIndices(stacks + 1);
 
     for (int stack = 0; stack <= stacks; ++stack) {
@@ -577,9 +561,6 @@ Primitive buildCylinder(int radius, int height, int slices, int stacks) {
         }
     }
 
-    // -------------------------
-    // FINALIZAÇÃO DA PRIMITIVA
-    // -------------------------
     for (const auto& p : points) addPoint(cylinder, p);
     for (const auto& n : normals) addNormal(cylinder, n);
     for (const auto& t : texCoords) addTexCoord(cylinder, t);
