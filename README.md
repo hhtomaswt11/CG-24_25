@@ -6,10 +6,13 @@
 
 *Grupo 36:* 
 
-Tomás Henrique Alves Melo - a104529
-Carlos Eduardo Martins de Sá Fernandes - a100890
-Hugo Rafael Lima Pereira - a93752
-Alexandre Marques Miranda - a104445
+- Tomás Henrique Alves Melo - a104529
+
+- Carlos Eduardo Martins de Sá Fernandes - a100890
+
+- Hugo Rafael Lima Pereira - a93752
+
+- Alexandre Marques Miranda - a104445
 
 #### Projeto Final - Mini Engine 3D com Suporte XML 
 
